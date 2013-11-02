@@ -1,0 +1,8 @@
+<h1>Second</h1>
+
+
+Filtre: <input ng-model='search'/>
+Add <input ng-model='newTodo'/><button ng-click='addTodo(newTodo)'>Add</button>
+<ul>
+	<li ng-repeat="todo in todos | filter:search">{{todo}}</li>
+</ul>
