@@ -12,9 +12,8 @@ angular.module('gameApp', [
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'
       })
-      .when('/second', {
-        templateUrl: 'views/second.html',
-        controller: 'SecondCtrl'
+      .when('/about', {
+        templateUrl: 'views/about.html'
       })
       .otherwise({
         redirectTo: '/'
