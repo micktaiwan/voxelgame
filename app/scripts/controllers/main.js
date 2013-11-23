@@ -6,7 +6,7 @@ angular.module('gameApp')
     Db.init();
     $scope.game = Game;
     Game.init();
-    Game.render();
+    Game.animate();
 
   })
 
