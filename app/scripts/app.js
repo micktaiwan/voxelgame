@@ -4,7 +4,8 @@ angular.module('gameApp', [
   'ngCookies',
   'ngResource',
   'ngSanitize',
-  'gameApp.services.db'
+  'gameApp.services.db',
+  'gameApp.services.game'
 ])
   .config(function ($routeProvider) {
     $routeProvider

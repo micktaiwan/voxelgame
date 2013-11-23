@@ -2,9 +2,9 @@
 
 angular.module('gameApp')
   .controller('UsersCtrl', function($scope, Db) {
-    
+
     var users = [];
-    Db.init();
+    //Db.init();
     //Db.addUser('Mickael', 'email mick');
 
     Db.getUsers(function(users) {
