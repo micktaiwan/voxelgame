@@ -12,6 +12,10 @@ angular.module('gameApp', [
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'
       })
+      .when('/users', {
+        templateUrl: 'views/users.html',
+        controller: 'UsersCtrl'
+      })
       .when('/about', {
         templateUrl: 'views/about.html'
       })
