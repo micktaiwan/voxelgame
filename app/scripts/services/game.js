@@ -60,7 +60,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     // objects
 
-    geometry = new THREE.CubeGeometry(20, 20, 20);
+    geometry = new THREE.CubeGeometry(10, 10, 10);
 
     for (var i = 0, l = geometry.faces.length; i < l; i++) {
 
@@ -73,12 +73,12 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     for (var i = 0; i < 500; i++) {
 
-        material = new THREE.MeshPhongMaterial({specular: 0xffffff, shading: THREE.FlatShading, vertexColors: THREE.VertexColors});
+        material = new THREE.MeshPhongMaterial({specular: 0xff0000, shading: THREE.FlatShading, vertexColors: THREE.VertexColors});
 
         var mesh = new THREE.Mesh(geometry, material);
-        mesh.position.x = Math.floor(Math.random() * 20 - 10) * 20;
-        mesh.position.y = Math.floor(Math.random() * 20) * 20 + 10;
-        mesh.position.z = Math.floor(Math.random() * 20 - 10) * 20;
+        mesh.position.x = Math.floor(Math.random() * 20 - 10) * 10;
+        mesh.position.y = Math.floor(Math.random() * 20) * 10 + 5;
+        mesh.position.z = Math.floor(Math.random() * 20 - 10) * 10;
         scene.add(mesh);
 
         material.color.setHSL(Math.random() * 0.2 + 0.5, 0.75, Math.random() * 0.25 + 0.75);
