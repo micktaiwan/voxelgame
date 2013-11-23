@@ -104,7 +104,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
         var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
         if (havePointerLock) {
-            var element = document.body;
+            var element = document.getElementById('game');
             var pointerlockchange = function(event) {
                 if (document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element) {
                     controls.enabled = true;
@@ -164,9 +164,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             }, false);
 
         } else {
-
             instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
-
         }
 
 
@@ -186,16 +184,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     function animate() {
 
         requestAnimationFrame(animate);
-
-        //
-
         controls.isOnObject(false);
-
         ray.ray.origin.copy(controls.getObject().position);
         ray.ray.origin.y -= 10;
-
         var intersections = ray.intersectObjects(objects);
-
         if (intersections.length > 0) {
             var distance = intersections[ 0 ].distance;
             if (distance > 0 && distance < 10) {
