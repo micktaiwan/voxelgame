@@ -5,6 +5,7 @@
 //
 //
 //
+var $game_div;
 var modeDebug = false;
 var dim = [5, 20, 5]; // x=largeur, y = hauteur, z=profondeur
 var scene, renderer;
@@ -48,7 +49,7 @@ function init() {
         scene.add(dummy[2].mesh);
     }
 
-    // player 
+    // player
     player = new perso('joueur');
     scene.add(player.corps);
 
@@ -100,17 +101,24 @@ function init() {
     //
     renderer = new THREE.WebGLRenderer();
     renderer.setClearColor(0x444444);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
+    $game_div = $('#game');
+    onWindowResize()
+
+    //document.body.appendChild(renderer.domElement);
+    $game_div.append(renderer.domElement);
+
     //
     window.addEventListener('resize', onWindowResize, false);
 }
 
 function onWindowResize() {
-
     player.camera.aspect = window.innerWidth / window.innerHeight;
     player.camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    var width = window.innerWidth-$game_div[0].offsetLeft*2;
+    var height = window.innerHeight-$game_div[0].offsetTop*2;
+    renderer.setSize(width, height);
+    $game_div[0].style.width = width;
+    $game_div[0].style.height = height;
 }
 
 function control() {
@@ -180,6 +188,7 @@ function control() {
 
 function animate() {
     requestAnimationFrame(animate);
+    if(!player) return;
 
     player.camera.rotation.x = player.tete.rotation.x;
 
