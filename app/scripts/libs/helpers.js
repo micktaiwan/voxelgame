@@ -114,8 +114,8 @@ function init() {
 function onWindowResize() {
     player.camera.aspect = window.innerWidth / window.innerHeight;
     player.camera.updateProjectionMatrix();
-    var width = window.innerWidth-$game_div[0].offsetLeft*2;
-    var height = window.innerHeight-$game_div[0].offsetTop*2;
+    var width = window.innerWidth - $game_div[0].offsetLeft * 2;
+    var height = window.innerHeight - $game_div[0].offsetTop * 2;
     renderer.setSize(width, height);
     $game_div[0].style.width = width;
     $game_div[0].style.height = height;
@@ -124,15 +124,13 @@ function onWindowResize() {
 function control() {
 
     var onMouseMove = function(event) {
-
         var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
         var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
         player.corps.rotation.y -= movementX * 0.002;
         player.tete.rotation.x -= movementY * 0.002;
-//        $('#ray').html('rotY:' + camera.rotation.y + ' posX:' + parseInt(camera.position.x) + ' posZ:' + parseInt(camera.position.z) + ' posX:' + parseInt(player.corps.position.x) + ' posZ:' + parseInt(player.corps.position.z) + ' posY:' + parseInt(player.corps.position.y));
     };
-    onKeyDown = function(event) {
 
+    onKeyDown = function(event) {
         switch (event.keyCode) {
 
             case 90: // z
@@ -156,8 +154,8 @@ function control() {
                 break;
         }
     };
-    onKeyUp = function(event) {
 
+    onKeyUp = function(event) {
         switch (event.keyCode) {
 
             case 38: // up
@@ -188,14 +186,16 @@ function control() {
 
 function animate() {
     requestAnimationFrame(animate);
-    if(!player) return;
+    if(!player)
+        return;
 
-    player.camera.rotation.x = player.tete.rotation.x;
-
-    player.move();
-    player.jump();
-    light2.position.set(player.corps.position.x, player.corps.position.y + 20, player.corps.position.z);
-
+    if(isLocked) {
+        player.camera.rotation.x = player.tete.rotation.x;
+        player.move();
+        player.jump();
+        light2.position.set(player.corps.position.x, player.corps.position.y + 20, player.corps.position.z);
+    }
+    
     renderer.render(scene, player.camera);
     if(player.corps.position.y > 250)
         end();
