@@ -55,17 +55,3 @@ elem.addEventListener('keyup', function(e) {
         escDown = false;
     }
 });
-
-$(document).ready(function()
-{
-    console.log('a debuger...');
-//    $('#instructions').click(function() {
-//        enablePointerLock
-//        console.log('start');
-//    });
-// arg rien ne marche!
-    $("#instructions").on('click', this, function() {
-        console.log('start');
-        alert('you clicked a p.test element');
-    });
-});

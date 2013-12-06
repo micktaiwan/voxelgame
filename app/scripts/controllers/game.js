@@ -7,4 +7,8 @@ angular.module('gameApp')
             //$scope.game = Game;
             Game.init();
             Game.animate();
+
+            $('#instructions').click(function() {
+                enablePointerLock();
+            });
         });
