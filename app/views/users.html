@@ -7,3 +7,6 @@
         <li ng-repeat="u in users| filter:search">{{u.name}}</li>
     </ul>
 </div>
+<script>
+    $('.navbar-nav li').removeClass('active').eq(2).addClass('active');
+</script>

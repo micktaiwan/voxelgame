@@ -22,9 +22,6 @@ var objects = [];
 
 var PI = Math.PI;
 
-control();
-animate();
-
 function init() {
 
     scene = new THREE.Scene();
@@ -109,6 +106,8 @@ function init() {
 
     //
     window.addEventListener('resize', onWindowResize, false);
+    
+    control();
 }
 
 function onWindowResize() {

@@ -58,13 +58,13 @@ elem.addEventListener('keyup', function(e) {
 
 $(document).ready(function()
 {
-    console.log('start');
-    $('#instructions').click(function() {
-        enablePointerLock
-        console.log('start');
-    });
+    console.log('a debuger...');
+//    $('#instructions').click(function() {
+//        enablePointerLock
+//        console.log('start');
+//    });
 // arg rien ne marche!
-    $("#blocker").on('click', this, function() {
+    $("#instructions").on('click', this, function() {
         console.log('start');
         alert('you clicked a p.test element');
     });

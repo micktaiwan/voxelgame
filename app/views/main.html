@@ -1,13 +1,63 @@
-<div id="blocker">
-   	<div id="title">Appuie sur Echap</div>
-    <div id="instructions">
-        <p>
-        	Z, Q, S, D / Souris = Deplacement<br/>
-        	ESPACE = Sauter<br/>
-        	<b>getcube touche E.</b><br/>
-        	En cours: Inventaire
-        </p>
+<div class="container">
+    <div class="col-xs-6">
+        <h1><span class="label label-primary">Jethro koull</span></h1>
+        <h2>Pourquoi? Comment?</h2>
+        <p>Hebergement : Github.io<br>
+            Database : Firebase<br>
+            Language : AngularJs, Jquery<br>
+            Moteur 3D: <a href="http://threejs.org/">TreeJs</a><br>
+        <hr>
+        <h2>Release notes</h2>
+        <h4>Inventaire</h4>
+        <p>En cours</p>
+        <p>Implique rammasser cube et reposer...</p>
+        <p>Rammasser cube <b>ok!</b></p>
+        <h4>Camera et deplacement</h4>
+        <p>camera à la wow de base. ok.<br>
+            deplacement et saut de base. ok.<br>
+            -amélioration a faire une fois la colision d'objet en place...<br>
+            -distance à la molette...</p>
+        <h4>Collision</h4>
+        <p>collision v1. ok.</p>
+        <p>Manque la collision en haut...</p>
+    </div>
+    <div class="col-xs-6">
+        <div id="signIn">
+            <h2>SignUp / LogIn</h2>
+            <input class="arrondi" type="text" id="nameLogIn" ng-model="name" placeholder='pseudo'>
+            <input class="arrondi" type='text' id='passwordLogIn' placeholder='password'>
+        </div>
+
+        <h2>Tchat firebase</h2>
+        <div id='messagesDiv'></div>
+        <div>
+            <input class="arrondi" type="text" id="nameInput" ng-model="name" placeholder='pseudo'>
+            <input class="arrondi" type='text' id='messageInput' placeholder='Message'><br>
+            Bonjour {{name|| "Inconnu"}}!
+        </div>
+        <h2>Liste des Joueurs</h2>
+        <div>
+            <button ng-repeat="u in users| filter:search" class="btn btn-warning">{{u.name}}</button>
+            <div>
+                <div class="clearfix"></div>
+                <hr>
+                <h2>Le jeu</h2>
+                <p>Un jeu de plateforme vertical, avec un soupcon de fps</p>
+                <h3>But du jeu</h3>
+                <p>1) Arriver le premier a une hauteur defini</p>
+                <p>2) Pour y arriver, on pourra s'aider :</p>
+                <ul>
+                    <li>Une quantite de cube limite</li>
+                    <li>Un appareil qui permet de cibler un cube et le prendre. (Temp de recharge a definir)</li>
+                    <li>De powerups, qui pourraient etre place aleatoirement sur l'aire de jeu</li>
+                </ul>
+                <h3>L'aire de jeu</h3>
+                <p>L'aire de jeu doit etre limite horizontalement et lateralement.</p>
+                <hr>
+            </div>
+        </div>
     </div>
 </div>
-
-<div id="game"></div>
+<script>
+    $('.navbar-nav li').removeClass('active').eq(0).addClass('active');
+</script>
