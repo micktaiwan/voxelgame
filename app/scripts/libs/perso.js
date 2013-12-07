@@ -1,8 +1,7 @@
-function perso(name) {
+function perso(name, x, y, z, dir) {
 
 // info player
     var speed = 1;
-    var distCamPlayer = 50;
     var distCollision = 8;
 
     var audio = document.createElement('audio');
@@ -13,15 +12,20 @@ function perso(name) {
 
     var canJump = true;
     var saut = 0;
-    var positionNew = new THREE.Vector3(0, 0, 0);
+    var positionNew = new THREE.Vector3(x, y, z);
 
-    this.name = name; // vivement le reseau :)
+    this.name = name;
     this.jumping = false;
     this.corps = new THREE.Object3D();
     this.corps.position.y = 30;
 
+    var map = THREE.ImageUtils.loadTexture('images/ash_uvgrid01.jpg');
+    map.wrapS = map.wrapT = THREE.RepeatWrapping;
+    map.anisotropy = 16;
+
+    var material = new THREE.MeshLambertMaterial({ambient: 0xbbbbbb, map: map});
     var geometrytorse = new THREE.CubeGeometry(10, 10, 10);
-    var material = new THREE.MeshLambertMaterial({color: 0xffff00});
+//    var material = new THREE.MeshLambertMaterial({color: 0xffff00});
     this.torse = new THREE.Mesh(geometrytorse, material);
     this.corps.add(this.torse);
 
@@ -31,9 +35,10 @@ function perso(name) {
     this.corps.add(this.tete);
 
     this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
-    this.camera.position.y = 14;
-    this.camera.position.z = -2.5;
-    this.corps.add(this.camera);
+//    this.camera.position.y = this.tete.position.y;
+    this.camera.position.x += Math.sin(this.corps.rotation.y) * distCamPlayer;
+    this.camera.position.z += Math.cos(this.corps.rotation.y) * distCamPlayer;
+    this.tete.add(this.camera);
 
     this.move = function() {
         positionNew.copy(this.corps.position);
@@ -164,5 +169,54 @@ function perso(name) {
             return true;
         }
         return false;
+    }
+
+    this.putCube = function() {
+        geometry = new THREE.CubeGeometry(20, 20, 20);
+        var cubeMaterial = new THREE.MeshLambertMaterial({map: THREE.ImageUtils.loadTexture('images/boite.jpg')});
+//        var cubeMaterial = new THREE.MeshLambertMaterial({map: THREE.ImageUtils.loadTexture('images/boite.jpg'), wireframe: true});
+        var mesh = new THREE.Mesh(geometry, cubeMaterial);
+        mesh.position.x = Math.round((this.corps.position.x -Math.sin(this.corps.rotation.y)*20)/20)*20;
+        mesh.position.z = Math.round((this.corps.position.z -Math.cos(this.corps.rotation.y)*20)/20)*20;
+        mesh.position.y = Math.round(this.corps.position.y/20)*20;
+        scene.add(mesh);
+        objects.push(mesh);
+        return;
+        canPut = this.canPut();
+        if(canPut) {
+            console.log('ok posé...');
+        }
+    }
+
+    this.canPut = function() {
+        var distPut = 12;
+
+        deltaX = -Math.sin(this.corps.rotation.y);
+        deltaZ = -Math.cos(this.corps.rotation.y);
+
+        if(intersects.length > 0 && intersects[0].distance < distPut) {
+            scene.remove(intersects[0].object);
+            for (var key in objects) {
+                if(objects[key]['id'] == intersects[0].object.id) {
+                    objects.splice(key, 1);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    this.camdist = function(e) {
+
+        distCamPlayer -= e.wheelDelta / 60;
+
+        if(distCamPlayer < 0)
+            distCamPlayer = 0;
+        if(distCamPlayer > 50)
+            distCamPlayer = 50;
+
+        this.camera.position.x = this.tete.position.x + Math.sin(this.tete.rotation.y) * distCamPlayer;
+        this.camera.position.z = this.tete.position.z + Math.cos(this.tete.rotation.y) * distCamPlayer;
+        console.log(distCamPlayer);
     }
 }

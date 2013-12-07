@@ -55,7 +55,3 @@ elem.addEventListener('keyup', function(e) {
         escDown = false;
     }
 });
-
-$('#blocker').click(function() {
-enablePointerLock();
-});

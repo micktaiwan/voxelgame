@@ -1,17 +1,17 @@
 // Cube 20*20*20
 // Plan 2000*2000
 //
-//
-//
-//
-//
+
 var $game_div;
 var modeDebug = false;
-var dim = [5, 20, 5]; // x=largeur, y = hauteur, z=profondeur
+var dim = [6, 20, 6]; // x=largeur, y = hauteur, z=profondeur
 var scene, renderer;
 var geometry, material, mesh;
 var time = Date.now();
-var player;
+var players = [];
+var player; // the one who actually play
+var distCamPlayer = 0;
+
 var dummy = [];
 
 var velocity = new THREE.Vector3();
@@ -22,22 +22,20 @@ var objects = [];
 
 var PI = Math.PI;
 
-control();
-animate();
-
-function init() {
-
+function init(_player) {
+    player = _player;
     scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x005555, 0, 200);
-    light = new THREE.DirectionalLight(0x00ffff, 1.5);
+    scene.fog = new THREE.Fog(0x004444, 0, 200);
+    light = new THREE.DirectionalLight(0x004444, 1.5);
     light.position.set(1, 1, 1);
     scene.add(light);
     light = new THREE.DirectionalLight(0xffff00, 1.5);
     light.position.set(-1, -1, -1);
     scene.add(light);
-    light2 = new THREE.PointLight(0xff0040, 2, 50);
+    light2 = new THREE.PointLight(0xffffff, 2, 50);
     light2.position.set(-1, 1, -1);
     scene.add(light2);
+    scene.add(player.corps);
 
 // mode debug
     if(modeDebug) {
@@ -49,19 +47,14 @@ function init() {
         scene.add(dummy[2].mesh);
     }
 
-    // player
-    player = new perso('joueur');
-    scene.add(player.corps);
-
     // floor
-
     geometry = new THREE.CubeGeometry(20, 20, 20);
     var cubeMaterial = new THREE.MeshLambertMaterial({map: THREE.ImageUtils.loadTexture('images/boite.jpg')});
     for (var iz = -dim[2] / 2; iz < dim[2] / 2; iz++) {
         for (var ix = -dim[0] / 2; ix < dim[0] / 2; ix++) {
             var mesh = new THREE.Mesh(geometry, cubeMaterial);
             mesh.position.x = ix * 20;
-            mesh.position.y = -10;
+            mesh.position.y = 0;
             mesh.position.z = iz * 20;
             scene.add(mesh);
             objects.push(mesh);
@@ -92,7 +85,7 @@ function init() {
     for (var i = 0; i < 500; i++) {
         var mesh = new THREE.Mesh(geometry, cubeMaterial);
         mesh.position.x = Math.floor(Math.random() * 20 - 10) * 20;
-        mesh.position.y = Math.floor(Math.random() * 10) * 20 + 10;
+        mesh.position.y = Math.floor(Math.random() * 20) * 20;
         mesh.position.z = Math.floor(Math.random() * 20 - 10) * 20;
         scene.add(mesh);
         objects.push(mesh);
@@ -100,7 +93,7 @@ function init() {
 
     //
     renderer = new THREE.WebGLRenderer();
-    renderer.setClearColor(0x444444);
+    renderer.setClearColor(0x004444);
     $game_div = $('#game');
     onWindowResize()
 
@@ -109,13 +102,15 @@ function init() {
 
     //
     window.addEventListener('resize', onWindowResize, false);
+
+    control();
 }
 
 function onWindowResize() {
     player.camera.aspect = window.innerWidth / window.innerHeight;
     player.camera.updateProjectionMatrix();
-    var width = window.innerWidth-$game_div[0].offsetLeft*2;
-    var height = window.innerHeight-$game_div[0].offsetTop*2;
+    var width = window.innerWidth - $game_div[0].offsetLeft * 2;
+    var height = window.innerHeight - $game_div[0].offsetTop * 2;
     renderer.setSize(width, height);
     $game_div[0].style.width = width;
     $game_div[0].style.height = height;
@@ -124,15 +119,13 @@ function onWindowResize() {
 function control() {
 
     var onMouseMove = function(event) {
-
         var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
         var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
         player.corps.rotation.y -= movementX * 0.002;
         player.tete.rotation.x -= movementY * 0.002;
-//        $('#ray').html('rotY:' + camera.rotation.y + ' posX:' + parseInt(camera.position.x) + ' posZ:' + parseInt(camera.position.z) + ' posX:' + parseInt(player.corps.position.x) + ' posZ:' + parseInt(player.corps.position.z) + ' posY:' + parseInt(player.corps.position.y));
     };
-    onKeyDown = function(event) {
 
+    onKeyDown = function(event) {
         switch (event.keyCode) {
 
             case 90: // z
@@ -151,13 +144,16 @@ function control() {
                 player.jumping = true;
                 player.jump();
                 break;
-            case 69: // space
+            case 69: // e
                 player.getCube();
+                break;
+            case 82: // r
+                player.putCube();
                 break;
         }
     };
-    onKeyUp = function(event) {
 
+    onKeyUp = function(event) {
         switch (event.keyCode) {
 
             case 38: // up
@@ -184,17 +180,24 @@ function control() {
     document.addEventListener('mousemove', onMouseMove, false);
     document.addEventListener('keydown', onKeyDown, false);
     document.addEventListener('keyup', onKeyUp, false);
+    document.addEventListener('mousewheel', function(e) {
+        player.camdist(e);
+        return false;
+    }, false);
 }
 
 function animate() {
     requestAnimationFrame(animate);
-    if(!player) return;
+    if(!player)
+        return;
 
-    player.camera.rotation.x = player.tete.rotation.x;
-
-    player.move();
-    player.jump();
-    light2.position.set(player.corps.position.x, player.corps.position.y + 20, player.corps.position.z);
+    if(isLocked) {
+        player.camera.rotation.x = player.tete.rotation.x;
+//        player.camera.position.y = player.tete.position.y - Math.sin(player.tete.rotation.x) * distCamPlayer;
+        player.move();
+        player.jump();
+        light2.position.set(player.corps.position.x, player.corps.position.y + 20, player.corps.position.z);
+    }
 
     renderer.render(scene, player.camera);
     if(player.corps.position.y > 250)
