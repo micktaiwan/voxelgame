@@ -147,8 +147,11 @@ function control() {
                 player.jumping = true;
                 player.jump();
                 break;
-            case 69: // space
+            case 69: // e
                 player.getCube();
+                break;
+            case 82: // r
+                player.putCube();
                 break;
         }
     };

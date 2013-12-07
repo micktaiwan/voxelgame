@@ -171,6 +171,41 @@ function perso(name) {
         return false;
     }
 
+    this.putCube = function() {
+        geometry = new THREE.CubeGeometry(20, 20, 20);
+        var cubeMaterial = new THREE.MeshLambertMaterial({map: THREE.ImageUtils.loadTexture('images/boite.jpg')});
+//        var cubeMaterial = new THREE.MeshLambertMaterial({map: THREE.ImageUtils.loadTexture('images/boite.jpg'), wireframe: true});
+        var mesh = new THREE.Mesh(geometry, cubeMaterial);
+        mesh.position.x = this.corps.position.x -Math.sin(this.corps.rotation.y)*20;
+        mesh.position.z = this.corps.position.z -Math.cos(this.corps.rotation.y)*20;
+        mesh.position.y = this.corps.position.y;
+        scene.add(mesh);
+        objects.push(mesh);
+        return;
+        canPut = this.canPut();
+        if(canPut) {
+            console.log('ok posé...');
+        }
+    }
+
+    this.canPut = function() {
+        var distPut = 12;
+
+        deltaX = -Math.sin(this.corps.rotation.y);
+        deltaZ = -Math.cos(this.corps.rotation.y);
+
+        if(intersects.length > 0 && intersects[0].distance < distPut) {
+            scene.remove(intersects[0].object);
+            for (var key in objects) {
+                if(objects[key]['id'] == intersects[0].object.id) {
+                    objects.splice(key, 1);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
     this.camdist = function(e) {
 
         distCamPlayer -= e.wheelDelta / 60;
