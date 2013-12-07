@@ -3,9 +3,6 @@
 
     Filtre: <input ng-model='search' ng-init="search=''"/>
     <ul>
-        <li ng-repeat="u in users| filter:{name:search}">{{u.name}} ({{u}})</li>
+        <li ng-repeat="u in users| filter:{name:search}">{{u.name}}</li>
     </ul>
 </div>
-<script>
-    $('.navbar-nav li').removeClass('active').eq(2).addClass('active');
-</script>
