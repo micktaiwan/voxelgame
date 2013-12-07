@@ -19,7 +19,7 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
         },
         setUser: function(u) {
             user = u;
-            console.log('connection: ' + u.displayName + ", " + u.id);
+            console.log('connection: ' + u.name + ", " + u.id);
         },
         getUsers: function(callbackSuccess) {
             if(!users) {

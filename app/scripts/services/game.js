@@ -25,6 +25,18 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     var PI = Math.PI;
 
+    function copyVector(to, from) { // FIXME: pas sur que ça serve...
+        to.x = from.x;
+        to.y = from.y;
+        to.z = from.z;
+    };
+
+    // Db.updateRot({ corps: player.corps.rotation.y, tete: player.tete.rotation.x });
+    function copyRotation(to, from) {
+        to.y = from.corps;
+        to.x = from.tete;
+    };
+
     function init(_player) {
         player = _player;
         scene = new THREE.Scene();
@@ -419,12 +431,13 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         }
     }
 
-    function PNJ(name, Pos, Rot) {
+    function PNJ(id, name, pos, rot) {
 
-        this.name = name;
-        this.corps = new THREE.Object3D();
-        this.corps.position.copy(Pos);
-        this.corps.rotation.copy(Rot);
+        this.id     = id;
+        this.name   = name;
+        this.corps  = new THREE.Object3D();
+        copyVector(this.corps.position, pos);
+        copyRotation(this.corps.rotation, rot);
 
         var geometrytorse = new THREE.CubeGeometry(dimCadri/2, dimCadri/2, dimCadri/2);
         var material = new THREE.MeshLambertMaterial({color: 0xffff00});
@@ -437,9 +450,14 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.corps.add(this.tete);
 
         this.move = function(pos, rot) {
-            this.corps.position.copy(pos);
-            this.corps.rotation.copy(rot);
+            copyVector(this.corps.position, pos);
+            copyRotation(this.corps.rotation, rot);
         };
+
+        return {
+            id : this.id,
+            move: this.move
+            }
     }
     function cubeC(Pos) {
         var geometry = new THREE.CubeGeometry(dimCadri, dimCadri, dimCadri);
@@ -475,8 +493,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             players << p;
             return p;
         },
-        addPNJ: function(name, pos, rot) {
-            var p = new PNJ(name, pos, rot);
+        addPNJ: function(id, name, pos, rot) {
+            var p = new PNJ(id, name, pos, rot);
             scene.add(p.corps);
             objects.push(p.torse);
             players << p;
