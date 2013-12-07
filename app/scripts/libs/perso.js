@@ -1,4 +1,4 @@
-function perso(name) {
+function perso(name, x, y, z, dir) {
 
 // info player
     var speed = 1;
@@ -12,9 +12,9 @@ function perso(name) {
 
     var canJump = true;
     var saut = 0;
-    var positionNew = new THREE.Vector3(0, 0, 0);
+    var positionNew = new THREE.Vector3(x, y, z);
 
-    this.name = name; // vivement le reseau :)
+    this.name = name;
     this.jumping = false;
     this.corps = new THREE.Object3D();
     this.corps.position.y = 30;

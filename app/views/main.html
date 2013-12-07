@@ -33,11 +33,11 @@
         <div>
             <input class="arrondi" type="text" id="nameInput" ng-model="name" placeholder='pseudo'>
             <input class="arrondi" type='text' id='messageInput' placeholder='Message'><br>
-            Bonjour {{name|| "Inconnu"}}!
+            Bonjour {{name || "Inconnu"}}!
         </div>
         <h2>Liste des Joueurs</h2>
         <div>
-            <button ng-repeat="u in users| filter:search" class="btn btn-warning">{{u.name}}</button>
+            <button ng-repeat="u in users" class="btn btn-warning">{{u.name}}</button>
             <div>
                 <div class="clearfix"></div>
                 <hr>
