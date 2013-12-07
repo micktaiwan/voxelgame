@@ -19,8 +19,13 @@ function perso(name) {
     this.corps = new THREE.Object3D();
     this.corps.position.y = 30;
 
+    var map = THREE.ImageUtils.loadTexture('images/ash_uvgrid01.jpg');
+    map.wrapS = map.wrapT = THREE.RepeatWrapping;
+    map.anisotropy = 16;
+
+    var material = new THREE.MeshLambertMaterial({ambient: 0xbbbbbb, map: map});
     var geometrytorse = new THREE.CubeGeometry(10, 10, 10);
-    var material = new THREE.MeshLambertMaterial({color: 0xffff00});
+//    var material = new THREE.MeshLambertMaterial({color: 0xffff00});
     this.torse = new THREE.Mesh(geometrytorse, material);
     this.corps.add(this.torse);
 
@@ -167,9 +172,14 @@ function perso(name) {
     }
 
     this.camdist = function(e) {
-        
+
         distCamPlayer -= e.wheelDelta / 60;
-        
+
+        if(distCamPlayer < 0)
+            distCamPlayer = 0;
+        if(distCamPlayer > 50)
+            distCamPlayer = 50;
+
         this.camera.position.x = this.tete.position.x + Math.sin(this.tete.rotation.y) * distCamPlayer;
         this.camera.position.z = this.tete.position.z + Math.cos(this.tete.rotation.y) * distCamPlayer;
         console.log(distCamPlayer);
