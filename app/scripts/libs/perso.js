@@ -2,7 +2,6 @@ function perso(name) {
 
 // info player
     var speed = 1;
-    var distCamPlayer = 50;
     var distCollision = 8;
 
     var audio = document.createElement('audio');
@@ -31,9 +30,10 @@ function perso(name) {
     this.corps.add(this.tete);
 
     this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
-    this.camera.position.y = 14;
-    this.camera.position.z = -2.5;
-    this.corps.add(this.camera);
+//    this.camera.position.y = this.tete.position.y;
+    this.camera.position.x += Math.sin(this.corps.rotation.y) * distCamPlayer;
+    this.camera.position.z += Math.cos(this.corps.rotation.y) * distCamPlayer;
+    this.tete.add(this.camera);
 
     this.move = function() {
         positionNew.copy(this.corps.position);
@@ -164,5 +164,14 @@ function perso(name) {
             return true;
         }
         return false;
+    }
+
+    this.camdist = function(e) {
+        
+        distCamPlayer -= e.wheelDelta / 60;
+        
+        this.camera.position.x = this.tete.position.x + Math.sin(this.tete.rotation.y) * distCamPlayer;
+        this.camera.position.z = this.tete.position.z + Math.cos(this.tete.rotation.y) * distCamPlayer;
+        console.log(distCamPlayer);
     }
 }

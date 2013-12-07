@@ -1,10 +1,7 @@
 // Cube 20*20*20
 // Plan 2000*2000
 //
-//
-//
-//
-//
+
 var $game_div;
 var modeDebug = false;
 var dim = [5, 20, 5]; // x=largeur, y = hauteur, z=profondeur
@@ -12,6 +9,8 @@ var scene, renderer;
 var geometry, material, mesh;
 var time = Date.now();
 var player;
+var distCamPlayer = 0;
+
 var dummy = [];
 
 var velocity = new THREE.Vector3();
@@ -25,14 +24,14 @@ var PI = Math.PI;
 function init() {
 
     scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x005555, 0, 200);
-    light = new THREE.DirectionalLight(0x00ffff, 1.5);
+    scene.fog = new THREE.Fog(0x004444, 0, 200);
+    light = new THREE.DirectionalLight(0x004444, 1.5);
     light.position.set(1, 1, 1);
     scene.add(light);
     light = new THREE.DirectionalLight(0xffff00, 1.5);
     light.position.set(-1, -1, -1);
     scene.add(light);
-    light2 = new THREE.PointLight(0xff0040, 2, 50);
+    light2 = new THREE.PointLight(0xffffff, 2, 50);
     light2.position.set(-1, 1, -1);
     scene.add(light2);
 
@@ -97,7 +96,7 @@ function init() {
 
     //
     renderer = new THREE.WebGLRenderer();
-    renderer.setClearColor(0x444444);
+    renderer.setClearColor(0x004444);
     $game_div = $('#game');
     onWindowResize()
 
@@ -106,7 +105,7 @@ function init() {
 
     //
     window.addEventListener('resize', onWindowResize, false);
-    
+
     control();
 }
 
@@ -181,6 +180,10 @@ function control() {
     document.addEventListener('mousemove', onMouseMove, false);
     document.addEventListener('keydown', onKeyDown, false);
     document.addEventListener('keyup', onKeyUp, false);
+    document.addEventListener('mousewheel', function(e) {
+        player.camdist(e);
+        return false;
+    }, false);
 }
 
 function animate() {
@@ -190,11 +193,12 @@ function animate() {
 
     if(isLocked) {
         player.camera.rotation.x = player.tete.rotation.x;
+//        player.camera.position.y = player.tete.position.y - Math.sin(player.tete.rotation.x) * distCamPlayer;
         player.move();
         player.jump();
         light2.position.set(player.corps.position.x, player.corps.position.y + 20, player.corps.position.z);
     }
-    
+
     renderer.render(scene, player.camera);
     if(player.corps.position.y > 250)
         end();

@@ -19,7 +19,6 @@ angular.module('gameApp')
             });
 
             $('#passwordLogIn').keypress(function(e) {
-                console.log('test');
                 if(e.keyCode == 13) {
                     var name = $('#nameLogIn').val();
                     var password = $('#passwordLogIn').val();
@@ -38,6 +37,7 @@ angular.module('gameApp')
             var jetname = readCookie('jetname');
             if(jetname != '') {
                 $('#signIn').hide();
+                $("#nameInput").attr("disabled", "disabled");
             }
             $scope.name = jetname;
 
