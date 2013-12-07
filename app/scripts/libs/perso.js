@@ -176,8 +176,8 @@ function perso(name) {
         var cubeMaterial = new THREE.MeshLambertMaterial({map: THREE.ImageUtils.loadTexture('images/boite.jpg')});
 //        var cubeMaterial = new THREE.MeshLambertMaterial({map: THREE.ImageUtils.loadTexture('images/boite.jpg'), wireframe: true});
         var mesh = new THREE.Mesh(geometry, cubeMaterial);
-        mesh.position.x = this.corps.position.x -Math.sin(this.corps.rotation.y)*20;
-        mesh.position.z = this.corps.position.z -Math.cos(this.corps.rotation.y)*20;
+        mesh.position.x = Math.round((this.corps.position.x -Math.sin(this.corps.rotation.y)*20)/20)*20;
+        mesh.position.z = Math.round((this.corps.position.z -Math.cos(this.corps.rotation.y)*20)/20)*20;
         mesh.position.y = this.corps.position.y;
         scene.add(mesh);
         objects.push(mesh);

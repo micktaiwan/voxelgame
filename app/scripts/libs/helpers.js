@@ -4,7 +4,7 @@
 
 var $game_div;
 var modeDebug = false;
-var dim = [5, 20, 5]; // x=largeur, y = hauteur, z=profondeur
+var dim = [6, 20, 6]; // x=largeur, y = hauteur, z=profondeur
 var scene, renderer;
 var geometry, material, mesh;
 var time = Date.now();
@@ -57,7 +57,7 @@ function init() {
         for (var ix = -dim[0] / 2; ix < dim[0] / 2; ix++) {
             var mesh = new THREE.Mesh(geometry, cubeMaterial);
             mesh.position.x = ix * 20;
-            mesh.position.y = -10;
+            mesh.position.y = 0;
             mesh.position.z = iz * 20;
             scene.add(mesh);
             objects.push(mesh);
@@ -88,7 +88,7 @@ function init() {
     for (var i = 0; i < 500; i++) {
         var mesh = new THREE.Mesh(geometry, cubeMaterial);
         mesh.position.x = Math.floor(Math.random() * 20 - 10) * 20;
-        mesh.position.y = Math.floor(Math.random() * 10) * 20 + 10;
+        mesh.position.y = Math.floor(Math.random() * 20) * 20;
         mesh.position.z = Math.floor(Math.random() * 20 - 10) * 20;
         scene.add(mesh);
         objects.push(mesh);
