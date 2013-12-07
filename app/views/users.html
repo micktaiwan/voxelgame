@@ -1,10 +1,9 @@
 <div class="container">
     <h1>Users</h1>
 
-    Filtre: <input ng-model='search'/>
-    Add <input ng-model='user'/><button ng-click='addUser(user)'>Add user</button>
+    Filtre: <input ng-model='search' ng-init="search=''"/>
     <ul>
-        <li ng-repeat="u in users| filter:search">{{u.name}}</li>
+        <li ng-repeat="u in users| filter:{name:search}">{{u.name}} ({{u}})</li>
     </ul>
 </div>
 <script>
