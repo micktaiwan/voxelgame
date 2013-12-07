@@ -8,7 +8,8 @@ var dim = [6, 20, 6]; // x=largeur, y = hauteur, z=profondeur
 var scene, renderer;
 var geometry, material, mesh;
 var time = Date.now();
-var player;
+var players = [];
+var player; // the one who actually play
 var distCamPlayer = 0;
 
 var dummy = [];
@@ -21,8 +22,8 @@ var objects = [];
 
 var PI = Math.PI;
 
-function init() {
-
+function init(_player) {
+    player = _player;
     scene = new THREE.Scene();
     scene.fog = new THREE.Fog(0x004444, 0, 200);
     light = new THREE.DirectionalLight(0x004444, 1.5);
@@ -34,6 +35,7 @@ function init() {
     light2 = new THREE.PointLight(0xffffff, 2, 50);
     light2.position.set(-1, 1, -1);
     scene.add(light2);
+    scene.add(player.corps);
 
 // mode debug
     if(modeDebug) {
@@ -45,12 +47,7 @@ function init() {
         scene.add(dummy[2].mesh);
     }
 
-    // player
-    player = new perso('joueur');
-    scene.add(player.corps);
-
     // floor
-
     geometry = new THREE.CubeGeometry(20, 20, 20);
     var cubeMaterial = new THREE.MeshLambertMaterial({map: THREE.ImageUtils.loadTexture('images/boite.jpg')});
     for (var iz = -dim[2] / 2; iz < dim[2] / 2; iz++) {

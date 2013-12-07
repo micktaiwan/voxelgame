@@ -5,7 +5,10 @@ angular.module('gameApp')
 
             //Db.init();
             //$scope.game = Game;
-            Game.init();
+
+            // TODO: get current logged player from DB
+            p = Game.addPlayer("joueur", 0,0,0, 0);
+            Game.init(p);
             Game.animate();
 
             $('#instructions').click(function() {
