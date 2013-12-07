@@ -9,6 +9,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         },
         addPlayer: function(name, x, y, z, dir) {
             p = new perso(name, x, y, z, dir);
+            if(scene) scene.add(p.corps);
             players << p;
             return p;
         }
