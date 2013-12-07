@@ -221,7 +221,7 @@ function perso(name, x, y, z) {
     }
 }
 
-function anotherPerso(name, otherPos, otherRot) {
+function PNJ(name, otherPos, otherRot) {
 
     this.name = name;
     this.corps = new THREE.Object3D();
@@ -237,8 +237,8 @@ function anotherPerso(name, otherPos, otherRot) {
     this.tete.position.y = 14;
     this.corps.add(this.tete);
 
-    this.move = function() {
-        this.corps.position.copy(otherPos);
-        this.corps.rotation.copy(otherRot);;
+    this.move = function(pos, rot) {
+        this.corps.position.copy(pos);
+        this.corps.rotation.copy(rot);;
     };
 }
