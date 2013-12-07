@@ -1,4 +1,4 @@
-function perso(name, x, y, z, dir) {
+function perso(name, x, y, z) {
 
 // info player
     var speed = 1;
@@ -219,4 +219,26 @@ function perso(name, x, y, z, dir) {
         this.camera.position.z = this.tete.position.z + Math.cos(this.tete.rotation.y) * distCamPlayer;
         console.log(distCamPlayer);
     }
+}
+
+function anotherPerso(name, otherPos, otherRot) {
+
+    this.name = name;
+    this.corps = new THREE.Object3D();
+    this.corps.position.y = 30;
+
+    var geometrytorse = new THREE.CubeGeometry(10, 10, 10);
+    var material = new THREE.MeshLambertMaterial({color: 0xffff00});
+    this.torse = new THREE.Mesh(geometrytorse, material);
+    this.corps.add(this.torse);
+
+    var geometrytete = new THREE.CubeGeometry(3, 3, 3);
+    this.tete = new THREE.Mesh(geometrytete, material);
+    this.tete.position.y = 14;
+    this.corps.add(this.tete);
+
+    this.move = function() {
+        this.corps.position.copy(otherPos);
+        this.corps.rotation.copy(otherRot);;
+    };
 }
