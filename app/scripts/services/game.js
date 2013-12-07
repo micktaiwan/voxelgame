@@ -33,8 +33,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     // Db.updateRot({ corps: player.corps.rotation.y, tete: player.tete.rotation.x });
     function copyRotation(to, from) {
-        to.y = from.corps;
-        to.x = from.tete;
+        to.corps.rotation.y = from.corps;
+        to.tete.rotation.x = from.tete;
     };
 
     function init(_player) {
@@ -437,7 +437,6 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.name   = name;
         this.corps  = new THREE.Object3D();
         copyVector(this.corps.position, pos);
-        copyRotation(this.corps.rotation, rot);
 
         var geometrytorse = new THREE.CubeGeometry(dimCadri/2, dimCadri/2, dimCadri/2);
         var material = new THREE.MeshLambertMaterial({color: 0xffff00});
@@ -448,16 +447,14 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.tete = new THREE.Mesh(geometrytete, material);
         this.tete.position.y = dimCadri/2;
         this.corps.add(this.tete);
+        copyRotation(this, rot);
 
         this.move = function(pos, rot) {
             copyVector(this.corps.position, pos);
-            copyRotation(this.corps.rotation, rot);
+            copyRotation(this, rot);
         };
 
-        return {
-            id : this.id,
-            move: this.move
-            }
+        return this;
     }
     function cubeC(Pos) {
         var geometry = new THREE.CubeGeometry(dimCadri, dimCadri, dimCadri);

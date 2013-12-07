@@ -28,13 +28,16 @@
             <input class="arrondi" type='text' id='passwordLogIn' placeholder='password'>
         </div>
 
-        <h2>Tchat firebase</h2>
+        <input class="arrondi" type="text" id="nameLogIn" ng-model="name" placeholder='pseudo'>
+        <button ng-click="changeLogin()">change login</button>
+        <h2>Tchat</h2>
         <div id='messagesDiv'></div>
         <div>
             <input class="arrondi" type="text" id="nameInput" ng-model="name" placeholder='pseudo'>
             <input class="arrondi" type='text' id='messageInput' placeholder='Message'><br>
             Bonjour {{name || "Inconnu"}}!
         </div>
+
         <h2>Liste des Joueurs</h2>
         <div>
             <button ng-repeat="u in users" class="btn btn-warning">{{u.name}}</button>

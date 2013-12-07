@@ -3,6 +3,50 @@
 angular.module('gameApp')
     .controller('MainCtrl', function($scope, Db, Game) {
 
+        $scope.changeLogin = function() {
+            var user = getUserByName($scope.name);
+            if(user) {
+                Db.setUser(user);
+            }
+            else console.log('ooops');
+        }
+
+        function getUserByName(name) {
+          var rv = null;
+          $scope.users.some(function(s) {
+            if(s.name==name) {
+              rv = s;
+              return;
+            }
+          });
+          return rv;
+        }
+
+        $('#passwordLogIn').keypress(function(e) {
+            if(e.keyCode == 13) {
+                var name = $('#nameLogIn').val();
+                var password = $('#passwordLogIn').val();
+                var encodedpassword = window.btoa(password);
+                var email = 'yo';
+
+                // TODO: vérifier que ce nom n'existe pas déjà
+                Db.addUser(name, email);
+                $('#passwordLogIn').val('enregistré!');
+                $("#passwordLogIn").attr("disabled", "disabled");
+                $("#nameLogIn").attr("disabled", "disabled");
+                $('#messageInput').focus();
+
+                writeCookie('jetname', name, 20);
+            }
+        });
+
+        var jetname = readCookie('jetname');
+        if(jetname != '') {
+            $('#signIn').hide();
+            $("#nameInput").attr("disabled", "disabled");
+        }
+        $scope.name = jetname;
+
         Db.init();
         Db.getUsers(function(users) {
             $scope.users = []; // we reinitialize all users
@@ -21,45 +65,6 @@ angular.module('gameApp')
             $('<div/>').text(text).prepend($('<em/>').text(name + ': ')).appendTo($('#messagesDiv'));
             $('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
         });
-
-
-        function getUserByName(name) {
-          var rv = null;
-          $scope.users.some(function(s) {
-            if(s.name==name) {
-              rv = s;
-              return;
-            }
-          });
-          return rv;
-        }
-
-
-        $('#passwordLogIn').keypress(function(e) {
-            if(e.keyCode == 13) {
-                var name = $('#nameLogIn').val();
-                var password = $('#passwordLogIn').val();
-                var encodedpassword = window.btoa(password);
-                var email = 'yo';
-
-                // TODO: vérifier que ce nom n'existe pas déjà
-                Db.addUser(name, 'no email');
-                $('#passwordLogIn').val('enregistré!');
-                $("#passwordLogIn").attr("disabled", "disabled");
-                $("#nameLogIn").attr("disabled", "disabled");
-                $('#messageInput').focus();
-
-                writeCookie('jetname', name, 20);
-            }
-        });
-
-        var jetname = readCookie('jetname');
-        if(jetname != '') {
-            $('#signIn').hide();
-            $("#nameInput").attr("disabled", "disabled");
-        }
-        $scope.name = jetname;
-
         //tchat
         $('#messageInput').keypress(function(e) {
             if(e.keyCode == 13) {
