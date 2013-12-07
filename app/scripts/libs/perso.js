@@ -178,7 +178,7 @@ function perso(name) {
         var mesh = new THREE.Mesh(geometry, cubeMaterial);
         mesh.position.x = Math.round((this.corps.position.x -Math.sin(this.corps.rotation.y)*20)/20)*20;
         mesh.position.z = Math.round((this.corps.position.z -Math.cos(this.corps.rotation.y)*20)/20)*20;
-        mesh.position.y = this.corps.position.y;
+        mesh.position.y = Math.round(this.corps.position.y/20)*20;
         scene.add(mesh);
         objects.push(mesh);
         return;
