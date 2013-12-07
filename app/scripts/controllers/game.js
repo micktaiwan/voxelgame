@@ -1,29 +1,34 @@
 'use strict';
 
 angular.module('gameApp')
-        .controller('GameCtrl', function($scope, $timeout, Db, Game) {
+    .controller('GameCtrl', function($scope, $timeout, $location, Db, Game) {
 
-            //Db.init();
-            //$scope.game = Game;
+        var user = Db.getUser();
+        if(!user) {
+            $location.path("/");
+            return;
+        }
 
-            // TODO: get current logged player from DB
-            var p = Game.addMainPlayer("main", 0,0,0, 0);
-            Game.init(p);
-            var another = Game.addPNJ("second", { x: -100, y: 20, z:0}, { x: 0, y: 0, z:0});
-            Game.animate();
+        function updatePlayer(id, obj) {
+            another.move(obj.pos, obj.rot);
+        };
 
-            function updatePlayers() {
-            	another.move({ x: another.corps.position.x+1, y: another.corps.position.y, z:another.corps.position.z}, {x:0, y:0, z:0});
-            };
-
-			function updateLater() {
-				$timeout(function() {
-					updatePlayers();
-					updateLater(); // schedule another update
-					}, 1000);
-			};
-			updateLater();
-            $('#instructions').click(function() {
-                enablePointerLock();
-            });
+        Db.getUsers(function(players) {
+            $scope.players = []; // we reinitialize all users
+            for (var i in players) {
+                if(!players[i].pos) players[i].pos = {x:0, y:0, z: 0};
+                if(!players[i].rot) players[i].rot = {corps:0, tete:0};
+                $scope.players.push(Db.newPlayer(i, players[i].name, players[i].pos, players[i].rot, updatePlayer));
+            }
+            console.log($scope.players.length + ' players');
         });
+
+        var p = Game.addMainPlayer("main", user.pos);
+        Game.init(p);
+        var another = Game.addPNJ("second", { x: -100, y: 20, z:0}, { x: 0, y: 0, z:0});
+        Game.animate();
+
+        $('#instructions').click(function() {
+            enablePointerLock();
+        });
+    });
