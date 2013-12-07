@@ -17,21 +17,21 @@ function perso(name, x, y, z) {
     this.name = name;
     this.jumping = false;
     this.corps = new THREE.Object3D();
-    this.corps.position.y = 30;
+    this.corps.position.y = dimCadri;
 
     var map = THREE.ImageUtils.loadTexture('images/ash_uvgrid01.jpg');
     map.wrapS = map.wrapT = THREE.RepeatWrapping;
     map.anisotropy = 16;
 
     var material = new THREE.MeshLambertMaterial({ambient: 0xbbbbbb, map: map});
-    var geometrytorse = new THREE.CubeGeometry(10, 10, 10);
+    var geometrytorse = new THREE.CubeGeometry(dimCadri/2, dimCadri/2, dimCadri/2);
 //    var material = new THREE.MeshLambertMaterial({color: 0xffff00});
     this.torse = new THREE.Mesh(geometrytorse, material);
     this.corps.add(this.torse);
 
-    var geometrytete = new THREE.CubeGeometry(3, 3, 3);
+    var geometrytete = new THREE.CubeGeometry(dimCadri/4, dimCadri/4, dimCadri/4);
     this.tete = new THREE.Mesh(geometrytete, material);
-    this.tete.position.y = 14;
+    this.tete.position.y = dimCadri/2;
     this.corps.add(this.tete);
 
     this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
@@ -172,13 +172,13 @@ function perso(name, x, y, z) {
     }
 
     this.putCube = function() {
-        geometry = new THREE.CubeGeometry(20, 20, 20);
+        geometry = new THREE.CubeGeometry(dimCadri, dimCadri, dimCadri);
         var cubeMaterial = new THREE.MeshLambertMaterial({map: THREE.ImageUtils.loadTexture('images/boite.jpg')});
 //        var cubeMaterial = new THREE.MeshLambertMaterial({map: THREE.ImageUtils.loadTexture('images/boite.jpg'), wireframe: true});
         var mesh = new THREE.Mesh(geometry, cubeMaterial);
-        mesh.position.x = Math.round((this.corps.position.x -Math.sin(this.corps.rotation.y)*20)/20)*20;
-        mesh.position.z = Math.round((this.corps.position.z -Math.cos(this.corps.rotation.y)*20)/20)*20;
-        mesh.position.y = Math.round(this.corps.position.y/20)*20;
+        mesh.position.x = Math.round((this.corps.position.x -Math.sin(this.corps.rotation.y)*dimCadri)/dimCadri)*dimCadri;
+        mesh.position.z = Math.round((this.corps.position.z -Math.cos(this.corps.rotation.y)*dimCadri)/dimCadri)*dimCadri;
+        mesh.position.y = Math.round(this.corps.position.y/dimCadri)*dimCadri;
         scene.add(mesh);
         objects.push(mesh);
         return;
@@ -212,29 +212,29 @@ function perso(name, x, y, z) {
 
         if(distCamPlayer < 0)
             distCamPlayer = 0;
-        if(distCamPlayer > 50)
-            distCamPlayer = 50;
+        if(distCamPlayer > 100)
+            distCamPlayer = 100;
 
         this.camera.position.x = this.tete.position.x + Math.sin(this.tete.rotation.y) * distCamPlayer;
         this.camera.position.z = this.tete.position.z + Math.cos(this.tete.rotation.y) * distCamPlayer;
-        console.log(distCamPlayer);
     }
 }
 
-function PNJ(name, otherPos, otherRot) {
+function PNJ(name, Pos, Rot) {
 
     this.name = name;
     this.corps = new THREE.Object3D();
-    this.corps.position.y = 30;
+    this.corps.position.copy(Pos);
+    this.corps.rotation.copy(Rot);
 
-    var geometrytorse = new THREE.CubeGeometry(10, 10, 10);
+    var geometrytorse = new THREE.CubeGeometry(dimCadri/2, dimCadri/2, dimCadri/2);
     var material = new THREE.MeshLambertMaterial({color: 0xffff00});
     this.torse = new THREE.Mesh(geometrytorse, material);
     this.corps.add(this.torse);
 
-    var geometrytete = new THREE.CubeGeometry(3, 3, 3);
+    var geometrytete = new THREE.CubeGeometry(dimCadri/4, dimCadri/4, dimCadri/4);
     this.tete = new THREE.Mesh(geometrytete, material);
-    this.tete.position.y = 14;
+    this.tete.position.y = dimCadri/2;
     this.corps.add(this.tete);
 
     this.move = function(pos, rot) {

@@ -11,13 +11,15 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         },
         addMainPlayer: function(name, x, y, z, dir) {
             var p = new perso(name, x, y, z, dir);
-            if(scene) scene.add(p.corps);
+            if(scene)
+                scene.add(p.corps);
             players << p;
             return p;
         },
         addPNJ: function(name, pos, rot) {
             var p = new PNJ(name, pos, rot);
             scene.add(p.corps);
+            objects.push(p.torse);
             players << p;
             return p;
         }

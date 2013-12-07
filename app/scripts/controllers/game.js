@@ -9,7 +9,7 @@ angular.module('gameApp')
             // TODO: get current logged player from DB
             var p = Game.addMainPlayer("main", 0,0,0, 0);
             Game.init(p);
-            var another = Game.addPNJ("second", 0,0,0, 0);
+            var another = Game.addPNJ("second", { x: -100, y: 20, z:0}, { x: 0, y: 0, z:0});
             Game.animate();
 
             function updatePlayers() {
