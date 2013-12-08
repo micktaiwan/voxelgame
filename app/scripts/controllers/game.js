@@ -34,10 +34,9 @@ angular.module('gameApp')
                 if(!players[i].rot) players[i].rot = {corps:0, tete:0};
                 var p = Db.newPlayer(i, players[i].name, players[i].pos, players[i].rot, updatePlayer);
                 //$scope.players.push(p);
-
                 if(p.id!=user.id) pnjs.push(Game.addPNJ(p.id, p.name, p.pos, p.rot));
             }
-            console.log($scope.players.length + ' players');
+            console.log(pnjs.length + ' pnjs');
 
             Game.animate();
 

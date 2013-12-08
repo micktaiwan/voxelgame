@@ -22,27 +22,28 @@ angular.module('gameApp')
           return rv;
         }
 
-        $('#passwordLogIn').keypress(function(e) {
-            if(e.keyCode == 13) {
-                var name = $('#nameLogIn').val();
-                var password = $('#passwordLogIn').val();
-                var encodedpassword = window.btoa(password);
-                var email = 'yo';
-
-                // TODO: vérifier que ce nom n'existe pas déjà
-                Db.addUser(name, email);
-                $('#passwordLogIn').val('enregistré!');
-                $("#passwordLogIn").attr("disabled", "disabled");
-                $("#nameLogIn").attr("disabled", "disabled");
-                $('#messageInput').focus();
-
-                writeCookie('jetname', name, 20);
+        $scope.signup = function(name, pwd) {
+            //var encodedpassword = $window.btoa($scope.pwd);
+            // TODO: vérifier que ce nom n'existe pas déjà
+            var user = getUserByName($scope.name);
+            if(!user) {
+                Db.addUser($scope.name, $scope.email);
+                $scope.pwd = 'enregistré!'
+                //$("#passwordLogIn").attr("disabled", "disabled");
+                //$("#nameLogIn").attr("disabled", "disabled");
+                $('#msg').focus();
+                writeCookie('jetname', $scope.name, 20);
+                $scope.error = '';
             }
-        });
+            else {
+                $scope.error = 'pseudo '+$scope.name+' is already taken';
+                $scope.name = '';
+            }
+        };
 
         var jetname = readCookie('jetname');
         if(jetname != '') {
-            $('#signIn').hide();
+            $('#signIn').hide(); // FIXME: ya une façon angular de faire
             $("#nameInput").attr("disabled", "disabled");
         }
         $scope.name = jetname;
