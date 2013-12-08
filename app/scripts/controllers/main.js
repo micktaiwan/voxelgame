@@ -8,7 +8,7 @@ angular.module('gameApp')
             if(user) {
                 Db.setUser(user);
             }
-            else console.log('ooops');
+            else console.log('ooops this user does not exists');
         }
 
         function getUserByName(name) {
@@ -49,7 +49,7 @@ angular.module('gameApp')
 
         Db.init();
         Db.getUsers(function(users) {
-            $scope.users = []; // we reinitialize all users
+            $scope.users = [];
             for (var i in users) {
                 $scope.users.push(Db.newUser(i, users[i].name, users[i].email, users[i].pos, users[i].rot));
             }
@@ -66,13 +66,9 @@ angular.module('gameApp')
             $('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
         });
         //tchat
-        $('#messageInput').keypress(function(e) {
-            if(e.keyCode == 13) {
-                var name = $('#nameInput').val();
-                var text = $('#messageInput').val();
-                Db.addMessage(name, text);
-                $('#messageInput').val('');
-            }
-        });
+        $scope.addMsg = function(name, msg) {
+            Db.addMessage(name, msg);
+            $scope.msg = '';
+        }
+    });
 
-    })
