@@ -1,0 +1,8 @@
+<div class="container">
+    <h1>Users</h1>
+
+    Filtre: <input ng-model="search" ng-init="search=''">
+    <ul>
+        <li ng-repeat="u in users| filter:{name:search}">{{u.name}}</li>
+    </ul>
+</div>

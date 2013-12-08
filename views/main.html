@@ -1,0 +1,70 @@
+<div class="container">
+    <div class="col-xs-6">
+        <h1><span class="label label-primary">Jethro koull</span></h1>
+        <h2>Pourquoi? Comment?</h2>
+        <p>Hebergement : Github.io<br>
+            Database : Firebase<br>
+            Language : AngularJs, Jquery<br>
+            Moteur 3D: <a href="http://threejs.org/">TreeJs</a><br>
+        <hr>
+        <h2>Release notes</h2>
+        <h4>Inventaire</h4>
+        </p><p>En cours</p>
+        <p>Implique rammasser cube et reposer...</p>
+        <p>Rammasser cube <b>ok!</b></p>
+        <h4>Camera et deplacement</h4>
+        <p>camera à la wow de base. ok.<br>
+            deplacement et saut de base. ok.<br>
+            -amélioration a faire une fois la colision d'objet en place...<br>
+            -distance à la molette... ok!</p>
+        <h4>Collision</h4>
+        <p>collision v1. ok.</p>
+        <p>Manque la collision en haut...</p>
+    </div>
+    <div class="col-xs-6">
+        <div id="signIn" ng-hide="isSignedIn()">
+            <h2>SignUp / LogIn</h2>
+            <strong ng-hide="name!=''">{{error}}</strong>
+	        <form name="add_form" ng-submit="signup()" role="form">
+	            <input class="arrondi" type="text" ng-model="name" placeholder="pseudo" ng-disabled="isSignedIn()"><br>
+	            <input class="arrondi" type="text" ng-model="email" placeholder="email (option)" ng-disabled="isSignedIn()"><br>
+	            <input class="arrondi" type="text" ng-model="pwd" placeholder="password" ng-disabled="isSignedIn()"><br>
+	            <button type="submit" class="btn btn-default">Register</button>
+	        </form>
+        </div>
+
+        <!--
+        <input class="arrondi" type="text" id="nameLogIn" ng-model="name" placeholder='pseudo'>
+        <button ng-click="changeLogin()" class="btn btn-default">change login</button>
+        -->
+        <h2>Tchat</h2>
+        <div id="messagesDiv"></div>
+        <form name="add_form" ng-submit="addMsg(name, msg)" role="form">
+            <input class="arrondi" type="text" ng-model="name" placeholder="pseudo" ng-disabled="isSignedIn()">
+            <input class="arrondi" type="text" ng-model="msg" id="msg" placeholder="Message">
+            <button type="submit" class="btn btn-default">Send</button>
+        </form>
+
+        <h2>Liste des Joueurs</h2>
+        <div>
+            <button ng-repeat="u in users" class="btn btn-warning">{{u.name}}</button>
+            <div>
+                <div class="clearfix"></div>
+                <hr>
+                <h2>Le jeu</h2>
+                <p>Un jeu de plateforme vertical, avec un soupcon de fps</p>
+                <h3>But du jeu</h3>
+                <p>1) Arriver le premier a une hauteur defini</p>
+                <p>2) Pour y arriver, on pourra s'aider :</p>
+                <ul>
+                    <li>Une quantite de cube limite</li>
+                    <li>Un appareil qui permet de cibler un cube et le prendre. (Temp de recharge a definir)</li>
+                    <li>De powerups, qui pourraient etre place aleatoirement sur l'aire de jeu</li>
+                </ul>
+                <h3>L'aire de jeu</h3>
+                <p>L'aire de jeu doit etre limite horizontalement et lateralement.</p>
+                <hr>
+            </div>
+        </div>
+    </div>
+</div>
