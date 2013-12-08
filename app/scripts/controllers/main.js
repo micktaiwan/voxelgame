@@ -42,13 +42,10 @@ angular.module('gameApp')
         };
 
         var jetname = readCookie('jetname');
-        if(jetname != '') {
-            $('#signIn').hide(); // FIXME: ya une façon angular de faire
-            $("#nameInput").attr("disabled", "disabled");
-            $("#nameChat").attr("disabled", "disabled");
-        }
         $scope.name = jetname;
-
+        $scope.isSignedIn = function() {
+            return $scope.name != '';
+        }
         Db.init();
         Db.getUsers(function(users) {
             $scope.users = [];

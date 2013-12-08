@@ -22,11 +22,11 @@
         <p>Manque la collision en haut...</p>
     </div>
     <div class="col-xs-6">
-        <div id="signIn">
+        <div id="signIn" ng-hide="isSignedIn()">
             <h2>SignUp / LogIn</h2>
             <strong ng-hide="name!=''">{{error}}</strong>
 	        <form name="add_form" ng-submit="signup(name, msg)" role="form">
-	            <input class="arrondi" type="text" ng-model="name" placeholder='pseudo' id="nameInput"><br/>
+	            <input class="arrondi" type="text" ng-model="name" placeholder='pseudo' ng-disabled="isSignedIn()"><br/>
 	            <input class="arrondi" type="text" ng-model="email" placeholder='email (option)'><br/>
 	            <input class="arrondi" type='text' ng-model="pwd"  placeholder='password'><br/>
 	            <button type="submit" class="btn btn-default">Register</button>
@@ -40,7 +40,7 @@
         <h2>Tchat</h2>
         <div id='messagesDiv'></div>
         <form name="add_form" ng-submit="addMsg(name, msg)" role="form">
-            <input class="arrondi" type="text" ng-model="name" placeholder='pseudo' id="nameChat">
+            <input class="arrondi" type="text" ng-model="name" placeholder='pseudo' ng-disabled="isSignedIn()">
             <input class="arrondi" type="text" ng-model="msg"  id="msg" placeholder='Message'>
             <button type="submit" class="btn btn-default">Send</button>
         </form>
