@@ -24,7 +24,7 @@ angular.module('gameApp')
 
         $scope.signup = function(name, pwd) {
             //var encodedpassword = $window.btoa($scope.pwd);
-            // TODO: vérifier que ce nom n'existe pas déjà
+            // check that login does not already exist
             var user = getUserByName($scope.name);
             if(!user) {
                 Db.addUser($scope.name, $scope.email);
@@ -45,6 +45,7 @@ angular.module('gameApp')
         if(jetname != '') {
             $('#signIn').hide(); // FIXME: ya une façon angular de faire
             $("#nameInput").attr("disabled", "disabled");
+            $("#nameChat").attr("disabled", "disabled");
         }
         $scope.name = jetname;
 
