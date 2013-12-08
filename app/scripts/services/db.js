@@ -1,8 +1,9 @@
 angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $location) {
 
-    var users;
-    var user;
-    var tchat;
+    var users_ref = null;
+    var tchat_ref = null;
+    var user = null;
+    var initialized = false;
     var CONFIG = {
         firebaseUrl: 'https://voxelgame.firebaseio.com'
     }
@@ -13,20 +14,22 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
 
     return {
         init: function() {
-            users = new Firebase(CONFIG.firebaseUrl + '/users');
-            tchat = new Firebase(CONFIG.firebaseUrl + '/tchat');
-            console.log("db users ref: " + users);
+            if(initialized) return;
+            users_ref = new Firebase(CONFIG.firebaseUrl + '/users');
+            tchat_ref = new Firebase(CONFIG.firebaseUrl + '/tchat');
+            initialized = true;
+            console.log("db users ref: " + users_ref);
         },
         setUser: function(u) {
             user = u;
             console.log('connection: ' + u.name + ", " + u.id);
         },
         getUsers: function(callbackSuccess) {
-            if(!users) {
+            if(!users_ref) {
                 console.log('no users ref while getting values');
                 return;
             }
-            users.once('value', function(snapshot) {
+            users_ref.once('value', function(snapshot) {
                 if(snapshot.val() !== null) {
                     safeApply($rootScope, function(){
                         callbackSuccess(snapshot.val());
@@ -41,7 +44,7 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
             return user;
         },
         addUser: function(name, email) {
-            users.push({name: name, email: email});
+            users_ref.push({name: name, email: email});
         },
         newUser: function(id, name, email, pos, rot) {
             return {
@@ -53,15 +56,13 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
             }
         },
         newPlayer: function(id, name, pos, rot, callbackSuccess) {
-            if(id!=user.id) {
-                var player_ref = new Firebase(CONFIG.firebaseUrl + '/users/'+id);
-                player_ref.on('value', function(snapshot) {
-                    safeApply($rootScope, function(){
-                      callbackSuccess(id, snapshot.val());
-                      return;
-                    });
+            var player_ref = new Firebase(CONFIG.firebaseUrl + '/users/'+id);
+            player_ref.on('value', function(snapshot) {
+                safeApply($rootScope, function(){
+                  callbackSuccess(id, snapshot.val());
+                  return;
                 });
-            }
+            });
 
             return {
                 id: id,
@@ -72,10 +73,10 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
         },
 
         addMessage: function(name, text) {
-            tchat.push({name: name, text: text});
+            tchat_ref.push({name: name, text: text});
         },
         getTchat: function(callbackSuccess) {
-            tchat.on('child_added', function(snapshot) {
+            tchat_ref.on('child_added', function(snapshot) {
                 var message = snapshot.val();
                 callbackSuccess(message.name, message.text);
             });
@@ -83,11 +84,11 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
         // Update current logged user position
         updatePos: function(pos) {
             if(!user) return;
-            users.child(user.id).child('pos').update(pos);
+            users_ref.child(user.id).child('pos').update(pos);
         },
         updateRot: function(rot) {
             if(!user) return;
-            users.child(user.id).child('rot').update(rot);
+            users_ref.child(user.id).child('rot').update(rot);
         },
 
     };

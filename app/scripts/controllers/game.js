@@ -32,9 +32,11 @@ angular.module('gameApp')
             for (var i in players) {
                 if(!players[i].pos) players[i].pos = {x:0, y:0, z: 0};
                 if(!players[i].rot) players[i].rot = {corps:0, tete:0};
-                var p = Db.newPlayer(i, players[i].name, players[i].pos, players[i].rot, updatePlayer);
                 //$scope.players.push(p);
-                if(p.id!=user.id) pnjs.push(Game.addPNJ(p.id, p.name, p.pos, p.rot));
+                if(i != user.id) {
+                    var p = Db.newPlayer(i, players[i].name, players[i].pos, players[i].rot, updatePlayer);
+                    pnjs.push(Game.addPNJ(p.id, p.name, p.pos, p.rot));
+                }
             }
             console.log(pnjs.length + ' pnjs');
 

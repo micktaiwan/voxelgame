@@ -1,19 +1,21 @@
 'use strict';
 
-angular.module('gameApp')
-    .controller('MainCtrl', function($scope, Db, Game) {
+Date.prototype.getWeek = function() {
+  var onejan = new Date(this.getFullYear(),0,1);
+  return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()+1)/7);
+}
 
-        $scope.changeLogin = function() {
-            var user = getUserByName($scope.name);
-            if(user) {
-                Db.setUser(user);
-            }
-            else console.log('ooops this user does not exists');
-        }
+angular.module('gameApp')
+    .controller('MainCtrl', function($rootScope, $scope, $location, Db, Session) {
+
+        $rootScope.users    = [];
+        $scope.current_date = new Date().getTime();
+        $scope.weekNumber   = new Date().getWeek();
+
 
         function getUserByName(name) {
           var rv = null;
-          $scope.users.some(function(s) {
+          $rootScope.users.some(function(s) {
             if(s.name==name) {
               rv = s;
               return;
@@ -21,50 +23,40 @@ angular.module('gameApp')
           });
           return rv;
         }
-
-        $scope.signup = function(name, pwd) {
-            //var encodedpassword = $window.btoa($scope.pwd);
-            // check that login does not already exist
-            var user = getUserByName($scope.name);
-            if(!user) {
-                Db.addUser($scope.name, $scope.email);
-                $scope.pwd = 'enregistré!'
-                //$("#passwordLogIn").attr("disabled", "disabled");
-                //$("#nameLogIn").attr("disabled", "disabled");
-                $('#msg').focus();
-                writeCookie('jetname', $scope.name, 20);
-                $scope.error = '';
-            }
-            else {
-                $scope.error = 'pseudo '+$scope.name+' is already taken';
-                $scope.name = '';
-            }
+        $scope.signup = function() {
+            Session.signup($scope.name, $scope.email, $scope.pwd);
         };
 
-        var jetname = readCookie('jetname');
-        $scope.name = jetname;
+        $scope.logout = function() {
+            Session.logout();
+        };
+
+        //$scope.name = Session.getUser();
+
         $scope.isSignedIn = function() {
-            return $scope.name != '';
+            Session.isSignedIn();
         }
         Db.init();
         Db.getUsers(function(users) {
-            $scope.users = [];
+            $rootScope.users = [];
             for (var i in users) {
-                $scope.users.push(Db.newUser(i, users[i].name, users[i].email, users[i].pos, users[i].rot));
+                $rootScope.users.push(Db.newUser(i, users[i].name, users[i].email, users[i].pos, users[i].rot));
             }
             var user = getUserByName($scope.name);
-            if(!user.pos) user.pos = {x:0, y:0, z: 0};
-            if(!user.rot) user.rot = {corps:0, tete:0};
-            console.log(user);
-            Db.setUser(user);
-            console.log($scope.users.length + ' users')
+            if(user) {
+                if(!user.pos) user.pos = {x:0, y:0, z: 0};
+                if(!user.rot) user.rot = {corps:0, tete:0};
+                console.log(user);
+                Session.setUser(user);
+            }
+            console.log($rootScope.users.length + ' users')
         });
 
+        // Chat
         Db.getTchat(function(name, text) {
             $('<div/>').text(text).prepend($('<em/>').text(name + ': ')).appendTo($('#messagesDiv'));
             $('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
         });
-        //tchat
         $scope.addMsg = function(name, msg) {
             Db.addMessage(name, msg);
             $scope.msg = '';

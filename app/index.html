@@ -34,16 +34,16 @@
                     <li ng-class="{ active: isActive('/game')}"><a class="navbar-brand" href="#/game">Play</a></li>
                     <li ng-class="{ active: isActive('/users')}"><a href="#/users">Users</a></li>
                 </ul>
-                <p class="navbar-text" ng-show="user">{{current_date| date:'EEE dd-MMM-yyyy'}} - Week {{weekNumber}}</p>
+                <p class="navbar-text" ng-show="Session.isSignedIn()">{{current_date | date:'EEE dd-MMM-yyyy'}} - Week {{weekNumber}}</p>
 
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tools <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li ng-show="user"><a target="_blank" href="https://github.com/micktaiwan/voxelgame/issues">Declare a bug or suggest a idea</a></li>
-                            <li ng-show="user"><a href="#/notification_test">Notification test</a></li>
-                            <li ng-show="user"><a href="#" ng-click="logout()">Logout</a></li>
-                            <li class="divider" ng-show="user"></li>
+                            <li ng-show="Session.isSignedIn()"><a target="_blank" href="https://github.com/micktaiwan/voxelgame/issues">Declare a bug or suggest a idea</a></li>
+                            <li ng-show="Session.isSignedIn()"><a href="#/notification_test">Notification test</a></li>
+                            <li ng-show="Session.isSignedIn()"><a href="#" ng-click="logout()">Logout</a></li>
+                            <li class="divider" ng-show="Session.isSignedIn()"></li>
                             <li><a href="#/about">About</a></li>
                         </ul>
                     </li>
@@ -90,6 +90,7 @@
         <script src="scripts/controllers/users.js"></script>
         <script src="scripts/controllers/header.js"></script>
         <script src="scripts/services/db.js"></script>
+        <script src="scripts/services/session.js"></script>
         <script src="scripts/services/game.js"></script>
         <!-- endbuild -->
     </body>
