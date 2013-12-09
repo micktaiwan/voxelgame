@@ -51,14 +51,22 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
 
     return {
         getUsers: getUsers,
+
         getUser: function() {
             return user;
         },
+
+        setUser : function(u) {
+            user = u;
+        },
+
         addUser: function(name, email) {
             var id = users_ref.push().name(); // generate a unique id based on timestamp
             users_ref.child(id).set({id: id, name: name, email: email});
         },
+
         newUser: newUser,
+
         newPlayer: function(id, name, pos, rot, callbackSuccess) {
             var player_ref = new Firebase(CONFIG.firebaseUrl + '/users/'+id);
             player_ref.on('value', function(snapshot) {
@@ -79,12 +87,14 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
         addMessage: function(name, text) {
             tchat_ref.push({name: name, text: text});
         },
+
         getTchat: function(callbackSuccess) {
             tchat_ref.on('child_added', function(snapshot) {
                 var message = snapshot.val();
                 callbackSuccess(message.name, message.text);
             });
         },
+
         // Update current logged user position
         updatePos: function(pos) {
             if(!user) return;

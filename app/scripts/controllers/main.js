@@ -6,11 +6,18 @@ Date.prototype.getWeek = function() {
 }
 
 angular.module('gameApp')
-    .controller('MainCtrl', function($rootScope, $scope, $location, Db, Session) {
+    .controller('MainCtrl', function($rootScope, $scope, $location, $timeout, Db, Session) {
 
         $scope.current_date = new Date().getTime();
         $scope.weekNumber   = new Date().getWeek();
-        $scope.isSignedIn = false;
+
+        function initUser() {
+            $scope.isSignedIn = Session.isSignedIn();
+            var user = Session.getUser();
+            if(user) $scope.name = user.name;
+        }
+        initUser();
+        Session.onUsersLoad(initUser);
 
 
         $scope.login = function() {

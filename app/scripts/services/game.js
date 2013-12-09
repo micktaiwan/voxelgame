@@ -79,8 +79,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         // plafond
         for (var iz = -dim[2] * 2; iz < dim[2] * 2; iz++) {
             for (var ix = -dim[0] * 2; ix < dim[0] * 2; ix++) {
-                if(ix < dim[0] && ix > -dim[0] && iz < dim[2] && iz > -dim[2])
-                    console.log(ix + ' ' + iz);
+                if(ix < dim[0] && ix > -dim[0] && iz < dim[2] && iz > -dim[2]) {
+                    //console.log(ix + ' ' + iz);
+                }
                 else
                     new cubeC({x: ix * dimCadri, y: dim[1] * dimCadri, z: iz * dimCadri});
             }
@@ -208,10 +209,11 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         }
 
         renderer.render(scene, player.camera);
-        if(player.corps.position.y < -50)
+        if(player.corps.position.y < -150)
             end();
     }
 
+    // Death
     function end() {
         player.corps.position.x = 0;
         player.corps.position.y = 30;
@@ -467,7 +469,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
         }
 
-        this.setCamDist(20);
+        this.setCamDist(40);
 
     }
 
@@ -518,7 +520,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     function onDocumentMouseDown(event)
     {
         switch (event.button) {
-            case 0: // left 
+            case 0: // left
                 player.getCube();
                 break;
             case 1: // middle
