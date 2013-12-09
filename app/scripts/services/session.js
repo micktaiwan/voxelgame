@@ -25,6 +25,7 @@ angular.module('gameApp.services.session', [])
         onUsersLoad : function (callback) {
             onUserLoadCallback = callback;
         },
+
 		getUser : function () {
 			return user;
 		},
@@ -32,6 +33,9 @@ angular.module('gameApp.services.session', [])
 		isSignedIn : function() {
 			if(user) return true;
 			user = getUserByName(readCookie('voxelgame_name'));
+            if(user) {
+               Db.setUser(user);
+            }
 			return user != null;
 		},
 
@@ -42,8 +46,11 @@ angular.module('gameApp.services.session', [])
 
 	    login : function(login, pwd) {
 	        user = getUserByName(login);
-	        if(user) writeCookie('voxelgame_name', user.name, 20);
-	        console.log(user);
+	        if(user) {
+               writeCookie('voxelgame_name', user.name, 20);
+	           Db.setUser(user);
+            }
+            console.log(user);
 	    },
 
 	    signup : function(scope, name, login, pwd) {
@@ -64,7 +71,8 @@ angular.module('gameApp.services.session', [])
 	        if(!user) {
 	            if(!email) email = '';
 	            Db.addUser(name, email);
-	            scope.pwd = 'enregistré!'
+                //user = getUserByName(name); // check that login does not already exist
+                scope.pwd = 'enregistré!'
 	            writeCookie('voxelgame_name', name, 20);
 	            scope.error = '';
 	        }
