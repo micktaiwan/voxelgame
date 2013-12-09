@@ -1,60 +1,64 @@
 angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $location) {
 
-    var users_ref = null;
-    var tchat_ref = null;
-    var user = null;
-    var initialized = false;
     var CONFIG = {
         firebaseUrl: 'https://voxelgame.firebaseio.com'
     }
+    var users_ref = new Firebase(CONFIG.firebaseUrl + '/users');
+    var tchat_ref = new Firebase(CONFIG.firebaseUrl + '/tchat');
+    var user = null;
+    $rootScope.users = [];
 
     function safeApply(scope, fn) {
         (scope.$$phase || scope.$root.$$phase) ? fn() : scope.$apply(fn);
     };
 
-    return {
-        init: function() {
-            if(initialized) return;
-            users_ref = new Firebase(CONFIG.firebaseUrl + '/users');
-            tchat_ref = new Firebase(CONFIG.firebaseUrl + '/tchat');
-            initialized = true;
-            console.log("db users ref: " + users_ref);
-        },
-        setUser: function(u) {
-            user = u;
-            console.log('connection: ' + u.name + ", " + u.id);
-        },
-        getUsers: function(callbackSuccess) {
-            if(!users_ref) {
-                console.log('no users ref while getting values');
-                return;
+    // get all users once
+    function getUsers (callbackSuccess) {
+        users_ref.once('value', function(snapshot) {
+            if(snapshot.val() !== null) {
+                safeApply($rootScope, function(){
+                    callbackSuccess(snapshot.val());
+                });
             }
-            users_ref.once('value', function(snapshot) {
-                if(snapshot.val() !== null) {
-                    safeApply($rootScope, function(){
-                        callbackSuccess(snapshot.val());
-                    });
-                }
-                else {
-                    console.log('no values in DB');
-                }
-            });
-        },
+        });
+    };
+
+    // listen to users changes
+    function listenUsers(callbackSuccess) {
+        users_ref.on('child_added', function(snapshot) {
+            if(snapshot.val() !== null) {
+                safeApply($rootScope, function(){
+                    callbackSuccess(snapshot.val());
+                });
+            }
+        });
+    };
+
+    function newUser(id, name, email, pos, rot) {
+        return {
+            id: id,
+            name: name,
+            email: email,
+            pos: pos,
+            rot: rot
+        }
+    };
+
+    listenUsers(function(user) {
+        $rootScope.users.push(user);
+    });
+
+
+    return {
+        getUsers: getUsers,
         getUser: function() {
             return user;
         },
         addUser: function(name, email) {
-            users_ref.push({name: name, email: email});
+            var id = users_ref.push().name(); // generate a unique id based on timestamp
+            users_ref.child(id).set({id: id, name: name, email: email});
         },
-        newUser: function(id, name, email, pos, rot) {
-            return {
-                id: id,
-                name: name,
-                email: email,
-                pos: pos,
-                rot: rot
-            }
-        },
+        newUser: newUser,
         newPlayer: function(id, name, pos, rot, callbackSuccess) {
             var player_ref = new Firebase(CONFIG.firebaseUrl + '/users/'+id);
             player_ref.on('value', function(snapshot) {

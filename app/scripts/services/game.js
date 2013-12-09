@@ -168,7 +168,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         document.addEventListener('keydown', onKeyDown, false);
         document.addEventListener('keyup', onKeyUp, false);
         document.addEventListener('mousewheel', function(e) {
-            player.camdist(e);
+            player.camdist(e.wheelDelta);
             return false;
         }, false);
     }
@@ -417,18 +417,27 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             return false;
         }
 
-        this.camdist = function(e) {
+        this.setCamDist = function(dist) {
+            distCamPlayer = dist;
+            this.camera.position.x = this.tete.position.x + Math.sin(this.tete.rotation.y) * distCamPlayer;
+            this.camera.position.z = this.tete.position.z + Math.cos(this.tete.rotation.y) * distCamPlayer;
+        }
 
-            distCamPlayer -= e.wheelDelta / 60;
+        this.camdist = function(delta) {
+
+            distCamPlayer -= delta / 60;
 
             if(distCamPlayer < 0)
                 distCamPlayer = 0;
             if(distCamPlayer > 100)
                 distCamPlayer = 100;
 
-            this.camera.position.x = this.tete.position.x + Math.sin(this.tete.rotation.y) * distCamPlayer;
-            this.camera.position.z = this.tete.position.z + Math.cos(this.tete.rotation.y) * distCamPlayer;
+            this.setCamDist(distCamPlayer);
+
         }
+
+        this.setCamDist(20);
+
     }
 
     function PNJ(id, name, pos, rot) {
@@ -448,6 +457,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.tete.position.y = dimCadri/2;
         this.corps.add(this.tete);
         copyRotation(this, rot);
+
+        scene.add(this.corps);
+        objects.push(this.torse);
 
         this.move = function(pos, rot) {
             copyVector(this.corps.position, pos);
@@ -484,19 +496,13 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             animate();
         },
         addMainPlayer: function(name, pos) {
-            var p = new perso(name, pos);
-            if(scene)
-                scene.add(p.corps);
-            players << p;
-            return p;
+            return new perso(name, pos);
         },
         addPNJ: function(id, name, pos, rot) {
-            var p = new PNJ(id, name, pos, rot);
-            scene.add(p.corps);
-            objects.push(p.torse);
-            players << p;
-            return p;
+            //console.log('adding PNJ '+id)
+            return new PNJ(id, name, pos, rot);
         }
+
     };
 
 });

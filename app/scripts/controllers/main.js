@@ -8,49 +8,25 @@ Date.prototype.getWeek = function() {
 angular.module('gameApp')
     .controller('MainCtrl', function($rootScope, $scope, $location, Db, Session) {
 
-        $rootScope.users    = [];
         $scope.current_date = new Date().getTime();
         $scope.weekNumber   = new Date().getWeek();
+        $scope.isSignedIn = false;
 
 
-        function getUserByName(name) {
-          var rv = null;
-          $rootScope.users.some(function(s) {
-            if(s.name==name) {
-              rv = s;
-              return;
-            }
-          });
-          return rv;
-        }
+        $scope.login = function() {
+            Session.login($scope.name, $scope.pwd);
+            $scope.isSignedIn = Session.isSignedIn();
+        };
+
         $scope.signup = function() {
-            Session.signup($scope.name, $scope.email, $scope.pwd);
+            Session.signup($scope, $scope.name, $scope.email, $scope.pwd);
+            $scope.isSignedIn = Session.isSignedIn();
         };
 
         $scope.logout = function() {
             Session.logout();
+            $scope.isSignedIn = false;
         };
-
-        //$scope.name = Session.getUser();
-
-        $scope.isSignedIn = function() {
-            Session.isSignedIn();
-        }
-        Db.init();
-        Db.getUsers(function(users) {
-            $rootScope.users = [];
-            for (var i in users) {
-                $rootScope.users.push(Db.newUser(i, users[i].name, users[i].email, users[i].pos, users[i].rot));
-            }
-            var user = getUserByName($scope.name);
-            if(user) {
-                if(!user.pos) user.pos = {x:0, y:0, z: 0};
-                if(!user.rot) user.rot = {corps:0, tete:0};
-                console.log(user);
-                Session.setUser(user);
-            }
-            console.log($rootScope.users.length + ' users')
-        });
 
         // Chat
         Db.getTchat(function(name, text) {
