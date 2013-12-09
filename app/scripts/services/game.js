@@ -190,6 +190,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             player.camdist(e.wheelDelta);
             return false;
         }, false);
+        document.addEventListener('mousedown', onDocumentMouseDown, false);
     }
 
     function animate() {
@@ -207,13 +208,14 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         }
 
         renderer.render(scene, player.camera);
-//        if(player.corps.position.y > dimCadri * dim[1])
-//            end();
+        if(player.corps.position.y < -50)
+            end();
     }
 
     function end() {
-        $('#instructions').html('Bravo!! -> F5 :)')
-        $('#blocker').show();
+        player.corps.position.x = 0;
+        player.corps.position.y = 30;
+        player.corps.position.z = 0;
     }
 
     function posRnd(decalage) {
@@ -511,6 +513,20 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.mesh.position.y = 20;
         this.mesh.position.x = 15;
         this.mesh.visible = false;
+    }
+
+    function onDocumentMouseDown(event)
+    {
+        switch (event.button) {
+            case 0: // left 
+                player.getCube();
+                break;
+            case 1: // middle
+                break;
+            case 2: // right
+                player.putCube();
+                break;
+        }
     }
 
     return {
