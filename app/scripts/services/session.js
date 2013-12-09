@@ -5,27 +5,34 @@ angular.module('gameApp.services.session', [])
 
 	var user = null;
 	var users = [];
+    var onUserLoadCallback = null;
 
     Db.getUsers(function(u) {
         for (var i in u) {
             users.push(Db.newUser(i, u[i].name, u[i].email, u[i].pos, u[i].rot));
         }
+        if(onUserLoadCallback) onUserLoadCallback();
         console.log('Session: '+users.length+' users')
     });
 
     function getUserByName(name) {
-      var rv = null;
-      users.some(function(s) { if(s.name==name) { rv = s; return; } });
-      return rv;
+        var rv = null;
+        users.some(function(s) { if(s.name==name) { rv = s; return; } });
+        return rv;
     };
 
 	return {
+        onUsersLoad : function (callback) {
+            onUserLoadCallback = callback;
+        },
 		getUser : function () {
 			return user;
 		},
 
 		isSignedIn : function() {
-			return user!=null;
+			if(user) return true;
+			user = getUserByName(readCookie('voxelgame_name'));
+			return user != null;
 		},
 
 		// TODO: make this disappear !!!
@@ -35,6 +42,7 @@ angular.module('gameApp.services.session', [])
 
 	    login : function(login, pwd) {
 	        user = getUserByName(login);
+	        if(user) writeCookie('voxelgame_name', user.name, 20);
 	        console.log(user);
 	    },
 
@@ -57,9 +65,8 @@ angular.module('gameApp.services.session', [])
 	            if(!email) email = '';
 	            Db.addUser(name, email);
 	            scope.pwd = 'enregistré!'
-	            //writeCookie('jetname', $scope.name, 20);
+	            writeCookie('voxelgame_name', name, 20);
 	            scope.error = '';
-	            //jetname = $scope.name;
 	        }
 	        else {
 	            scope.error = 'pseudo '+ name +' is already taken';
@@ -69,7 +76,7 @@ angular.module('gameApp.services.session', [])
 
 		logout : function() {
 		    user = null;
-		    //writeCookie('jetname', '', 20);
+		    writeCookie('voxelgame_name', '', 20);
 		}
 	}
 });
