@@ -204,7 +204,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         if(isLocked) {
             player.move();
             player.jump();
-            light2.position.set(player.corps.position.x, player.corps.position.y + dimCadri, player.corps.position.z);
+            light2.position.set(player.corps.position.x, player.corps.position.y, player.corps.position.z);
         }
 
         renderer.render(scene, player.camera);
