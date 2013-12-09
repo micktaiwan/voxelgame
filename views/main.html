@@ -1,15 +1,18 @@
 <div class="container">
     <div class="col-xs-6">
         <h1><span class="label label-primary">Jethro koull</span></h1>
+        <h1><a href="#/game" class="label label-warning">Play</a></h1>
         <h2>Pourquoi? Comment?</h2>
-        <p>Hebergement : Github.io<br>
+        <p>Hebergement : Github.io (<a href="http://micktaiwan.github.io/voxelgame/">http://micktaiwan.github.io/voxelgame/</a>)<br>
             Database : Firebase<br>
             Language : AngularJs, Jquery<br>
             Moteur 3D: <a href="http://threejs.org/">TreeJs</a><br>
         <hr>
         <h2>Release notes</h2>
+        <h4>Réseau</h4>
+        </p><p>Ca marche pour les déplacements !</p>
         <h4>Inventaire</h4>
-        </p><p>En cours</p>
+        <p>En cours</p>
         <p>Implique rammasser cube et reposer...</p>
         <p>Rammasser cube <b>ok!</b></p>
         <h4>Camera et deplacement</h4>
@@ -22,13 +25,19 @@
         <p>Manque la collision en haut...</p>
     </div>
     <div class="col-xs-6">
-        <div id="signIn" ng-hide="isSignedIn()">
-            <h2>SignUp / LogIn</h2>
+        <div id="signIn" ng-hide="isSignedIn">
+            <h2>Login</h2>
+            <strong ng-hide="name!=''">{{login_error}}</strong>
+	        <form name="add_form" ng-submit="login()" role="form">
+	            <input class="arrondi" type="text" ng-model="name" placeholder="pseudo" ng-disabled="isSignedIn"><br>
+	            <button type="submit" class="btn btn-default">Login</button>
+	        </form>
+            <h2>Signup</h2>
             <strong ng-hide="name!=''">{{error}}</strong>
-	        <form name="add_form" ng-submit="signup()" role="form">
-	            <input class="arrondi" type="text" ng-model="name" placeholder="pseudo" ng-disabled="isSignedIn()"><br>
-	            <input class="arrondi" type="text" ng-model="email" placeholder="email (option)" ng-disabled="isSignedIn()"><br>
-	            <input class="arrondi" type="text" ng-model="pwd" placeholder="password" ng-disabled="isSignedIn()"><br>
+	        <form name="add_form" ng-submit="register()" role="form">
+	            <input class="arrondi" type="text" ng-model="name" placeholder="pseudo" ng-disabled="isSignedIn"><br>
+	            <input class="arrondi" type="text" ng-model="email" placeholder="email (option)" ng-disabled="isSignedIn"><br>
+	            <input class="arrondi" type="text" ng-model="pwd" placeholder="password" ng-disabled="isSignedIn"><br>
 	            <button type="submit" class="btn btn-default">Register</button>
 	        </form>
         </div>
@@ -40,7 +49,7 @@
         <h2>Tchat</h2>
         <div id="messagesDiv"></div>
         <form name="add_form" ng-submit="addMsg(name, msg)" role="form">
-            <input class="arrondi" type="text" ng-model="name" placeholder="pseudo" ng-disabled="isSignedIn()">
+            <input class="arrondi" type="text" ng-model="name" placeholder="pseudo" ng-disabled="isSignedIn">
             <input class="arrondi" type="text" ng-model="msg" id="msg" placeholder="Message">
             <button type="submit" class="btn btn-default">Send</button>
         </form>

@@ -31,16 +31,16 @@
                     <li ng-class="{ active: isActive('/game')}"><a class="navbar-brand" href="#/game">Play</a></li>
                     <li ng-class="{ active: isActive('/users')}"><a href="#/users">Users</a></li>
                 </ul>
-                <p class="navbar-text" ng-show="user">{{current_date| date:'EEE dd-MMM-yyyy'}} - Week {{weekNumber}}</p>
+                <p class="navbar-text" ng-show="isSignedIn">{{current_date | date:'EEE dd-MMM-yyyy'}} - Week {{weekNumber}}</p>
 
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tools <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li ng-show="user"><a target="_blank" href="https://github.com/micktaiwan/voxelgame/issues">Declare a bug or suggest a idea</a></li>
-                            <li ng-show="user"><a href="#/notification_test">Notification test</a></li>
-                            <li ng-show="user"><a href="#" ng-click="logout()">Logout</a></li>
-                            <li class="divider" ng-show="user"></li>
+                            <li ng-show="isSignedIn"><a target="_blank" href="https://github.com/micktaiwan/voxelgame/issues">Declare a bug or suggest a idea</a></li>
+                            <li ng-show="isSignedIn"><a href="#/notification_test">Notification test</a></li>
+                            <li ng-show="isSignedIn"><a href="#" ng-click="logout()">Logout</a></li>
+                            <li class="divider" ng-show="isSignedIn"></li>
                             <li><a href="#/about">About</a></li>
                         </ul>
                     </li>
@@ -62,10 +62,10 @@
           </script> -->
 
         <script src="//cdn.firebase.com/v0/firebase.js"></script>
-        <script src="scripts/b25d1207.plugins.js"></script>
+        <script src="scripts/c3365c6c.plugins.js"></script>
 
         <script src="scripts/6b865daa.modules.js"></script>
 
-        <script src="scripts/731f6a33.scripts.js"></script>
+        <script src="scripts/e342bfc4.scripts.js"></script>
     </body>
 </html>
