@@ -12,7 +12,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     var $game_div;
     var modeDebug = false;
-    var dim = [12, 20, 12]; // x=largeur, y = hauteur, z=profondeur
+    //var dim = [24, 20, 24]; // x=largeur, y = hauteur, z=profondeur
     var dimCadri = 20; // dimensions cadrillage;
     var scene, renderer;
     var geometry, material, mesh;
@@ -51,7 +51,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     function init(_player) {
         player = _player;
         scene = new THREE.Scene();
-        scene.fog = new THREE.Fog(0x004444, 0, 200);
+        scene.fog = new THREE.Fog(0x004444, 0, 800);
         light = new THREE.DirectionalLight(0x004444, 1.5);
         light.position.set(1, 1, 1);
         scene.add(light);
@@ -72,12 +72,13 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             modeDebug();
 
         // floor
-        for (var iz = -dim[2] / 2; iz < dim[2] / 2; iz++) {
+/*        for (var iz = -dim[2] / 2; iz < dim[2] / 2; iz++) {
             for (var ix = -dim[0] / 2; ix < dim[0] / 2; ix++) {
-                new cubeC({x: ix * dimCadri, y: 0, z: iz * dimCadri});
+                //new cubeC({x: ix * dimCadri, y: 0, z: iz * dimCadri});
+                Db.put(ix * dimCadri, 0, iz * dimCadri, WoodBlock);
             }
         }
-
+*/
         // plafond
 /*        for (var iz = -dim[2] * 2; iz < dim[2] * 2; iz++) {
             for (var ix = -dim[0] * 2; ix < dim[0] * 2; ix++) {
@@ -284,7 +285,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.tete.position.z = -5;
         this.corps.add(this.tete);
 
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
+        this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
         this.camera.position.x += Math.sin(this.corps.rotation.y) * distCamPlayer;
         this.camera.position.z += Math.cos(this.corps.rotation.y) * distCamPlayer;
         this.tete.add(this.camera);
@@ -367,9 +368,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 //            dummy[10].mesh.position.x = (this.corps.position.x - Math.sin(this.corps.rotation.y) * distPut * Math.cos(this.tete.rotation.x));
 //            dummy[10].mesh.position.z = (this.corps.position.z - Math.cos(this.corps.rotation.y) * distPut * Math.cos(this.tete.rotation.x));
 // Grille
-            dummy[10].mesh.position.y = Math.round((this.corps.position.y + Math.sin(this.tete.rotation.x) * distPut + 10) / 20) * 20;
-            dummy[10].mesh.position.x = Math.round((this.corps.position.x - Math.sin(this.corps.rotation.y) * distPut * Math.cos(this.tete.rotation.x)) / 20) * 20;
-            dummy[10].mesh.position.z = Math.round((this.corps.position.z - Math.cos(this.corps.rotation.y) * distPut * Math.cos(this.tete.rotation.x)) / 20) * 20;
+            dummy[10].mesh.position.y = Math.round((this.corps.position.y + Math.sin(this.tete.rotation.x) * distPut + dimCadri/2) / dimCadri) * dimCadri;
+            dummy[10].mesh.position.x = Math.round((this.corps.position.x - Math.sin(this.corps.rotation.y) * distPut * Math.cos(this.tete.rotation.x)) / dimCadri) * dimCadri;
+            dummy[10].mesh.position.z = Math.round((this.corps.position.z - Math.cos(this.corps.rotation.y) * distPut * Math.cos(this.tete.rotation.x)) / dimCadri) * dimCadri;
             return canBouge;
         }
 
