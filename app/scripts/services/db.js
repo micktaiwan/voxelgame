@@ -96,19 +96,42 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
             });
         },
 
+        onNewCube: function(callbackSuccess) {
+            cubes_ref.on('child_added', function(snapshot) {
+                var obj = snapshot.val();
+                var x,y,z,type;
+                for(x in obj) {
+                    for(y in obj[x]) {
+                        for(z in obj[x][y]) {
+                            type = obj[x][y][z].type;
+                            callbackSuccess(x,y,z,type);
+                        }
+                    }
+                }
+            });
+        },
+
         put: function(x,y,z,type) {
             if(!user) return;
-            cubes_ref.child(x).child(y).child(z).update({type: type, user: user.id, date: new Date().getTime()});
+            cubes_ref.child('pos').child(x).child(y).child(z).update({type: type, user: user.id, date: new Date().getTime()});
+        },
+        remove: function(x,y,z) {
+            if(!user) return;
+            cubes_ref.child('pos').child(x).child(y).child(z).remove();
         },
 
         // Update current logged user position
         updatePos: function(pos) {
             if(!user) return;
-            users_ref.child(user.id).child('pos').update(pos);
+            var node = users_ref.child(user.id);
+            node.child('pos').update(pos);
+            node.update({date: new Date().getTime()});
         },
         updateRot: function(rot) {
             if(!user) return;
-            users_ref.child(user.id).child('rot').update(rot);
+            var node = users_ref.child(user.id);
+            node.child('rot').update(rot);
+            node.update({date: new Date().getTime()});
         },
 
     };

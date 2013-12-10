@@ -107,7 +107,18 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         window.addEventListener('resize', onWindowResize, false);
 
         control();
-    }
+        Db.onNewCube(setCube);
+    };
+
+    function setCube(x,y,z,type) {
+        var mesh = new THREE.Mesh(geometry, cubeMaterial);
+        mesh.position.x = x;
+        mesh.position.y = y;
+        mesh.position.z = z;
+        scene.add(mesh);
+        objects.push(mesh);
+        //dummy[10].mesh.visible = false;
+    };
 
     function onWindowResize() {
         player.camera.aspect = window.innerWidth / window.innerHeight;
@@ -411,7 +422,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
                 scene.remove(intersects[0].object);
                 for (var key in objects) {
                     if(objects[key]['id'] == intersects[0].object.id) {
+                        Db.remove(objects[key].position.x, objects[key].position.y, objects[key].position.z);
                         objects.splice(key, 1);
+                        // break; // manque pas un break là ?
                     }
                 }
                 return true;
@@ -440,6 +453,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             var deltaX = -Math.sin(this.corps.rotation.y);
             var deltaZ = -Math.cos(this.corps.rotation.y);
 
+            // Note: no need to do a Db.remove()
             if(intersects.length > 0 && intersects[0].distance < distPut) {
                 scene.remove(intersects[0].object);
                 for (var key in objects) {
