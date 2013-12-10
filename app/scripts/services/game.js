@@ -52,7 +52,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         player = _player;
         scene = new THREE.Scene();
         scene.fog = new THREE.Fog(0x004444, 0, 800);
-        light = new THREE.DirectionalLight(0x004444, 1.5);
+        light = new THREE.DirectionalLight(0x999988, 1.5);
         light.position.set(1, 1, 1);
         scene.add(light);
         light = new THREE.DirectionalLight(0xffff00, 1.5);
@@ -97,7 +97,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 */
         //
         renderer = new THREE.WebGLRenderer();
-        renderer.setClearColor(0x004444);
+        renderer.setClearColor(0x447777);
         $game_div = $('#game');
         onWindowResize()
 
@@ -506,6 +506,22 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.tete = new THREE.Mesh(geometrytete, material);
         this.tete.position.y = dimCadri / 2;
         this.corps.add(this.tete);
+
+        var geometryName = new THREE.TextGeometry(name, {
+            font: 'optimer', // Must be lowercase!
+            weight: 'normal',
+            style: 'normal',
+            size: 2,
+            height: 0.5,
+            bevelThickness: 0.1, bevelSize: 0.1, bevelEnabled: true
+        });
+        var textMaterial = new THREE.MeshPhongMaterial({ color: 0xffaa00 });
+        this.name_label = new THREE.Mesh(geometryName, textMaterial);
+        this.name_label.position.y = dimCadri*0.1;
+        this.name_label.position.z = dimCadri*0.25;
+        this.name_label.position.x = -5;
+        this.corps.add(this.name_label);
+
         copyRotation(this, rot);
 
         scene.add(this.corps);
