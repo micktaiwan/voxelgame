@@ -8,9 +8,11 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     rendererStats.domElement.style.bottom = '0px';
     document.body.appendChild(rendererStats.domElement);
 
+    var WoodBlock = 1;
+
     var $game_div;
     var modeDebug = false;
-    var dim = [6, 20, 6]; // x=largeur, y = hauteur, z=profondeur
+    var dim = [12, 20, 12]; // x=largeur, y = hauteur, z=profondeur
     var dimCadri = 20; // dimensions cadrillage;
     var scene, renderer;
     var geometry, material, mesh;
@@ -77,7 +79,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         }
 
         // plafond
-        for (var iz = -dim[2] * 2; iz < dim[2] * 2; iz++) {
+/*        for (var iz = -dim[2] * 2; iz < dim[2] * 2; iz++) {
             for (var ix = -dim[0] * 2; ix < dim[0] * 2; ix++) {
                 if(ix < dim[0] && ix > -dim[0] && iz < dim[2] && iz > -dim[2]) {
                     //console.log(ix + ' ' + iz);
@@ -86,12 +88,12 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
                     new cubeC({x: ix * dimCadri, y: dim[1] * dimCadri, z: iz * dimCadri});
             }
         }
-
+*/
         // objects
-        for (var i = 0; i < 500; i++) {
+/*        for (var i = 0; i < 500; i++) {
             new cubeC({x: posRnd(dimCadri / 2), y: posRnd(), z: posRnd(dimCadri / 2)});
         }
-
+*/
         //
         renderer = new THREE.WebGLRenderer();
         renderer.setClearColor(0x004444);
@@ -420,13 +422,13 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.putCube = function() {
             if(dummy[10].mesh.visible) {
                 var mesh = new THREE.Mesh(geometry, cubeMaterial);
-                mesh.position.x = Math.round(dummy[10].mesh.position.x / 20) * 20;
-                mesh.position.y = Math.round(dummy[10].mesh.position.y / 20) * 20;
-                mesh.position.z = Math.round(dummy[10].mesh.position.z / 20) * 20;
+                mesh.position.x = Math.round(dummy[10].mesh.position.x / dimCadri) * dimCadri;
+                mesh.position.y = Math.round(dummy[10].mesh.position.y / dimCadri) * dimCadri;
+                mesh.position.z = Math.round(dummy[10].mesh.position.z / dimCadri) * dimCadri;
                 scene.add(mesh);
                 objects.push(mesh);
-                console.log('ok posé...');
                 dummy[10].mesh.visible = false;
+                Db.put(mesh.position.x, mesh.position.y, mesh.position.z, WoodBlock);
             }
             else
                 dummy[10].mesh.visible = true;
