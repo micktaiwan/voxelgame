@@ -5,6 +5,7 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
     }
     var users_ref = new Firebase(CONFIG.firebaseUrl + '/users');
     var tchat_ref = new Firebase(CONFIG.firebaseUrl + '/tchat');
+    var cubes_ref = new Firebase(CONFIG.firebaseUrl + '/cubes');
     var user = null;
     $rootScope.users = [];
 
@@ -93,6 +94,11 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
                 var message = snapshot.val();
                 callbackSuccess(message.name, message.text);
             });
+        },
+
+        put: function(x,y,z,type) {
+            if(!user) return;
+            cubes_ref.child(x).child(y).child(z).update({type: type, user: user.id, date: new Date().getTime()});
         },
 
         // Update current logged user position

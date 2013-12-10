@@ -31,11 +31,13 @@ angular.module('gameApp.services.session', [])
 		},
 
 		isSignedIn : function() {
-			if(user) return true;
-			user = getUserByName(readCookie('voxelgame_name'));
+            // FIXME: not good.... not the place to do Db.setUser
             if(user) {
                Db.setUser(user);
+               return true;
             }
+			user = getUserByName(readCookie('voxelgame_name'));
+            if(user) Db.setUser(user);
 			return user != null;
 		},
 
@@ -45,6 +47,7 @@ angular.module('gameApp.services.session', [])
 	    },
 
 	    login : function(login, pwd) {
+            // TODO: pwd management
 	        user = getUserByName(login);
 	        if(user) {
                writeCookie('voxelgame_name', user.name, 20);
