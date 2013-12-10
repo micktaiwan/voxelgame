@@ -51,7 +51,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     function init(_player) {
         player = _player;
         scene = new THREE.Scene();
-        scene.fog = new THREE.Fog(0x004444, 0, 800);
+        scene.fog = new THREE.Fog(0x444444, 0, 600);
         light = new THREE.DirectionalLight(0x999988, 1.5);
         light.position.set(1, 1, 1);
         scene.add(light);
@@ -138,6 +138,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
             player.corps.rotation.y -= movementX * 0.002;
             player.tete.rotation.x -= movementY * 0.002;
+
+            player.camera.position.x += movementX * 0.01;
+            player.camera.position.y -= movementY * 0.01;
+
             if(player.tete.rotation.x < -PI / 2)
                 player.tete.rotation.x = -PI / 2;
             if(player.tete.rotation.x > PI / 2)
@@ -216,6 +220,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         if(!player)
             return;
 
+        player.updateCamera();
+
         if(isLocked) {
             player.move();
             player.jump();
@@ -289,6 +295,11 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.camera.position.x += Math.sin(this.corps.rotation.y) * distCamPlayer;
         this.camera.position.z += Math.cos(this.corps.rotation.y) * distCamPlayer;
         this.tete.add(this.camera);
+
+        this.updateCamera = function() {
+            this.camera.position.x += (this.tete.position.x - this.camera.position.x) / 10;
+            this.camera.position.y += (this.tete.position.y - this.camera.position.y - dimCadri/2) / 10;
+        }
 
         this.move = function() {
             positionNew.copy(this.corps.position);
@@ -377,7 +388,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.jump = function() {
             if(canJump && this.jumping == true) {
                 canJump = false;
-                saut = 4;
+                saut = 4.3;
             }
 
             var canFall = true;
@@ -475,12 +486,12 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
         this.camdist = function(delta) {
 
-            distCamPlayer -= delta / 60;
+            distCamPlayer -= delta / 30;
 
             if(distCamPlayer < 0)
                 distCamPlayer = 0;
-            if(distCamPlayer > 100)
-                distCamPlayer = 100;
+            if(distCamPlayer > 200)
+                distCamPlayer = 200;
 
             this.setCamDist(distCamPlayer);
 
