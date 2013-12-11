@@ -113,7 +113,21 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         Db.onCube(onCube);
     };
 
+
+    function getCubeFromScene(obj) {
+        for (var key in objects) {
+            if(objects[key].position.x / dimCadri == obj.x && objects[key].position.y / dimCadri == obj.y && objects[key].position.z / dimCadri == obj.z) {
+                return key;
+            }
+        }
+        return null;
+    }
+
     function addCubeToScene(obj) {
+        if(getCubeFromScene(obj)) {
+            //console.log('already there ('+obj.x+','+obj.y+','+obj.z+')');
+            return;
+        }
         var mesh = new THREE.Mesh(geometry, cubeMaterial);
         mesh.position.x = obj.x * dimCadri;
         mesh.position.y = obj.y * dimCadri;
@@ -123,13 +137,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     };
 
     function removeCubeFromScene(obj) {
-        for (var key in objects) {
-            if(objects[key].position.x / dimCadri == obj.x && objects[key].position.y / dimCadri == obj.y && objects[key].position.z / dimCadri == obj.z) {
-                scene.remove(objects[key]);
-                objects.splice(key, 1);
-                break;
-            }
-        }
+        var key = getCubeFromScene(obj);
+        if(!key) return;
+        scene.remove(objects[key]);
+        objects.splice(key, 1);
     };
 
     // type: 'added', 'changed', 'removed'
@@ -436,9 +447,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.getCube = function() {
                 var key = this.canGet();
                 if(key) {
-                    //scene.remove(objects[key]);
+                    scene.remove(objects[key]);
                     Db.remove(objects[key].position.x / dimCadri, objects[key].position.y / dimCadri, objects[key].position.z / dimCadri);
-                    //objects.splice(key, 1);
+                    objects.splice(key, 1);
                     console.log(key + ' dans l\'inventaire, enfin presque...');
                 }
                 else
@@ -463,10 +474,14 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
         this.putCube = function() {
             dummy[10].mesh.visible = false;
-            Db.put(dummy[10].mesh.position.x / dimCadri, dummy[10].mesh.position.y / dimCadri, dummy[10].mesh.position.z / dimCadri, WoodBlock);
+            var obj = {x: dummy[10].mesh.position.x / dimCadri, y: dummy[10].mesh.position.y / dimCadri, z: dummy[10].mesh.position.z / dimCadri};
+            addCubeToScene(obj);
+            Db.put(obj.x, obj.y, obj.z, WoodBlock);
         }
 
-        this.canPut = function() {
+// Je commente parce que je sais pas à quoi ça sert
+
+/*        this.canPut = function() {
             var distPut = 12;
 
             var deltaX = -Math.sin(this.corps.rotation.y);
@@ -484,7 +499,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             }
             return false;
         }
-
+*/
         this.setCamDist = function(dist) {
             distCamPlayer = dist;
             this.camera.position.x = this.tete.position.x + Math.sin(this.tete.rotation.y) * distCamPlayer;
