@@ -430,8 +430,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
         this.canGet = function() {
             var distGet = dimCadri; // à ameliorer
-            var vecteur = new THREE.Vector3(dummy[10].mesh.position.x - this.corps.position.x, dummy[10].mesh.position.y - this.corps.position.y, dummy[10].mesh.position.z - this.corps.position.z).normalize();
-            var raycaster = new THREE.Raycaster(this.corps.position, vecteur);
+            var teteposabs = new THREE.Vector3(this.corps.position.x + this.tete.position.x, this.corps.position.y + this.tete.position.y,this.corps.position.z + this.tete.position.z)
+            var vecteur = new THREE.Vector3(dummy[10].mesh.position.x - teteposabs.x, dummy[10].mesh.position.y - teteposabs.y, dummy[10].mesh.position.z - teteposabs.z).normalize();
+            var raycaster = new THREE.Raycaster(teteposabs, vecteur);
             var intersects = raycaster.intersectObjects(objects);
             if(intersects.length > 0 && intersects[0].distance < distGet) {
                 scene.remove(intersects[0].object);
