@@ -63,38 +63,40 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         scene.add(light2);
         scene.add(player.corps);
 
-// debug
+// helper get et put cube
         dummy[10] = new dummyC();
-        scene.add(dummy[10].mesh);
+        scene.add(dummy[10].mesh); // dummy libre
+        dummy[11] = new dummyC();
+        scene.add(dummy[11].mesh); // dummy sur grille
 
         // mode debug
         if(modeDebug)
             modeDebug();
 
         // floor
-/*        for (var iz = -dim[2] / 2; iz < dim[2] / 2; iz++) {
-            for (var ix = -dim[0] / 2; ix < dim[0] / 2; ix++) {
-                //new cubeC({x: ix * dimCadri, y: 0, z: iz * dimCadri});
-                Db.put(ix * dimCadri, 0, iz * dimCadri, WoodBlock);
-            }
-        }
-*/
+        /*        for (var iz = -dim[2] / 2; iz < dim[2] / 2; iz++) {
+         for (var ix = -dim[0] / 2; ix < dim[0] / 2; ix++) {
+         //new cubeC({x: ix * dimCadri, y: 0, z: iz * dimCadri});
+         Db.put(ix * dimCadri, 0, iz * dimCadri, WoodBlock);
+         }
+         }
+         */
         // plafond
-/*        for (var iz = -dim[2] * 2; iz < dim[2] * 2; iz++) {
-            for (var ix = -dim[0] * 2; ix < dim[0] * 2; ix++) {
-                if(ix < dim[0] && ix > -dim[0] && iz < dim[2] && iz > -dim[2]) {
-                    //console.log(ix + ' ' + iz);
-                }
-                else
-                    new cubeC({x: ix * dimCadri, y: dim[1] * dimCadri, z: iz * dimCadri});
-            }
-        }
-*/
+        /*        for (var iz = -dim[2] * 2; iz < dim[2] * 2; iz++) {
+         for (var ix = -dim[0] * 2; ix < dim[0] * 2; ix++) {
+         if(ix < dim[0] && ix > -dim[0] && iz < dim[2] && iz > -dim[2]) {
+         //console.log(ix + ' ' + iz);
+         }
+         else
+         new cubeC({x: ix * dimCadri, y: dim[1] * dimCadri, z: iz * dimCadri});
+         }
+         }
+         */
         // objects
-/*        for (var i = 0; i < 500; i++) {
-            new cubeC({x: posRnd(dimCadri / 2), y: posRnd(), z: posRnd(dimCadri / 2)});
-        }
-*/
+        /*        for (var i = 0; i < 500; i++) {
+         new cubeC({x: posRnd(dimCadri / 2), y: posRnd(), z: posRnd(dimCadri / 2)});
+         }
+         */
         //
         renderer = new THREE.WebGLRenderer();
         renderer.setClearColor(0x447777);
@@ -109,18 +111,20 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
         control();
         Db.onNewCube(setCube);
-    };
+    }
+    ;
 
-    function setCube(x,y,z,type) {
+    function setCube(x, y, z, type) {
         var mesh = new THREE.Mesh(geometry, cubeMaterial);
         mesh.position.x = x;
         mesh.position.y = y;
         mesh.position.z = z;
         scene.add(mesh);
         objects.push(mesh);
-        console.log('New cube on '+x+', '+y+', '+z);
+        console.log('New cube on ' + x + ', ' + y + ', ' + z);
         //dummy[10].mesh.visible = false;
-    };
+    }
+    ;
 
     function onWindowResize() {
         player.camera.aspect = window.innerWidth / window.innerHeight;
@@ -170,10 +174,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
                     player.jumping = true;
                     player.jump();
                     break;
-                case 69: // e
+                case 65: // a
                     player.getCube();
                     break;
-                case 82: // r
+                case 69: // e
                     player.putCube();
                     break;
             }
@@ -183,12 +187,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             switch (event.keyCode) {
 
                 case 38: // up
-                case 87: // w
                 case 90: // z
                     player.moveForward = false;
                     break;
                 case 37: // left
-                case 65: // a
                 case 81: // q
                     player.moveLeft = false;
                     break;
@@ -299,7 +301,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
         this.updateCamera = function() {
             this.camera.position.x += (this.tete.position.x - this.camera.position.x) / 10;
-            this.camera.position.y += (this.tete.position.y - this.camera.position.y - dimCadri/2) / 10;
+            this.camera.position.y += (this.tete.position.y - this.camera.position.y - dimCadri / 2) / 10;
         }
 
         this.move = function() {
@@ -375,12 +377,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
                 }
             }
             var distPut = 25;
-// Fluide
-//            dummy[10].mesh.position.y = this.corps.position.y + Math.sin(this.tete.rotation.x) * distPut + 10;
-//            dummy[10].mesh.position.x = (this.corps.position.x - Math.sin(this.corps.rotation.y) * distPut * Math.cos(this.tete.rotation.x));
-//            dummy[10].mesh.position.z = (this.corps.position.z - Math.cos(this.corps.rotation.y) * distPut * Math.cos(this.tete.rotation.x));
-// Grille
-            dummy[10].mesh.position.y = Math.round((this.corps.position.y + Math.sin(this.tete.rotation.x) * distPut + dimCadri/2) / dimCadri) * dimCadri;
+
+            // Grille
+            dummy[10].mesh.position.y = Math.round((this.corps.position.y + Math.sin(this.tete.rotation.x) * distPut + dimCadri / 2) / dimCadri) * dimCadri;
             dummy[10].mesh.position.x = Math.round((this.corps.position.x - Math.sin(this.corps.rotation.y) * distPut * Math.cos(this.tete.rotation.x)) / dimCadri) * dimCadri;
             dummy[10].mesh.position.z = Math.round((this.corps.position.z - Math.cos(this.corps.rotation.y) * distPut * Math.cos(this.tete.rotation.x)) / dimCadri) * dimCadri;
             return canBouge;
@@ -416,28 +415,31 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         }
 
         this.getCube = function() {
-            var canGet = this.canGet();
-            if(canGet) {
-                console.log('ok dans l\'inventaire, enfin presque...');
+            if(dummy[10].mesh.visible) {
+//                copyVector(mesh.position,dummy[10].mesh.position);
+                dummy[10].mesh.visible = false;
+                var canGet = this.canGet();
+                if(canGet)
+                    console.log('ok dans l\'inventaire, enfin presque...');
+                else
+                    console.log('aucun cube recupéré');
             }
+            else
+                dummy[10].mesh.visible = true;
         }
 
         this.canGet = function() {
-            var distGet = 12;
-
-            var deltaX = -Math.sin(this.corps.rotation.y);
-            var deltaZ = -Math.cos(this.corps.rotation.y);
-
-            var raycaster = new THREE.Raycaster(this.corps.position, new THREE.Vector3(deltaX * distGet, 0, deltaZ * distGet).normalize());
+            var distGet = dimCadri; // à ameliorer
+            var vecteur = new THREE.Vector3(dummy[10].mesh.position.x - this.corps.position.x, dummy[10].mesh.position.y - this.corps.position.y, dummy[10].mesh.position.z - this.corps.position.z).normalize();
+            var raycaster = new THREE.Raycaster(this.corps.position, vecteur);
             var intersects = raycaster.intersectObjects(objects);
-
             if(intersects.length > 0 && intersects[0].distance < distGet) {
                 scene.remove(intersects[0].object);
                 for (var key in objects) {
                     if(objects[key]['id'] == intersects[0].object.id) {
                         Db.remove(objects[key].position.x, objects[key].position.y, objects[key].position.z);
                         objects.splice(key, 1);
-                        // break; // manque pas un break là ?
+                         break; // manque pas un break là ? si :)
                     }
                 }
                 return true;
@@ -448,9 +450,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.putCube = function() {
             if(dummy[10].mesh.visible) {
                 var mesh = new THREE.Mesh(geometry, cubeMaterial);
-                mesh.position.x = Math.round(dummy[10].mesh.position.x / dimCadri) * dimCadri;
-                mesh.position.y = Math.round(dummy[10].mesh.position.y / dimCadri) * dimCadri;
-                mesh.position.z = Math.round(dummy[10].mesh.position.z / dimCadri) * dimCadri;
+                copyVector(mesh.position, dummy[10].mesh.position);
                 scene.add(mesh);
                 objects.push(mesh);
                 dummy[10].mesh.visible = false;
@@ -517,6 +517,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         var geometrytete = new THREE.CubeGeometry(dimCadri / 4, dimCadri / 4, dimCadri / 4);
         this.tete = new THREE.Mesh(geometrytete, material);
         this.tete.position.y = dimCadri / 2;
+        this.tete.position.z = dimCadri / 4;
         this.corps.add(this.tete);
 
         var geometryName = new THREE.TextGeometry(name, {
@@ -527,10 +528,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             height: 0.5,
             bevelThickness: 0.1, bevelSize: 0.1, bevelEnabled: true
         });
-        var textMaterial = new THREE.MeshPhongMaterial({ color: 0xffaa00 });
+        var textMaterial = new THREE.MeshPhongMaterial({color: 0xffaa00});
         this.name_label = new THREE.Mesh(geometryName, textMaterial);
-        this.name_label.position.y = dimCadri*0.1;
-        this.name_label.position.z = dimCadri*0.25;
+        this.name_label.position.y = dimCadri * 0.1;
+        this.name_label.position.z = dimCadri * 0.25;
         this.name_label.position.x = -5;
         this.corps.add(this.name_label);
 
