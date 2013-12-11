@@ -48,7 +48,10 @@
         -->
         <h2>Tchat</h2>
         <ul class="chats">
-        	<li ng-repeat="msg in chat_messages">{{msg.date | date:'dd-MMM HH:mm'}} <b>{{msg.name}}</b>: {{msg.text}}</li>
+        	<li ng-repeat="msg in chat_messages">
+	        	<i class="glyphicon glyphicon-trash" ng-click="deleteMsg(msg.id)" ng-show="msg.id"></i>
+	        	{{msg.date | date:'dd-MMM HH:mm'}} <b>{{msg.name}}</b>: {{msg.text}}
+        	</li>
         </ul>
         <form name="add_form" ng-submit="addMsg(name, msg)" role="form">
             <input class="arrondi" type="text" ng-model="name" placeholder="pseudo" ng-disabled="isSignedIn">
