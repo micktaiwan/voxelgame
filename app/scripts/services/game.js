@@ -445,17 +445,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         }
 
         this.putCube = function() {
-            if(dummy[10].mesh.visible) {
-/*                var mesh = new THREE.Mesh(geometry, cubeMaterial);
-                copyVector(mesh.position, dummy[10].mesh.position);
-                scene.add(mesh);
-                objects.push(mesh);
-*/
                 dummy[10].mesh.visible = false;
                 Db.put(dummy[10].mesh.position.x / dimCadri, dummy[10].mesh.position.y / dimCadri, dummy[10].mesh.position.z / dimCadri, WoodBlock);
-            }
-            else
-                dummy[10].mesh.visible = true;
         }
 
         this.canPut = function() {
