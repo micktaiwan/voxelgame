@@ -20,6 +20,13 @@ angular.module('gameApp')
         initUser();
         Session.onUsersLoad(initUser);
 
+        function getChatMsgIndex(id) {
+            console.log(id);
+            var indexes = $.map($scope.chat_messages, function(chat, index) {
+                if(chat.id == id) return index;
+            });
+            return indexes[0];
+        };
 
         $scope.login = function() {
             Session.login($scope.name, $scope.pwd);
@@ -43,6 +50,11 @@ angular.module('gameApp')
         $scope.addMsg = function(name, msg) {
             Db.addMessage(name, msg);
             $scope.msg = '';
+        }
+        $scope.deleteMsg = function(id) {
+            var i = getChatMsgIndex(id);
+            $scope.chat_messages.splice(i, 1);
+            Db.deleteMessage(id);
         }
     });
 

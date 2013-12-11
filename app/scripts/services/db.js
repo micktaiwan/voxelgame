@@ -101,11 +101,16 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
         },
 
         addMessage: function(name, text) {
-            tchat_ref.push({name: name, text: text, date: new Date().getTime()});
+            var id = tchat_ref.push().name();
+            tchat_ref.child(id).set({id: id, name: name, text: text, date: new Date().getTime()});
+        },
+
+        deleteMessage: function(id) {
+            tchat_ref.child(id).remove();
         },
 
         getChatMsg: function(callbackSuccess) {
-            tchat_ref.on('child_added', function(snapshot) {
+            tchat_ref.limit(10).on('child_added', function(snapshot) {
                 safeApply($rootScope, function(){
                     callbackSuccess(snapshot.val());
                 });
