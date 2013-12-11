@@ -415,17 +415,11 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         }
 
         this.getCube = function() {
-            if(dummy[10].mesh.visible) {
-//                copyVector(mesh.position,dummy[10].mesh.position);
-                dummy[10].mesh.visible = false;
                 var canGet = this.canGet();
                 if(canGet)
                     console.log('ok dans l\'inventaire, enfin presque...');
                 else
                     console.log('aucun cube recupéré');
-            }
-            else
-                dummy[10].mesh.visible = true;
         }
 
         this.canGet = function() {
@@ -449,16 +443,11 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         }
 
         this.putCube = function() {
-            if(dummy[10].mesh.visible) {
                 var mesh = new THREE.Mesh(geometry, cubeMaterial);
                 copyVector(mesh.position, dummy[10].mesh.position);
                 scene.add(mesh);
                 objects.push(mesh);
-                dummy[10].mesh.visible = false;
                 Db.put(mesh.position.x, mesh.position.y, mesh.position.z, WoodBlock);
-            }
-            else
-                dummy[10].mesh.visible = true;
         }
 
         this.canPut = function() {
