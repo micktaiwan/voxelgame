@@ -5,7 +5,7 @@
         <h2>Pourquoi? Comment?</h2>
         <p>Hebergement : Github.io (<a href="http://micktaiwan.github.io/voxelgame/">http://micktaiwan.github.io/voxelgame/</a>)<br>
             Database : Firebase<br>
-            Language : AngularJs, Jquery<br>
+            Language : AngularJs<br>
             Moteur 3D: <a href="http://threejs.org/">TreeJs</a><br>
         <hr/>
         <h2>Release notes</h2>
@@ -59,9 +59,11 @@
             <button type="submit" class="btn btn-default">Send</button>
         </form>
 
-        <h2>Liste des Joueurs</h2>
+        <h2>Dernière connection des joueurs</h2>
         <div>
-            <button ng-repeat="u in users" class="btn btn-warning">{{u.name}}</button>
+        	<ul class="chats">
+            	<li ng-repeat="u in users | orderBy:'-date'">{{u.date | date:'dd-MMM HH:mm'}}: {{u.name}}</li>
+            </ul>
             <div>
                 <div class="clearfix"></div>
                 <hr>
