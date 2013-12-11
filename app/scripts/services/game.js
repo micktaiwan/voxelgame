@@ -417,17 +417,11 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         }
 
         this.getCube = function() {
-            if(dummy[10].mesh.visible) {
-//                copyVector(mesh.position,dummy[10].mesh.position);
-                dummy[10].mesh.visible = false;
                 var canGet = this.canGet();
                 if(canGet)
                     console.log('ok dans l\'inventaire, enfin presque...');
                 else
                     console.log('aucun cube recupéré');
-            }
-            else
-                dummy[10].mesh.visible = true;
         }
 
         this.canGet = function() {
