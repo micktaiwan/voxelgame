@@ -99,7 +99,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         renderer = new THREE.WebGLRenderer();
         renderer.setClearColor(0x447777);
         $game_div = $('#game');
-        onWindowResize()
+        onWindowResize();
 
         //document.body.appendChild(renderer.domElement);
         $game_div.append(renderer.domElement);
@@ -118,6 +118,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         mesh.position.z = z;
         scene.add(mesh);
         objects.push(mesh);
+        console.log('New cube on '+x+', '+y+', '+z);
         //dummy[10].mesh.visible = false;
     };
 

@@ -8,11 +8,12 @@ Date.prototype.getWeek = function() {
 angular.module('gameApp')
     .controller('MainCtrl', function($rootScope, $scope, $location, $timeout, Db, Session) {
 
-        $scope.current_date = new Date().getTime();
-        $scope.weekNumber   = new Date().getWeek();
+        $rootScope.current_date = new Date().getTime();
+        $rootScope.weekNumber   = new Date().getWeek();
+        $scope.chat_messages = [];
 
         function initUser() {
-            $scope.isSignedIn = Session.isSignedIn();
+            $rootScope.isSignedIn = Session.isSignedIn();
             var user = Session.getUser();
             if(user) $scope.name = user.name;
         }
@@ -22,23 +23,22 @@ angular.module('gameApp')
 
         $scope.login = function() {
             Session.login($scope.name, $scope.pwd);
-            $scope.isSignedIn = Session.isSignedIn();
+            $rootScope.isSignedIn = Session.isSignedIn();
         };
 
         $scope.signup = function() {
             Session.signup($scope, $scope.name, $scope.email, $scope.pwd);
-            $scope.isSignedIn = Session.isSignedIn();
+            $rootScope.isSignedIn = Session.isSignedIn();
         };
 
         $scope.logout = function() {
             Session.logout();
-            $scope.isSignedIn = false;
+            $rootScope.isSignedIn = false;
         };
 
         // Chat
-        Db.getTchat(function(name, text) {
-            $('<div/>').text(text).prepend($('<em/>').text(name + ': ')).appendTo($('#messagesDiv'));
-            $('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
+        Db.getChatMsg(function(msg) {
+            $scope.chat_messages.push(msg);
         });
         $scope.addMsg = function(name, msg) {
             Db.addMessage(name, msg);

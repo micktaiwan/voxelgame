@@ -47,7 +47,9 @@
         <button ng-click="changeLogin()" class="btn btn-default">change login</button>
         -->
         <h2>Tchat</h2>
-        <div id='messagesDiv'></div>
+        <ul class="chats">
+        	<li ng-repeat="msg in chat_messages">{{msg.date | date:'dd-MMM HH:mm'}} <b>{{msg.name}}</b>: {{msg.text}}</li>
+        </ul>
         <form name="add_form" ng-submit="addMsg(name, msg)" role="form">
             <input class="arrondi" type="text" ng-model="name" placeholder='pseudo' ng-disabled="isSignedIn">
             <input class="arrondi" type="text" ng-model="msg"  id="msg" placeholder='Message'>

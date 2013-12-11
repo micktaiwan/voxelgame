@@ -45,10 +45,25 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
         }
     };
 
+
+    function cube_changed(snapshot, callbackSuccess) {
+        safeApply($rootScope, function() {
+            var obj = snapshot.val();
+            var x,y,z,type;
+            for(x in obj) {
+                for(y in obj[x]) {
+                    for(z in obj[x][y]) {
+                        type = obj[x][y][z].type;
+                        callbackSuccess(x,y,z,type);
+                    }
+                }
+            }
+        });
+    };
+
     listenUsers(function(user) {
         $rootScope.users.push(user);
     });
-
 
     return {
         getUsers: getUsers,
@@ -86,29 +101,20 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
         },
 
         addMessage: function(name, text) {
-            tchat_ref.push({name: name, text: text});
+            tchat_ref.push({name: name, text: text, date: new Date().getTime()});
         },
 
-        getTchat: function(callbackSuccess) {
+        getChatMsg: function(callbackSuccess) {
             tchat_ref.on('child_added', function(snapshot) {
-                var message = snapshot.val();
-                callbackSuccess(message.name, message.text);
+                safeApply($rootScope, function(){
+                    callbackSuccess(snapshot.val());
+                });
             });
         },
 
         onNewCube: function(callbackSuccess) {
-            cubes_ref.on('child_added', function(snapshot) {
-                var obj = snapshot.val();
-                var x,y,z,type;
-                for(x in obj) {
-                    for(y in obj[x]) {
-                        for(z in obj[x][y]) {
-                            type = obj[x][y][z].type;
-                            callbackSuccess(x,y,z,type);
-                        }
-                    }
-                }
-            });
+            cubes_ref.on('child_added',   function(snapshot) { cube_changed(snapshot, callbackSuccess)});
+            //cubes_ref.on('child_changed', function(snapshot) { cube_changed(snapshot, callbackSuccess)});
         },
 
         put: function(x,y,z,type) {

@@ -12,3 +12,9 @@ body {
     margin-bottom: 2px;
     color: #428bca;
 }
+
+.chats {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
