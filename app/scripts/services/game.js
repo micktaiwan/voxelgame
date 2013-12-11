@@ -110,19 +110,20 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         window.addEventListener('resize', onWindowResize, false);
 
         control();
-        Db.onNewCube(setCube);
+        Db.onNewCube(updateCube);
     }
     ;
 
-    function setCube(x, y, z, type) {
+    // type: 'added' or 'changed'
+    // obj: the cube (id, x, y, z, type, user_id)
+    function updateCube(type, obj) {
         var mesh = new THREE.Mesh(geometry, cubeMaterial);
-        mesh.position.x = x;
-        mesh.position.y = y;
-        mesh.position.z = z;
+        mesh.position.x = obj.x;
+        mesh.position.y = obj.y;
+        mesh.position.z = obj.z;
         scene.add(mesh);
         objects.push(mesh);
-        console.log('New cube on ' + x + ', ' + y + ', ' + z);
-        //dummy[10].mesh.visible = false;
+        console.log('cube '+type+' on ' + obj.x + ', ' + obj.y + ', ' + obj.z);
     }
     ;
 
@@ -450,12 +451,13 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
         this.putCube = function() {
             if(dummy[10].mesh.visible) {
-                var mesh = new THREE.Mesh(geometry, cubeMaterial);
+/*                var mesh = new THREE.Mesh(geometry, cubeMaterial);
                 copyVector(mesh.position, dummy[10].mesh.position);
                 scene.add(mesh);
                 objects.push(mesh);
+*/
                 dummy[10].mesh.visible = false;
-                Db.put(mesh.position.x, mesh.position.y, mesh.position.z, WoodBlock);
+                Db.put(dummy[10].mesh.position.x, dummy[10].mesh.position.y, dummy[10].mesh.position.z, WoodBlock);
             }
             else
                 dummy[10].mesh.visible = true;
