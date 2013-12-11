@@ -113,20 +113,37 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         Db.onCube(onCube);
     };
 
+    function addCubeToScene(obj) {
+        var mesh = new THREE.Mesh(geometry, cubeMaterial);
+        mesh.position.x = obj.x * dimCadri;
+        mesh.position.y = obj.y * dimCadri;
+        mesh.position.z = obj.z * dimCadri;
+        scene.add(mesh);
+        objects.push(mesh);
+    };
+
+    function removeCubeFromScene(obj) {
+        for (var key in objects) {
+            if(objects[key].position.x / dimCadri == obj.x && objects[key].position.y / dimCadri == obj.y && objects[key].position.z / dimCadri == obj.z) {
+                scene.remove(objects[key]);
+                objects.splice(key, 1);
+                break;
+            }
+        }
+    };
+
     // type: 'added', 'changed', 'removed'
     // obj: the cube (id, x, y, z, type, user_id)
     function onCube(type, obj) {
         console.log('cube '+type+' on ' + obj.x + ', ' + obj.y + ', ' + obj.z);
         if(type=="added") {
-            var mesh = new THREE.Mesh(geometry, cubeMaterial);
-            mesh.position.x = obj.x * dimCadri;
-            mesh.position.y = obj.y * dimCadri;
-            mesh.position.z = obj.z * dimCadri;
-            scene.add(mesh);
-            objects.push(mesh);
+            addCubeToScene(obj);
+        } else if(type=="removed") {
+            removeCubeFromScene(obj);
+        } else {
+            console.log('unknown onCube type '+type);
         }
-    }
-    ;
+    };
 
     function onWindowResize() {
         player.camera.aspect = window.innerWidth / window.innerHeight;
@@ -417,36 +434,36 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         }
 
         this.getCube = function() {
-                var canGet = this.canGet();
-                if(canGet)
-                    console.log('ok dans l\'inventaire, enfin presque...');
+                var key = this.canGet();
+                if(key) {
+                    //scene.remove(objects[key]);
+                    Db.remove(objects[key].position.x / dimCadri, objects[key].position.y / dimCadri, objects[key].position.z / dimCadri);
+                    //objects.splice(key, 1);
+                    console.log(key + ' dans l\'inventaire, enfin presque...');
+                }
                 else
                     console.log('aucun cube recupéré');
-        }
+        },
 
         this.canGet = function() {
-            var distGet = dimCadri; // à ameliorer
+            var distGet = dimCadri; // FIXME: à ameliorer
             var teteposabs = new THREE.Vector3(this.corps.position.x + this.tete.position.x, this.corps.position.y + this.tete.position.y,this.corps.position.z + this.tete.position.z)
             var vecteur = new THREE.Vector3(dummy[10].mesh.position.x - teteposabs.x, dummy[10].mesh.position.y - teteposabs.y, dummy[10].mesh.position.z - teteposabs.z).normalize();
             var raycaster = new THREE.Raycaster(teteposabs, vecteur);
             var intersects = raycaster.intersectObjects(objects);
             if(intersects.length > 0 && intersects[0].distance < distGet) {
-                scene.remove(intersects[0].object);
                 for (var key in objects) {
                     if(objects[key]['id'] == intersects[0].object.id) {
-                        Db.remove(objects[key].position.x / dimCadri, objects[key].position.y / dimCadri, objects[key].position.z / dimCadri);
-                        objects.splice(key, 1);
-                         break; // manque pas un break là ? si :)
+                        return key;
                     }
                 }
-                return true;
             }
-            return false;
+            return null;
         }
 
         this.putCube = function() {
-                dummy[10].mesh.visible = false;
-                Db.put(dummy[10].mesh.position.x / dimCadri, dummy[10].mesh.position.y / dimCadri, dummy[10].mesh.position.z / dimCadri, WoodBlock);
+            dummy[10].mesh.visible = false;
+            Db.put(dummy[10].mesh.position.x / dimCadri, dummy[10].mesh.position.y / dimCadri, dummy[10].mesh.position.z / dimCadri, WoodBlock);
         }
 
         this.canPut = function() {
