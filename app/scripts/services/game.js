@@ -110,20 +110,21 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         window.addEventListener('resize', onWindowResize, false);
 
         control();
-        Db.onNewCube(updateCube);
-    }
-    ;
+        Db.onCube(onCube);
+    };
 
-    // type: 'added' or 'changed'
+    // type: 'added', 'changed', 'removed'
     // obj: the cube (id, x, y, z, type, user_id)
-    function updateCube(type, obj) {
-        var mesh = new THREE.Mesh(geometry, cubeMaterial);
-        mesh.position.x = obj.x;
-        mesh.position.y = obj.y;
-        mesh.position.z = obj.z;
-        scene.add(mesh);
-        objects.push(mesh);
+    function onCube(type, obj) {
         console.log('cube '+type+' on ' + obj.x + ', ' + obj.y + ', ' + obj.z);
+        if(type=="added") {
+            var mesh = new THREE.Mesh(geometry, cubeMaterial);
+            mesh.position.x = obj.x * dimCadri;
+            mesh.position.y = obj.y * dimCadri;
+            mesh.position.z = obj.z * dimCadri;
+            scene.add(mesh);
+            objects.push(mesh);
+        }
     }
     ;
 
@@ -439,7 +440,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
                 scene.remove(intersects[0].object);
                 for (var key in objects) {
                     if(objects[key]['id'] == intersects[0].object.id) {
-                        Db.remove(objects[key].position.x, objects[key].position.y, objects[key].position.z);
+                        Db.remove(objects[key].position.x / dimCadri, objects[key].position.y / dimCadri, objects[key].position.z / dimCadri);
                         objects.splice(key, 1);
                          break; // manque pas un break là ? si :)
                     }
@@ -457,7 +458,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
                 objects.push(mesh);
 */
                 dummy[10].mesh.visible = false;
-                Db.put(dummy[10].mesh.position.x, dummy[10].mesh.position.y, dummy[10].mesh.position.z, WoodBlock);
+                Db.put(dummy[10].mesh.position.x / dimCadri, dummy[10].mesh.position.y / dimCadri, dummy[10].mesh.position.z / dimCadri, WoodBlock);
             }
             else
                 dummy[10].mesh.visible = true;

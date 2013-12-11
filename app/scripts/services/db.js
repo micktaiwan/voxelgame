@@ -48,7 +48,6 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
 
 
     function cube_changed(type, snapshot, callbackSuccess) {
-        console.log(type);
         safeApply($rootScope, function() {
             callbackSuccess(type, snapshot.val());
         });
@@ -110,23 +109,32 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
             });
         },
 
-        onNewCube: function(callbackSuccess) {
+        onCube: function(callbackSuccess) {
             cubelist_ref.on('child_added',   function(snapshot) { cube_changed('added', snapshot, callbackSuccess)});
             cubelist_ref.on('child_changed', function(snapshot) { cube_changed('changed', snapshot, callbackSuccess)});
+            cubelist_ref.on('child_removed', function(snapshot) { cube_changed('removed', snapshot, callbackSuccess)});
         },
 
         put: function(x,y,z,type) {
             if(!user) return;
-            var id = cubelist_ref.push().name();
-            var date = new Date().getTime();
-            cubes_ref.child('pos').child(x).child(y).child(z).update({id: id, type: type, user: user.id, date: date});
-            cubelist_ref.child(id).update({id: id, type: type, user: user.id, date: date, x: x, y: y, z: z});
+            cubes_ref.child('pos').child(x).child(y).child(z).once('value', function(snapshot) {
+                if(snapshot.val()) return; // cube already here
+                var id = cubelist_ref.push().name();
+                var date = new Date().getTime();
+                cubes_ref.child('pos').child(x).child(y).child(z).update({id: id, type: type, user: user.id, date: date});
+                cubelist_ref.child(id).update({id: id, type: type, user: user.id, date: date, x: x, y: y, z: z});
+            });
         },
+
         remove: function(x,y,z) {
             if(!user) return;
-            var id = cubes_ref.child('pos').child(x).child(y).child(z).id;
-            cubes_ref.child('pos').child(x).child(y).child(z).remove();
-            cubes_ref.child('id').remove();
+            cubes_ref.child('pos').child(x).child(y).child(z).once('value', function(snapshot) {
+                obj = snapshot.val();
+                if(!obj) return; // no cube here. error ?
+                var id = obj.id;
+                cubes_ref.child('pos').child(x).child(y).child(z).remove();
+                cubelist_ref.child(id).remove();
+            });
         },
 
         // Update current logged user position
