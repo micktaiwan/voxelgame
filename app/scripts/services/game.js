@@ -322,10 +322,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         }
 
         this.move = function() {
-            positionNew.copy(this.corps.position);
-
             var cm = this.canMove();
-            if(cm && (cm.x > 0 || cm.z >0)) {
+            if(cm && (cm.x != 0 || cm.z != 0)) {
+                positionNew.copy(this.corps.position);
                 positionNew.x += cm.x;
                 positionNew.z += cm.z;
                 this.corps.position.copy(positionNew);
