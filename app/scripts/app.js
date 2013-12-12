@@ -6,6 +6,7 @@ angular.module('gameApp', [
     'ngSanitize',
     'gameApp.services.db',
     'gameApp.services.session',
+    'gameApp.services.notification',
     'gameApp.services.game'
 ])
         .config(function($routeProvider) {

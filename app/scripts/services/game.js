@@ -15,10 +15,11 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     var dimCadri = 20; // dimensions cadrillage;
     var scene, renderer;
     var geometry, material, mesh;
-    var time = Date.now();
-    var players = [];
+    //var time = Date.now();
+    //var players = [];
     var player; // the one who actually play
-    var distCamPlayer = 0;
+    var INIT_CAM_DIST = 80;
+    var distCamPlayer = INIT_CAM_DIST;
 
     var dummy = [];
 
@@ -475,7 +476,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
         }
 
-        this.setCamDist(40);
+        this.setCamDist(INIT_CAM_DIST);
 
     }
 

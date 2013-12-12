@@ -6,11 +6,13 @@ Date.prototype.getWeek = function() {
 }
 
 angular.module('gameApp')
-    .controller('MainCtrl', function($rootScope, $scope, $location, $timeout, Db, Session) {
+    .controller('MainCtrl', function($rootScope, $scope, $location, $timeout, Db, Session, Notification) {
 
         $rootScope.current_date = new Date().getTime();
         $rootScope.weekNumber   = new Date().getWeek();
         $scope.chat_messages = [];
+
+        Notification.enable();
 
         function initUser() {
             $rootScope.isSignedIn = Session.isSignedIn();
@@ -47,7 +49,10 @@ angular.module('gameApp')
         // Chat
         Db.getChatMsg(function(msg) {
             $scope.chat_messages.push(msg);
+            if(msg.date > new Date().getTime() - 10*1000)
+                Notification.add(Notification.types.CHAT, msg.name + ': ' + msg.text);
         });
+
         $scope.addMsg = function(name, msg) {
             Db.addMessage(name, msg);
             $scope.msg = '';
