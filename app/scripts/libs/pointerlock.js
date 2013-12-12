@@ -2,7 +2,7 @@
 // http://www.html5rocks.com/en/tutorials/pointerlock/intro/
 
 var elem = document.body;
-var isLocked = false;
+var isLocked = true;
 var escDown = false;
 
 elem.requestFullscreen =
@@ -23,6 +23,10 @@ var enablePointerLock = function() {
         elem.requestFullscreen();
     }
     $('#blocker').hide();
+};
+
+var disablePointerLock = function() {
+    $('#blocker').show();
 };
 
 var onFullscreenChange = function() {
@@ -49,9 +53,11 @@ elem.addEventListener('keydown', function(e) {
 
 elem.addEventListener('keyup', function(e) {
     if(e.keyCode === 27) {
-        if(!isLocked && escDown) {
+        if(isLocked && escDown)
             enablePointerLock();
-        }
+        else
+            disablePointerLock();
+        
         escDown = false;
     }
 });
