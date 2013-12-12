@@ -289,6 +289,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     function perso(name, pos) {
 
+        if(!pos) pos = {x: 0, y:0, z:0};
         // info player
         var speed = 1;
         var distCollision = 8;
@@ -525,6 +526,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     function PNJ(id, name, pos, rot) {
 
+        if(!pos) pos = {x: 0, y:0, z:0};
+        if(!rot) rot = {corps: 0, tete:0};
         this.id = id;
         this.name = name;
         this.corps = new THREE.Object3D();

@@ -16,7 +16,8 @@ angular.module('gameApp')
             $rootScope.isSignedIn = Session.isSignedIn();
             var user = Session.getUser();
             if(user) $scope.name = user.name;
-        }
+        };
+
         initUser();
         Session.onUsersLoad(initUser);
 
@@ -38,7 +39,7 @@ angular.module('gameApp')
             $rootScope.isSignedIn = Session.isSignedIn();
         };
 
-        $scope.logout = function() {
+        $rootScope.logout = function() {
             Session.logout();
             $rootScope.isSignedIn = false;
         };

@@ -1,3 +1,5 @@
+'use stcrict';
+
 angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $location) {
 
     var CONFIG = {
@@ -68,9 +70,11 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
             user = u;
         },
 
-        addUser: function(name, email) {
+        addUser: function(name, email, callback) {
             var id = users_ref.push().name(); // generate a unique id based on timestamp
-            users_ref.child(id).set({id: id, name: name, email: email});
+            var user = {id: id, name: name, email: email};
+            users_ref.child(id).set(user);
+            if(callback) callback(user);
         },
 
         newUser: newUser,
@@ -129,7 +133,7 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
         remove: function(x,y,z) {
             if(!user) return;
             cubes_ref.child('pos').child(x).child(y).child(z).once('value', function(snapshot) {
-                obj = snapshot.val();
+                var obj = snapshot.val();
                 if(!obj) return; // no cube here. error ?
                 var id = obj.id;
                 cubes_ref.child('pos').child(x).child(y).child(z).remove();

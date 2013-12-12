@@ -53,27 +53,36 @@ angular.module('gameApp.services.session', [])
                writeCookie('voxelgame_name', user.name, 20);
 	           Db.setUser(user);
             }
-            console.log(user);
 	    },
 
-	    signup : function(scope, name, login, pwd) {
+	    signup : function(scope, name, email, pwd) {
 	        //var encodedpassword = $window.btoa($scope.pwd);
 
 	        scope.error = "";
-	        if(!$rootScope.users) {
-	            scope.error = "waiting for users to load";
+
+	        if(users.length==0) {
+	            console.log('no users yet');
+                scope.error = "waiting for users to load, try again in 2 seconds";
 	            return;
 	        }
 
-	        user = getUserByName(name); // check that login does not already exist
+            if(!name) {
+                console.log('name is empty');
+                scope.error = "name can not be empty";
+                return;
+            }
 
-	        if(user) {
+	        var exist = getUserByName(name); // check that login does not already exist
+
+	        if(exist) {
 	            scope.error = 'User already exists';
 	            return;
 	        }
-	        if(!user) {
+	        if(!exist) {
 	            if(!email) email = '';
-	            Db.addUser(name, email);
+	            Db.addUser(name, email, function(newUser) {
+                    users.push(newUser); // FIXME: do not use Db.newUser ??
+                });
                 //user = getUserByName(name); // check that login does not already exist
                 scope.pwd = 'enregistré!'
 	            writeCookie('voxelgame_name', name, 20);
