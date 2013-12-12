@@ -324,10 +324,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.move = function() {
             positionNew.copy(this.corps.position);
 
-            var canBouge = this.canMove();
-            if(canBouge) {
-                positionNew.x += canBouge[0];
-                positionNew.z += canBouge[1];
+            var cm = this.canMove();
+            if(cm && (cm.x > 0 || cm.z >0)) {
+                positionNew.x += cm.x;
+                positionNew.z += cm.z;
                 this.corps.position.copy(positionNew);
                 var pos = {x: positionNew.x, y: positionNew.y, z: positionNew.z};
                 Db.updatePos(pos);
@@ -382,7 +382,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
                 deltaZ[2] -= Math.cos(this.corps.rotation.y - PI / 2 + pangle);
             }
 
-            var canBouge = [deltaX[1], deltaZ[1]];
+            var canBouge = {x: deltaX[1], z: deltaZ[1]};
             for (var i = 0; i < 3; i++) {
                 var raycaster = new THREE.Raycaster(this.corps.position, new THREE.Vector3(deltaX[i] * distCollision, 0, deltaZ[i] * distCollision).normalize());
                 var intersects = raycaster.intersectObjects(objects);
