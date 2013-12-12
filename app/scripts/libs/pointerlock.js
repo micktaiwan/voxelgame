@@ -27,6 +27,7 @@ var enablePointerLock = function() {
 
 var disablePointerLock = function() {
     $('#blocker').show();
+    $('#inventaire').hide();
 };
 
 var onFullscreenChange = function() {

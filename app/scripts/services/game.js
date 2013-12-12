@@ -184,6 +184,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
                     case 69: // e
                         player.putCube();
                         break;
+                    case 73: // i
+                        player.inventaire();
+                        break;
                 }
             }
         };
@@ -421,6 +424,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
                 canJump = true;
                 this.jumping = false;
             }
+        }
+
+        this.inventaire = function() {
+            $('#inventaire').toggle();
         }
 
         this.getCube = function() {
