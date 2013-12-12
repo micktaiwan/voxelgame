@@ -10,7 +10,7 @@
         <hr>
         <h2>Release notes</h2>
         <h4>Réseau</h4>
-        </p><p>Ca marche pour les déplacements !</p>
+        </p><p>Déplacements et pose/prise de cubes OK !</p>
         <h4>Inventaire</h4>
         <p>En cours</p>
         <p>Implique rammasser cube et reposer...</p>
@@ -28,18 +28,18 @@
         <div id="signIn" ng-hide="isSignedIn">
             <h2>Login</h2>
             <strong>{{login_error}}</strong>
-	        <form name="add_form" ng-submit="login()" role="form">
-	            <input class="arrondi" type="text" ng-model="name" placeholder="pseudo" ng-disabled="isSignedIn"><br>
-	            <button type="submit" class="btn btn-default">Login</button>
-	        </form>
+            <form name="add_form" ng-submit="login()" role="form">
+                <input class="arrondi" type="text" ng-model="name" placeholder="pseudo" ng-disabled="isSignedIn"><br>
+                <button type="submit" class="btn btn-default">Login</button>
+            </form>
             <h2>Signup</h2>
             <strong>{{error}}</strong>
-	        <form name="add_form" ng-submit="signup()" role="form">
-	            <input class="arrondi" type="text" ng-model="name" placeholder="pseudo" ng-disabled="isSignedIn"><br>
-	            <input class="arrondi" type="text" ng-model="email" placeholder="email (option)" ng-disabled="isSignedIn"><br>
-	            <input class="arrondi" type="text" ng-model="pwd" placeholder="password" ng-disabled="isSignedIn"><br>
-	            <button type="submit" class="btn btn-default">Signup</button>
-	        </form>
+            <form name="add_form" ng-submit="signup()" role="form">
+                <input class="arrondi" type="text" ng-model="name" placeholder="pseudo" ng-disabled="isSignedIn"><br>
+<!--            <input class="arrondi" type="text" ng-model="email" placeholder='email (option)' ng-disabled="isSignedIn"><br/>
+                <input class="arrondi" type='text' ng-model="pwd"  placeholder='password' ng-disabled="isSignedIn"><br/> -->
+                <button type="submit" class="btn btn-default">Signup</button>
+            </form>
         </div>
 
         <!--
@@ -48,10 +48,10 @@
         -->
         <h2>Tchat</h2>
         <ul class="chats">
-        	<li ng-repeat="msg in chat_messages">
-	        	<i class="glyphicon glyphicon-trash" ng-click="deleteMsg(msg.id)" ng-show="msg.id"></i>
-	        	{{msg.date | date:'dd-MMM HH:mm'}} <b>{{msg.name}}</b>: {{msg.text}}
-        	</li>
+            <li ng-repeat="msg in chat_messages">
+                <i class="glyphicon glyphicon-trash" ng-click="deleteMsg(msg.id)" ng-show="msg.id"></i>
+                {{msg.date | date:'dd-MMM HH:mm'}} <b>{{msg.name}}</b>: {{msg.text}}
+            </li>
         </ul>
         <form name="add_form" ng-submit="addMsg(name, msg)" role="form">
             <input class="arrondi" type="text" ng-model="name" placeholder="pseudo" ng-disabled="isSignedIn">
@@ -61,26 +61,9 @@
 
         <h2>Dernière connection des joueurs</h2>
         <div>
-        	<ul class="chats">
-            	<li ng-repeat="u in users | orderBy:'-date'">{{u.date | date:'dd-MMM HH:mm'}}: {{u.name}}</li>
+            <ul class="chats">
+                <li ng-repeat="u in users | orderBy:'-date'">{{u.date | date:'dd-MMM HH:mm'}}: {{u.name}}</li>
             </ul>
-            <div>
-                <div class="clearfix"></div>
-                <hr>
-                <h2>Le jeu</h2>
-                <p>Un jeu de plateforme vertical, avec un soupcon de fps</p>
-                <h3>But du jeu</h3>
-                <p>1) Arriver le premier a une hauteur defini</p>
-                <p>2) Pour y arriver, on pourra s'aider :</p>
-                <ul>
-                    <li>Une quantite de cube limite</li>
-                    <li>Un appareil qui permet de cibler un cube et le prendre. (Temp de recharge a definir)</li>
-                    <li>De powerups, qui pourraient etre place aleatoirement sur l'aire de jeu</li>
-                </ul>
-                <h3>L'aire de jeu</h3>
-                <p>L'aire de jeu doit etre limite horizontalement et lateralement.</p>
-                <hr>
-            </div>
         </div>
     </div>
 </div>

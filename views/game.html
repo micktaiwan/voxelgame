@@ -10,4 +10,11 @@
         </p>
     </div>
 </div>
+<div id="inventaire">
+    <div id="title">Inventaire</div>
+    <p id="cubes"><span id="nb-cube">0</span> cubes</p>
+</div>
 <div id="game"></div>
+<div id="console" class="console">
+    <strong>Coords:</strong> <li ng-repeat="(key, value) in pos">{{key}}: {{value | number:2}}</li>
+</div>
