@@ -27,18 +27,18 @@
     <div class="col-xs-6">
         <div id="signIn" ng-hide="isSignedIn">
             <h2>Login</h2>
-            <strong ng-hide="name!=''">{{login_error}}</strong>
+            <strong>{{login_error}}</strong>
 	        <form name="add_form" ng-submit="login()" role="form">
 	            <input class="arrondi" type="text" ng-model="name" placeholder="pseudo" ng-disabled="isSignedIn"><br>
 	            <button type="submit" class="btn btn-default">Login</button>
 	        </form>
             <h2>Signup</h2>
-            <strong ng-hide="name!=''">{{error}}</strong>
-	        <form name="add_form" ng-submit="register()" role="form">
+            <strong>{{error}}</strong>
+	        <form name="add_form" ng-submit="signup()" role="form">
 	            <input class="arrondi" type="text" ng-model="name" placeholder="pseudo" ng-disabled="isSignedIn"><br>
 	            <input class="arrondi" type="text" ng-model="email" placeholder="email (option)" ng-disabled="isSignedIn"><br>
 	            <input class="arrondi" type="text" ng-model="pwd" placeholder="password" ng-disabled="isSignedIn"><br>
-	            <button type="submit" class="btn btn-default">Register</button>
+	            <button type="submit" class="btn btn-default">Signup</button>
 	        </form>
         </div>
 
