@@ -2,6 +2,10 @@
 
 angular.module('gameApp.services.game', []).factory('Game', function($rootScope, $location, Db) {
 
+    function safeApply(scope, fn) {
+        (scope.$$phase || scope.$root.$$phase) ? fn() : scope.$apply(fn);
+    };
+
     var rendererStats = new THREEx.RendererStats();
     rendererStats.domElement.style.position = 'absolute';
     rendererStats.domElement.style.left = '0px';
@@ -265,7 +269,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         scene.add(dummy[2].mesh);
     }
 
-    function perso(name, pos) {
+    function perso(name, pos, playerUpdateCallback) {
 
         if(!pos)
             pos = {x: 0, y: 0, z: 0};
@@ -322,7 +326,11 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
                 positionNew.x += canBouge[0];
                 positionNew.z += canBouge[1];
                 this.corps.position.copy(positionNew);
-                Db.updatePos({x: positionNew.x, y: positionNew.y, z: positionNew.z});
+                var pos = {x: positionNew.x, y: positionNew.y, z: positionNew.z};
+                Db.updatePos(pos);
+                safeApply($rootScope, function(){
+                    playerUpdateCallback({pos: pos});
+                });
             }
         };
 
@@ -568,8 +576,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         animate: function() {
             animate();
         },
-        addMainPlayer: function(name, pos) {
-            return new perso(name, pos);
+        addMainPlayer: function(name, pos, playerUpdateCallback) {
+            return new perso(name, pos, playerUpdateCallback);
         },
         addPNJ: function(id, name, pos, rot) {
             //console.log('adding PNJ '+id)

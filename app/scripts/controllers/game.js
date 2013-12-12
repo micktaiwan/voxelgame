@@ -17,21 +17,25 @@ angular.module('gameApp')
           return rv;
         }
 
-        function updatePlayer(id, obj) {
+        function updatePNJ(id, obj) {
             var p = getPNJById(id)
             if(p) p.move(obj.pos, obj.rot);
             //else console.log('player '+id+' not found')
             // when Db.newPlayer is called the callback is called but the pnj does not exists yet...
         };
 
-        var p = Game.addMainPlayer(user.name, user.pos);
+        function updatePlayer(obj) {
+            $scope.pos = obj.pos;
+        };
+
+        var p = Game.addMainPlayer(user.name, user.pos, updatePlayer);
         Game.init(p);
         var u = $rootScope.users;
         var pnjs = [];
         for(var i in u) {
             if(u[i].id != user.id) {
-                // FIXME: il ne devrait pas y avoir deux méthodes, ne pour la Db et l'autre poue le game... non ????
-                var p = Db.newPlayer(u[i].id, u[i].name, u[i].pos, u[i].rot, updatePlayer);
+                // FIXME: il ne devrait pas y avoir deux méthodes, ne pour la Db et l'autre pour le game... non ????
+                var p = Db.newPlayer(u[i].id, u[i].name, u[i].pos, u[i].rot, updatePNJ);
                 pnjs.push(Game.addPNJ(p.id, p.name, p.pos, p.rot));
             }
         }
