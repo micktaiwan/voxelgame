@@ -279,7 +279,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     function end() {
         addMessage("You're dead...");
         player.corps.position.x = 0;
-        player.corps.position.y = 30;
+        player.corps.position.y = Graphics.dimCadri + 10;
         player.corps.position.z = 0;
     }
 

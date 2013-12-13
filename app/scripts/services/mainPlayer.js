@@ -30,7 +30,6 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         });
 
         var dummy = Game.addGetPutDummy();
-        var speed = 1;
         var distCamPlayer = Graphics.distCamPlayer;
         var distCollision = 8;
         var _toggleInventoryCallback = toggleInventoryCallback;
@@ -82,18 +81,19 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         }
 
         this.move = function() {
+            if(! (this.moveForward || this.moveRight || this.moveLeft || this.moveBackward) ) return;
             var cm = this.canMove();
             if(cm && (cm.x != 0 || cm.z != 0)) {
                 positionNew.copy(this.corps.position);
-                positionNew.x += cm.x;
-                positionNew.z += cm.z;
+                positionNew.x += cm.x*Config.playerSpeed;
+                positionNew.z += cm.z*Config.playerSpeed;
                 this.corps.position.copy(positionNew);
                 var pos = {x: positionNew.x, y: positionNew.y, z: positionNew.z};
                 Db.updatePos(pos);
-                safeApply($rootScope, function(){
+/*                safeApply($rootScope, function(){
                     playerUpdateCallback({pos: pos});
                 });
-            }
+*/            }
         };
 
         this.canMove = function() {
