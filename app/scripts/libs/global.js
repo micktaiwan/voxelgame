@@ -1,3 +1,16 @@
+var CubeTypes = {
+    WoodBlock: 1
+}
+
+var Graphics = {
+    dimCadri: 20,
+    distCamPlayer: 80
+}
+
+var Config = {
+    modeDebug : false
+}
+
 // cookies
 function writeCookie(name, value, days) {
     var date, expires;

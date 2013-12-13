@@ -9,7 +9,7 @@ angular.module('gameApp.services.session', [])
 
     Db.getUsers(function(u) {
         for (var i in u) {
-            users.push(Db.newUser(i, u[i].name, u[i].email, u[i].pos, u[i].rot));
+            users.push(Db.newUser(i, u[i].name, u[i].email, u[i].pos, u[i].rot, u[i].inventory));
         }
         if(onUserLoadCallback) onUserLoadCallback();
         console.log('Session: '+users.length+' users')
@@ -24,6 +24,7 @@ angular.module('gameApp.services.session', [])
 	return {
         onUsersLoad : function (callback) {
             onUserLoadCallback = callback;
+            if(users.length > 0 && onUserLoadCallback) onUserLoadCallback();
         },
 
 		getUser : function () {

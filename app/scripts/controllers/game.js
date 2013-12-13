@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('gameApp')
-    .controller('GameCtrl', function($rootScope, $scope, $timeout, $location, Db, Game, Session) {
+    .controller('GameCtrl', function($rootScope, $scope, $timeout, $location, Db, Game, Session, MainPlayer) {
 
         var user = Session.getUser();
         if(!user) {
@@ -35,8 +35,9 @@ angular.module('gameApp')
             $scope.showInventaire = !$scope.showInventaire;
         }
 
-        var p = Game.addMainPlayer(user.name, user.pos, updatePlayer, toggleInventaire);
-        Game.init(p);
+        Game.init();
+        var p = MainPlayer.newPlayer(user.id, user.name, user.pos, updatePlayer, toggleInventaire);
+        Game.addMainPlayer(p);
         var u = $rootScope.users;
         var pnjs = [];
         for(var i in u) {

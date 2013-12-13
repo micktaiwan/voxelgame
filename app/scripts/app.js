@@ -7,7 +7,8 @@ angular.module('gameApp', [
     'gameApp.services.db',
     'gameApp.services.session',
     'gameApp.services.notification',
-    'gameApp.services.game'
+    'gameApp.services.game',
+    'gameApp.services.mainplayer',
 ])
         .config(function($routeProvider) {
             $routeProvider

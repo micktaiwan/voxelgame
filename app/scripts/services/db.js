@@ -38,13 +38,14 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
         });
     };
 
-    function newUser(id, name, email, pos, rot) {
+    function newUser(id, name, email, pos, rot, inventory) {
         return {
             id: id,
             name: name,
             email: email,
             pos: pos,
-            rot: rot
+            rot: rot,
+            inventory: inventory
         }
     };
 
@@ -128,6 +129,15 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
                 cubes_ref.child('pos').child(x).child(y).child(z).update({id: id, type: type, user: user.id, date: date});
                 cubelist_ref.child(id).update({id: id, type: type, user: user.id, date: date, x: x, y: y, z: z});
             });
+        },
+
+        addInventory: function(obj) {
+            if(!user) return;
+            var id = users_ref.child(user.id).child('inventory').push().name();
+            users_ref.child(user.id).child('inventory').child(id).update({id: id, type: obj.type, date: new Date().getTime()});
+            if(obj.attrs) {
+                users_ref.child(user.id).child('inventory').child(id).child('attrs').update(obj.attrs);
+            }
         },
 
         remove: function(x,y,z) {

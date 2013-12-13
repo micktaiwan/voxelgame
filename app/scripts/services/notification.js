@@ -4,8 +4,8 @@ angular.module('gameApp.services.notification', []).factory('Notification', func
 
       types : {
           CHAT : {
-              title : 'Chat',
-              icon : 'http://cdn2.iconfinder.com/data/icons/lullacons/large-alert.png'
+              title : 'Jethro koull',
+              icon : 'http://www.cusi.fr/site/tchat-enfant/im/msn.jpg'
           }
       },
 
