@@ -9,6 +9,8 @@ angular.module('gameApp')
             return;
         }
 
+        $scope.showInventaire = false;
+
         function getPNJById(id) {
           var rv = null;
           pnjs.some(function(s) {
@@ -28,7 +30,12 @@ angular.module('gameApp')
             $scope.pos = obj.pos;
         };
 
-        var p = Game.addMainPlayer(user.name, user.pos, updatePlayer);
+        function toggleInventaire() {
+            $scope.nbCubes = 0;
+            $scope.showInventaire = !$scope.showInventaire;
+        }
+
+        var p = Game.addMainPlayer(user.name, user.pos, updatePlayer, toggleInventaire);
         Game.init(p);
         var u = $rootScope.users;
         var pnjs = [];

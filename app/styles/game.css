@@ -49,12 +49,10 @@ body {
 
 #inventaire {
     position: absolute;
-    top: 200px;
+    top: 150px;
     left: 400px;
     width: 500px;
-    height: 100px;
     background-color: rgba(0,0,0,0.5);
-    display: none;
     color: white;
     padding: 20px;
 }

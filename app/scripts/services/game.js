@@ -190,7 +190,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
                         player.putCube();
                         break;
                     case 73: // i
-                        player.inventaire();
+                        player.toggleInventaire();
                         break;
                 }
             }
@@ -272,13 +272,14 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         scene.add(dummy[2].mesh);
     }
 
-    function perso(name, pos, playerUpdateCallback) {
+    function perso(name, pos, playerUpdateCallback, toggleInventaireCallback) {
 
         if(!pos)
             pos = {x: 0, y: 0, z: 0};
         // info player
         var speed = 1;
         var distCollision = 8;
+        var _toggleInventaireCallback = toggleInventaireCallback
 
         var audio = document.createElement('audio');
         var source = document.createElement('source');
@@ -434,8 +435,12 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             }
         }
 
-        this.inventaire = function() {
-            $('#inventaire').toggle();
+        this.toggleInventaire = function() {
+            if(_toggleInventaireCallback) {
+                safeApply($rootScope, function(){
+                    _toggleInventaireCallback();
+                });
+            }
         }
 
         this.getCube = function() {
@@ -582,8 +587,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         animate: function() {
             animate();
         },
-        addMainPlayer: function(name, pos, playerUpdateCallback) {
-            return new perso(name, pos, playerUpdateCallback);
+        addMainPlayer: function(name, pos, playerUpdateCallback, toggleInventaireCallback) {
+            return new perso(name, pos, playerUpdateCallback, toggleInventaireCallback);
         },
         addPNJ: function(id, name, pos, rot) {
             //console.log('adding PNJ '+id)

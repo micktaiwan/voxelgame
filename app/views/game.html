@@ -10,11 +10,14 @@
         </p>
     </div>
 </div>
-<div id="inventaire">
+
+<div id="inventaire" ng-show="showInventaire">
     <div id="title">Inventaire</div>
-    <p id="cubes"><span id="nb-cube">0</span> cubes</p>
-</div>
-<div id="game"></div>
-<div id="console" class="console">
+    <p id="cubes"><span id="nb-cube">{{nbCubes}}</span> cubes</p>
+    <p>Ca sert à rien mais c'est pour faire une démo :)</p>
     <strong>Coords:</strong> <li ng-repeat='(key, value) in pos'>{{key}}: {{value | number:2}}</li>
 </div>
+
+<div id="game"></div>
+<div id="console" class="console"></div>
+
