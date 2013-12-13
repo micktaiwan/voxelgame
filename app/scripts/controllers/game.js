@@ -30,8 +30,9 @@ angular.module('gameApp')
             $scope.pos = obj.pos;
         };
 
-        function toggleInventory() {
-            $scope.nbCubes = 0;
+        function toggleInventory(inventory) {
+            console.log(inventory);
+            $scope.nbInventory = Object.keys(inventory).length;
             $scope.showInventory = !$scope.showInventory;
         }
 

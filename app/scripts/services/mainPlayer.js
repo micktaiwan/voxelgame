@@ -192,7 +192,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         this.toggleInventory = function() {
             if(_toggleInventoryCallback) {
                 safeApply($rootScope, function(){
-                    _toggleInventoryCallback();
+                    _toggleInventoryCallback(dbUser.inventory);
                 });
             }
         };

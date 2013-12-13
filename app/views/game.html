@@ -13,7 +13,7 @@
 
 <div id="inventaire" ng-show="showInventory">
     <div id="title">Inventaire</div>
-    <p id="cubes"><span id="nb-cube">{{nbCubes}}</span> cubes</p>
+    <p>{{nbInventory}} objects</p>
     <p>Ca sert à rien mais c'est pour faire une démo :)</p>
     <strong>Coords:</strong> <li ng-repeat='(key, value) in pos'>{{key}}: {{value | number:2}}</li>
 </div>
