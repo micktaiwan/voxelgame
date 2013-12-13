@@ -27,7 +27,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         var speed = 1;
         var distCamPlayer = Graphics.distCamPlayer;
         var distCollision = 8;
-        var _toggleInventoryCallback = toggleInventoryCallback
+        var _toggleInventoryCallback = toggleInventoryCallback;
 
         var audio = document.createElement('audio');
         var source = document.createElement('source');
@@ -202,7 +202,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                 console.log(key + ' in inventory (really)');
             }
             else
-                console.log('aucun cube recupéré');
+                console.log('no cube here !');
         };
 
         this.canGet = function() {
@@ -252,8 +252,8 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
     }
     return {
 
-        newPlayer: function(name, pos, playerUpdateCallback, toggleInventoryCallback) {
-            return new player(name, pos, playerUpdateCallback, toggleInventoryCallback);
+        newPlayer: function(id, name, pos, playerUpdateCallback, toggleInventoryCallback) {
+            return new player(id, name, pos, playerUpdateCallback, toggleInventoryCallback);
         },
 
     };

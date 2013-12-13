@@ -9,7 +9,7 @@ angular.module('gameApp')
             return;
         }
 
-        $scope.showInventaire = false;
+        $scope.showInventory = false;
 
         function getPNJById(id) {
           var rv = null;
@@ -30,13 +30,13 @@ angular.module('gameApp')
             $scope.pos = obj.pos;
         };
 
-        function toggleInventaire() {
+        function toggleInventory() {
             $scope.nbCubes = 0;
-            $scope.showInventaire = !$scope.showInventaire;
+            $scope.showInventory = !$scope.showInventory;
         }
 
         Game.init();
-        var p = MainPlayer.newPlayer(user.id, user.name, user.pos, updatePlayer, toggleInventaire);
+        var p = MainPlayer.newPlayer(user.id, user.name, user.pos, updatePlayer, toggleInventory);
         Game.addMainPlayer(p);
         var u = $rootScope.users;
         var pnjs = [];
