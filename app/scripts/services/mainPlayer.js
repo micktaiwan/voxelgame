@@ -52,15 +52,20 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         var geometrytorse = new THREE.CubeGeometry(Graphics.dimCadri / 2, Graphics.dimCadri / 2, Graphics.dimCadri / 2);
         //    var material = new THREE.MeshLambertMaterial({color: 0xffff00});
         this.torse = new THREE.Mesh(geometrytorse, material);
+        this.torse.castShadow = true;
+        this.torse.receiveShadow = true;
+
         this.corps.add(this.torse);
 
         var geometrytete = new THREE.CubeGeometry(Graphics.dimCadri / 4, Graphics.dimCadri / 4, Graphics.dimCadri / 4);
         this.tete = new THREE.Mesh(geometrytete, material);
+        this.tete.castShadow = true;
+        this.tete.receiveShadow = true;
         this.tete.position.y = Graphics.dimCadri / 2;
         this.tete.position.z = -5;
         this.corps.add(this.tete);
 
-        this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+        this.camera = new THREE.PerspectiveCamera(Graphics.viewwAngle, window.innerWidth / window.innerHeight, 1, 1000);
         this.camera.position.x += Math.sin(this.corps.rotation.y) * distCamPlayer;
         this.camera.position.z += Math.cos(this.corps.rotation.y) * distCamPlayer;
         this.tete.add(this.camera);
@@ -237,6 +242,9 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         this.camdist = function(delta) {
 
             distCamPlayer -= delta / 30;
+            //this.camera.fov -= delta / 30;
+            //this.camera.updateProjectionMatrix();
+            //console.log(this.camera.fov);
 
             if(distCamPlayer < 0)
                 distCamPlayer = 0;

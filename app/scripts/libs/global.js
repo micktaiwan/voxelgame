@@ -4,7 +4,8 @@ var CubeTypes = {
 
 var Graphics = {
     dimCadri: 20,
-    distCamPlayer: 80
+    distCamPlayer: 80,
+    viewAngle: 45
 }
 
 var Config = {

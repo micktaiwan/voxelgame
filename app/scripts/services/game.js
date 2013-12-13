@@ -44,22 +44,46 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     function init() {
         scene = new THREE.Scene();
         scene.fog = new THREE.Fog(0x444444, 0, 600);
+
+        light = new THREE.AmbientLight(0x444444);
+        scene.add(light);
+/*
         light = new THREE.DirectionalLight(0x999988, 1.5);
-        light.position.set(1, 1, 1);
+        light.position.set(1, 1, 0);
         scene.add(light);
-        light = new THREE.DirectionalLight(0xffff00, 1.5);
-        light.position.set(-1, -1, -1);
+*/
+        //light = new THREE.DirectionalLight(0x999988, 1.5);
+        light = new THREE.SpotLight(0xffffff, 1, 10000, 45);
+        light.position.set(0, 1000, 1000);
+        light.castShadow = true;
+        //light.shadowCameraVisible = true;
+        light.shadowCameraNear = 100;
+        light.shadowCameraFar = 10000;
+        light.shadowCameraFov = 30;
         scene.add(light);
+
+/*
+        light = new THREE.SpotLight(0xffffff);
+        light.position.set(0, 200, 0);
+        light.castShadow = true;
+        light.shadowCameraNear = 500;
+        light.shadowCameraFar = 4000;
+        light.shadowCameraFov = 30;
+        scene.add(light);
+*/
+
+/*
         light2 = new THREE.PointLight(0xffffff, 2, 50);
         light2.position.set(-1, 1, -1);
         scene.add(light2);
-
+*/
         // mode debug
         if(Config.modeDebug)
             modeDebug();
 
         renderer = new THREE.WebGLRenderer();
         renderer.setClearColor(0x447777);
+        renderer.shadowMapEnabled = true;
         $game_div = $('#game');
         onWindowResize();
 
@@ -91,6 +115,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         mesh.position.x = obj.x * Graphics.dimCadri;
         mesh.position.y = obj.y * Graphics.dimCadri;
         mesh.position.z = obj.z * Graphics.dimCadri;
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
         scene.add(mesh);
         objects.push(mesh);
     }
@@ -140,8 +166,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
                 player.tete.rotation.x -= movementY * 0.002;
 
                 // camera lag, not nicely done
-                player.camera.position.x += movementX * 0.01;
-                player.camera.position.y -= movementY * 0.01;
+                //player.camera.position.x += movementX * 0.01;
+                //player.camera.position.y -= movementY * 0.01;
 
                 if(player.tete.rotation.x < - Math.PI / 2)
                     player.tete.rotation.x = - Math.PI / 2;
@@ -227,12 +253,12 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         if(!player)
             return;
 
-        player.updateCamera();
+        //player.updateCamera();
 
         if(!isLocked) {
             player.move();
             player.jump();
-            light2.position.set(player.corps.position.x, player.corps.position.y, player.corps.position.z);
+            //light2.position.set(player.corps.position.x, player.corps.position.y, player.corps.position.z);
         }
 
         renderer.render(scene, player.camera);
@@ -272,15 +298,20 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.id = id;
         this.name = name;
         this.corps = new THREE.Object3D();
+
         copyVector(this.corps.position, pos);
 
         var geometrytorse = new THREE.CubeGeometry(Graphics.dimCadri / 2, Graphics.dimCadri / 2, Graphics.dimCadri / 2);
         var material = new THREE.MeshLambertMaterial({color: 0xffff00});
-        this.torse = new THREE.Mesh(geometrytorse, material);
-        this.corps.add(this.torse);
+        var torse = new THREE.Mesh(geometrytorse, material);
+        this.corps.add(torse);
+        torse.castShadow = true;
+        torse.receiveShadow = true;
 
         var geometrytete = new THREE.CubeGeometry(Graphics.dimCadri / 4, Graphics.dimCadri / 4, Graphics.dimCadri / 4);
         this.tete = new THREE.Mesh(geometrytete, material);
+        this.tete.castShadow = true;
+        this.tete.receiveShadow = true;
         this.tete.position.y = Graphics.dimCadri / 2;
         this.tete.position.z = Graphics.dimCadri / 4;
         this.corps.add(this.tete);
@@ -304,7 +335,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         copyRotation(this, rot);
 
         scene.add(this.corps);
-        objects.push(this.torse);
+        objects.push(torse);
 
         this.move = function(pos, rot) {
             copyVector(this.corps.position, pos);
