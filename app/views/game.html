@@ -14,6 +14,9 @@
 <div id="inventaire" ng-show="showInventory">
     <div id="title">Inventaire</div>
     <p>{{nbInventory}} objects</p>
+    <li ng-repeat="o in inventory">{{o.type}} - {{o.date | date}}</li>
+    <img src="" />
+
     <p>Ca sert à rien mais c'est pour faire une démo :)</p>
     <strong>Coords:</strong> <li ng-repeat='(key, value) in pos'>{{key}}: {{value | number:2}}</li>
 </div>

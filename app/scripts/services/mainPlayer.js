@@ -18,8 +18,14 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             //console.log(dbUser);
             //console.log("Inventory: "+dbUser.inventory);
             if(!dbUser.inventory) {
-                Db.addInventory({type: CubeTypes.WoodBlock}); // attrs: {test: 'ok'}
-                dbUser['inventory'] = [{type: CubeTypes.WoodBlock}]; // TODO: listener on inventory objects ? or find a way to get the id....
+                var obj = Db.addInventory({type: CubeTypes.WoodBlock}); // attrs: {test: 'ok'}
+                dbUser['inventory'] = [obj];
+            }
+            else {
+                var array = $.map(dbUser.inventory, function(value, index) {
+                    return [value];
+                });
+                dbUser.inventory = array;
             }
         });
 
@@ -203,7 +209,8 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             if(key) {
                 Db.remove(objs[key].position.x / Graphics.dimCadri, objs[key].position.y / Graphics.dimCadri, objs[key].position.z / Graphics.dimCadri);
                 Game.removeCubeFromSceneByKey(key);
-                Db.addInventory({type: CubeTypes.WoodBlock}); // FIXME
+                var obj = Db.addInventory({type: CubeTypes.WoodBlock}); // FIXME
+                dbUser.inventory.push(obj);
                 console.log(key + ' in inventory (really)');
             }
             else

@@ -134,10 +134,13 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
         addInventory: function(obj) {
             if(!user) return;
             var id = users_ref.child(user.id).child('inventory').push().name();
-            users_ref.child(user.id).child('inventory').child(id).update({id: id, type: obj.type, date: new Date().getTime()});
+            var value = {id: id, type: obj.type, date: new Date().getTime()};
+            users_ref.child(user.id).child('inventory').child(id).update(value);
             if(obj.attrs) {
                 users_ref.child(user.id).child('inventory').child(id).child('attrs').update(obj.attrs);
+                value['attrs'] = obj.attrs;
             }
+            return value;
         },
 
         remove: function(x,y,z) {

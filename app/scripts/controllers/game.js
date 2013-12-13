@@ -32,7 +32,8 @@ angular.module('gameApp')
 
         function toggleInventory(inventory) {
             console.log(inventory);
-            $scope.nbInventory = Object.keys(inventory).length;
+            $scope.inventory = inventory;
+            $scope.nbInventory  = inventory.length;
             $scope.showInventory = !$scope.showInventory;
         }
 
