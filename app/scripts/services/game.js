@@ -28,6 +28,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     var light, light2;
     var objects = [];
+    var addMessageCallback = null; // method to add ingame messages
 
     function copyVector(to, from) { // FIXME: pas sur que ça serve...
         to.x = from.x;
@@ -41,7 +42,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         to.tete.rotation.x = from.tete;
     }
 
-    function init() {
+    function init(_addMessageCallback) {
+        addMessageCallback = _addMessageCallback;
         scene = new THREE.Scene();
         scene.fog = new THREE.Fog(0x444444, 0, 600);
 
@@ -97,6 +99,13 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         Db.onCube(onCube);
     }
 
+    function addMessage(msg) {
+        if(!addMessageCallback) return;
+        safeApply($rootScope, function() {
+            addMessageCallback(msg);
+        });
+    }
+
     function getCubeFromScene(obj) {
         for (var key in objects) {
             if(objects[key].position.x / Graphics.dimCadri == obj.x && objects[key].position.y / Graphics.dimCadri == obj.y && objects[key].position.z / Graphics.dimCadri == obj.z) {
@@ -134,7 +143,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     // type: 'added', 'changed', 'removed'
     // obj: the cube (id, x, y, z, type, user_id)
     function onCube(type, obj) {
-        //console.log('cube ' + type + ' on ' + obj.x + ', ' + obj.y + ', ' + obj.z);
+        //addMessage('cube ' + type + ' on ' + obj.x + ', ' + obj.y + ', ' + obj.z);
         if(type == "added") {
             addCubeToScene(obj);
         } else if(type == "removed") {
@@ -268,13 +277,14 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     // Death
     function end() {
+        addMessage("You're dead...");
         player.corps.position.x = 0;
         player.corps.position.y = 30;
         player.corps.position.z = 0;
     }
 
     function posRnd(decalage) {
-        decalage = typeof decalage !== 'undefined' ? decalage : 0;
+        decalage = decalage || 0;
         return Math.floor(Math.random() * Graphics.dimCadri - decalage) * Graphics.dimCadri;
     }
 
@@ -378,8 +388,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     }
 
     return {
-        init: function() {
-            init();
+        init: function(addMessageCallback) {
+            init(addMessageCallback);
         },
         animate: function() {
             animate();
@@ -409,8 +419,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             var dummy = new dummyC();
             scene.add(dummy.mesh);
             return dummy;
+        },
+        addMessage: function(msg) {
+            addMessage(msg);
         }
-
 
     };
 

@@ -10,6 +10,8 @@ angular.module('gameApp')
         }
 
         $scope.showInventory = false;
+        $scope.showConsole = false;
+        $scope.msgs = [];
 
         function getPNJById(id) {
           var rv = null;
@@ -37,7 +39,24 @@ angular.module('gameApp')
             $scope.showInventory = !$scope.showInventory;
         }
 
-        Game.init();
+        function consummeMessage() {
+            $timeout(function() {
+                $scope.msgs.splice(0,1);
+                if($scope.msgs.length == 0)
+                    $scope.showConsole = false;
+                else
+                    consummeMessage();
+            }, 4000);
+        }
+
+        function addMessage(msg) {
+            //console.log(msg);
+            $scope.msgs.push(msg);
+            $scope.showConsole = true;
+            consummeMessage();
+        }
+
+        Game.init(addMessage);
         var p = MainPlayer.newPlayer(user.id, user.name, user.pos, updatePlayer, toggleInventory);
         Game.addMainPlayer(p);
         var u = $rootScope.users;

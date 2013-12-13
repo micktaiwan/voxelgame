@@ -211,7 +211,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                 Game.removeCubeFromSceneByKey(key);
                 var obj = Db.addInventory({type: CubeTypes.WoodBlock}); // FIXME
                 dbUser.inventory.push(obj);
-                console.log(key + ' in inventory (really)');
+                Game.addMessage(key + ' in inventory (really)');
             }
             else
                 console.log('no cube here !');
