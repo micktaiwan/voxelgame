@@ -10,11 +10,19 @@
         </p>
     </div>
 </div>
-<div id="inventaire">
+
+<div id="inventaire" ng-show="showInventory">
     <div id="title">Inventaire</div>
-    <p id="cubes"><span id="nb-cube">0</span> cubes</p>
-</div>
-<div id="game"></div>
-<div id="console" class="console">
+    <p>{{nbInventory}} objects</p>
+    <li ng-repeat="o in inventory">{{o.type}} - {{o.date | date}}</li>
+    <img src="">
+
+    <p>Ca sert à rien mais c'est pour faire une démo :)</p>
     <strong>Coords:</strong> <li ng-repeat="(key, value) in pos">{{key}}: {{value | number:2}}</li>
 </div>
+
+<div id="console" class="console" ng-show="showConsole">
+    <li ng-repeat="m in msgs">{{m}}</li>
+</div>
+
+<div id="game"></div>
