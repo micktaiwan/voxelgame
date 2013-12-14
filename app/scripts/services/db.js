@@ -121,14 +121,16 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
             cubelist_ref.on('child_removed', function(snapshot) { cube_changed('removed', snapshot, callbackSuccess)});
         },
 
-        put: function(x,y,z,type) {
+        put: function(x,y,z,type, callbackSuccess) {
             if(!user) return;
             cubes_ref.child('pos').child(x).child(y).child(z).once('value', function(snapshot) {
-                if(snapshot.val()) return; // cube already here
+                if(snapshot.val()) throw "There is a cube in Db here";
                 var id = cubelist_ref.push().name();
                 var date = new Date().getTime();
                 cubes_ref.child('pos').child(x).child(y).child(z).update({id: id, type: type, user: user.id, date: date});
-                cubelist_ref.child(id).update({id: id, type: type, user: user.id, date: date, x: x, y: y, z: z});
+                var obj = {id: id, type: type, user: user.id, date: date, x: x, y: y, z: z};
+                cubelist_ref.child(id).update(obj);
+                if(callbackSuccess) callbackSuccess(obj);
             });
         },
 
@@ -144,13 +146,12 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
             return value;
         },
 
-        remove: function(x,y,z) {
+        remove: function(id) {
             if(!user) return;
-            cubes_ref.child('pos').child(x).child(y).child(z).once('value', function(snapshot) {
+            cubelist_ref.child(id).once('value', function(snapshot) {
                 var obj = snapshot.val();
-                if(!obj) return; // no cube here. error ?
-                var id = obj.id;
-                cubes_ref.child('pos').child(x).child(y).child(z).remove();
+                if(!obj) throw "no cube in Db here";
+                cubes_ref.child('pos').child(obj.x).child(obj.y).child(obj.z).remove();
                 cubelist_ref.child(id).remove();
             });
         },

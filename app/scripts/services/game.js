@@ -62,12 +62,31 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         }
 
         object.lensFlares[ 2 ].y += 0.025;
-        object.lensFlares[ 3 ].rotation = object.positionScreen.x * 0.5 + THREE.Math.degToRad( 45 );
+        object.lensFlares[ 3 ].rotation = object.positionScreen.x * 0.5 + THREE.Math.degToRad(45);
+    }
+
+    function initPostprocessing() {
+        var renderPass = new THREE.RenderPass( scene, camera );
+
+        var bokehPass = new THREE.BokehPass( scene, camera, {
+            focus:                 1.0,
+            aperture:        0.025,
+            maxblur:        1.0,
+            width: width,
+            height: height
+        } );
+
+        bokehPass.renderToScreen = true;
+
+        var composer = new THREE.EffectComposer( renderer );
+        composer.addPass( renderPass );
+        composer.addPass( bokehPass );
     }
 
     function addSun( h, s, l, x, y, z ) {
 
-        var light = new THREE.SpotLight( 0xffffff, 1.5, 0, 45);
+        var light = new THREE.DirectionalLight( 0xffffff, 1.5); //, 0, 45);
+        //var light = new THREE.SpotLight( 0xffffff, 1.5, 0, 45);
         light.color.setHSL( h, s, l );
         light.position.set( x, y, z );
         light.castShadow = true;
@@ -75,6 +94,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         light.shadowCameraNear = 100;
         light.shadowCameraFar = 10000;
         light.shadowCameraFov = 30;
+        light.shadowDarkness = 0.5;
         scene.add(light);
 
         light = new THREE.PointLight( 0xffffff, 1, 0);
@@ -102,13 +122,17 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     }
 
+    function getMeshObjects() {
+        return objects.map(function(o) { return o.mesh;});
+    }
+
     function init(_addMessageCallback) {
         addMessageCallback = _addMessageCallback;
         scene = new THREE.Scene();
         //scene.fog = new THREE.Fog(0x444444, 0, 600);
 
         light = new THREE.AmbientLight(0xffffff);
-        light.color.setHSL( 0.1, 0.3, 0.2 );
+        light.color.setHSL( 0.1, 0.3, 0.1 );
         scene.add(light);
         addSun( 0.995, 0.5, 0.9, 0, 500, 300 );
 /*
@@ -116,20 +140,17 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         light2.position.set(-1, 1, -1);
         scene.add(light2);
 */
-        // mode debug
         if(Config.modeDebug)
             modeDebug();
 
         renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true } );
-        renderer.setClearColor(0x447777);
+        renderer.setClearColor(0x225555);
         renderer.shadowMapEnabled = true;
+        renderer.shadowMapSoft = true;
         $game_div = $('#game');
         onWindowResize();
 
-        //document.body.appendChild(renderer.domElement);
         $game_div.append(renderer.domElement);
-
-        //
         window.addEventListener('resize', onWindowResize, false);
 
         control();
@@ -144,8 +165,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     }
 
     function getCubeFromScene(obj) {
-        for (var key in objects) {
-            if(objects[key].position.x / Config.dimCadri == obj.x && objects[key].position.y / Config.dimCadri == obj.y && objects[key].position.z / Config.dimCadri == obj.z) {
+        var objs = getMeshObjects();
+        for (var key in objs) {
+            if(objs[key].obj && objs[key].obj.id == obj.id) {
                 return key;
             }
         }
@@ -153,10 +175,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     }
 
     function addCubeToScene(obj) {
-        if(getCubeFromScene(obj)) {
-            //console.log('already there ('+obj.x+','+obj.y+','+obj.z+')');
-            return;
-        }
+        if(getCubeFromScene(obj))
+            throw ('There is a cube there. Check it before you call addCubeToScene.');
         var mesh = new THREE.Mesh(geometry, cubeMaterial);
         mesh.position.x = obj.x * Config.dimCadri;
         mesh.position.y = obj.y * Config.dimCadri;
@@ -164,11 +184,11 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         mesh.castShadow = true;
         mesh.receiveShadow = true;
         scene.add(mesh);
-        objects.push(mesh);
+        objects.push({obj: obj, mesh: mesh});
     }
 
     function removeCubeFromSceneByKey(key) {
-        scene.remove(objects[key]);
+        scene.remove(objects[key].mesh);
         objects.splice(key, 1);
     }
 
@@ -180,13 +200,14 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     // type: 'added', 'changed', 'removed'
     // obj: the cube (id, x, y, z, type, user_id)
     function onCube(type, obj) {
-        //addMessage('cube ' + type + ' on ' + obj.x + ', ' + obj.y + ', ' + obj.z);
+        if(obj.date > new Date().getTime() - 10*1000)
+            console.log('cube ' + type + ' on ' + obj.x + ', ' + obj.y + ', ' + obj.z);
         if(type == "added") {
             addCubeToScene(obj);
         } else if(type == "removed") {
             removeCubeFromScene(obj);
         } else {
-            console.log('unknown onCube type ' + type);
+            console.error('unknown onCube type ' + type);
         }
     }
 
@@ -325,8 +346,6 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         scene.add(dummy[2].mesh);
     }
 
-
-
     function PNJ(id, name, pos, rot) {
 
         if(!pos)
@@ -373,7 +392,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         copyRotation(this, rot);
 
         scene.add(this.corps);
-        objects.push(torse);
+        objects.push({mesh: torse});
 
         this.move = function(pos, rot) {
             copyVector(this.corps.position, pos);
@@ -387,7 +406,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         var mesh = new THREE.Mesh(geometry, cubeMaterial);
         mesh.position.copy(Pos);
         scene.add(mesh);
-        objects.push(mesh);
+        objects.push({mesh: mesh});
     }
 
     function dummyC() {
@@ -430,6 +449,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         },
         getObjects: function() {
             return objects;
+        },
+        getMeshObjects: function() {
+            return getMeshObjects();
         },
         addCubeToScene: function(obj) {
             addCubeToScene(obj);

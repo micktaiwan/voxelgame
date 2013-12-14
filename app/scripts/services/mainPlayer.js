@@ -143,9 +143,12 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             }
 
             var canBouge = {x: deltaX[1], z: deltaZ[1]};
+            var objs = Game.getMeshObjects();
+            //console.log(objs);
+            //debugger;
             for (var i = 0; i < 3; i++) {
                 var raycaster = new THREE.Raycaster(this.corps.position, new THREE.Vector3(deltaX[i] * distCollision, 0, deltaZ[i] * distCollision).normalize());
-                var intersects = raycaster.intersectObjects(Game.getObjects());
+                var intersects = raycaster.intersectObjects(objs);
 
                 if(intersects.length > 0 && intersects[0].distance < distCollision) {
                     audio.play();
@@ -175,7 +178,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
 
             var canFall = true;
             var raycaster = new THREE.Raycaster(this.corps.position, new THREE.Vector3(0, -1, 0));
-            var intersects = raycaster.intersectObjects(Game.getObjects());
+            var intersects = raycaster.intersectObjects(Game.getMeshObjects());
             if(intersects.length > 0 && intersects[0].distance < distCollision) {
                 canFall = false;
             }
@@ -206,20 +209,22 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
 
         this.getCube = function() {
             var key = this.canGet();
-            var objs = Game.getObjects();
             if(key) {
-                Db.remove(objs[key].position.x / Config.dimCadri, objs[key].position.y / Config.dimCadri, objs[key].position.z / Config.dimCadri);
+                //debugger;
+                var objs = Game.getObjects();
+                //console.log(key);
+                Db.remove(objs[key].obj.id);
                 Game.removeCubeFromSceneByKey(key);
-                var obj = Db.addInventory({type: CubeTypes.WoodBlock}); // FIXME
+                var obj = Db.addInventory({type: CubeTypes.WoodBlock}); // FIXME: type
                 dbUser.inventory.push(obj);
-                Game.addMessage(key + ' in inventory (really)');
+                Game.addMessage(key + ' (' + obj.id + ')' + ' put in inventory');
             }
             else
                 console.log('no cube here !');
         };
 
         this.canGet = function() {
-            var objs = Game.getObjects();
+            var objs = Game.getMeshObjects();
             var distGet = Config.dimCadri; // FIXME: à ameliorer
             var teteposabs = new THREE.Vector3(this.corps.position.x + this.tete.position.x, this.corps.position.y + this.tete.position.y, this.corps.position.z + this.tete.position.z)
             var vecteur = new THREE.Vector3(dummy.mesh.position.x - teteposabs.x, dummy.mesh.position.y - teteposabs.y, dummy.mesh.position.z - teteposabs.z).normalize();
@@ -236,9 +241,13 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         };
 
         this.putCube = function() {
-            dummy.mesh.visible = false;
+            var key = this.canGet();
+            if(key) {
+                Game.addMessage('There is a cube there');
+                return;
+            }
+            //dummy.mesh.visible = false;
             var obj = {x: dummy.mesh.position.x / Config.dimCadri, y: dummy.mesh.position.y / Config.dimCadri, z: dummy.mesh.position.z / Config.dimCadri};
-            Game.addCubeToScene(obj);
             Db.put(obj.x, obj.y, obj.z, CubeTypes.WoodBlock);
         };
 
