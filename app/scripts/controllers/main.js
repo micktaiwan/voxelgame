@@ -31,7 +31,6 @@ angular.module('gameApp')
 
 
         function getChatMsgIndex(id) {
-            console.log(id);
             var indexes = $.map($scope.chat_messages, function(chat, index) {
                 if(chat.id == id) return index;
             });
@@ -59,8 +58,8 @@ angular.module('gameApp')
         }
         $scope.deleteMsg = function(id) {
             var i = getChatMsgIndex(id);
-            $scope.chat_messages.splice(i, 1);
             Db.deleteMessage(id);
+            $scope.chat_messages.splice(i, 1);
         }
     });
 

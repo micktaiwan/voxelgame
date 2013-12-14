@@ -107,6 +107,7 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
         },
 
         onChatMsg: function(callbackSuccess) {
+            tchat_ref.off('child_added'); // FIXME....ugly
             tchat_ref.limit(10).on('child_added', function(snapshot) {
                 safeApply($rootScope, function(){
                     callbackSuccess(snapshot.val());
