@@ -30,7 +30,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         });
 
         var dummy = Game.addGetPutDummy();
-        var distCamPlayer = Graphics.distCamPlayer;
+        var distCamPlayer = Config.distCamPlayer;
         var distCollision = 8;
         var _toggleInventoryCallback = toggleInventoryCallback;
 
@@ -54,7 +54,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         map.anisotropy = 16;
 
         var material = new THREE.MeshLambertMaterial({ambient: 0xbbbbbb, map: map});
-        var geometrytorse = new THREE.CubeGeometry(Graphics.dimCadri / 2, Graphics.dimCadri / 2, Graphics.dimCadri / 2);
+        var geometrytorse = new THREE.CubeGeometry(Config.dimCadri / 2, Config.dimCadri / 2, Config.dimCadri / 2);
         //    var material = new THREE.MeshLambertMaterial({color: 0xffff00});
         this.torse = new THREE.Mesh(geometrytorse, material);
         this.torse.castShadow = true;
@@ -62,26 +62,27 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
 
         this.corps.add(this.torse);
 
-        var geometrytete = new THREE.CubeGeometry(Graphics.dimCadri / 4, Graphics.dimCadri / 4, Graphics.dimCadri / 4);
+        var geometrytete = new THREE.CubeGeometry(Config.dimCadri / 4, Config.dimCadri / 4, Config.dimCadri / 4);
         this.tete = new THREE.Mesh(geometrytete, material);
         this.tete.castShadow = true;
         this.tete.receiveShadow = true;
-        this.tete.position.y = Graphics.dimCadri / 2;
+        this.tete.position.y = Config.dimCadri / 2;
         this.tete.position.z = -5;
         this.corps.add(this.tete);
 
-        this.camera = new THREE.PerspectiveCamera(Graphics.viewwAngle, window.innerWidth / window.innerHeight, 1, 1000);
+        this.camera = new THREE.PerspectiveCamera(Config.viewwAngle, window.innerWidth / window.innerHeight, 1, 1000);
         this.camera.position.x += Math.sin(this.corps.rotation.y) * distCamPlayer;
         this.camera.position.z += Math.cos(this.corps.rotation.y) * distCamPlayer;
         this.tete.add(this.camera);
 
         this.updateCamera = function() {
             this.camera.position.x += (this.tete.position.x - this.camera.position.x) / 10;
-            this.camera.position.y += (this.tete.position.y - this.camera.position.y - Graphics.dimCadri / 2) / 10;
+            this.camera.position.y += (this.tete.position.y - this.camera.position.y - Config.dimCadri / 2) / 10;
         }
 
         this.move = function() {
-            if(! (this.moveForward || this.moveRight || this.moveLeft || this.moveBackward) ) return;
+            // if(! (this.moveForward || this.moveRight || this.moveLeft || this.moveBackward) ) return;
+            // can't do that or getputdummy is not updated...
             var cm = this.canMove();
             if(cm && (cm.x != 0 || cm.z != 0)) {
                 positionNew.copy(this.corps.position);
@@ -160,9 +161,9 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             var distPut = 25;
 
             // Grille
-            dummy.mesh.position.y = Math.round((this.corps.position.y + Math.sin(this.tete.rotation.x) * distPut + Graphics.dimCadri / 2) / Graphics.dimCadri) * Graphics.dimCadri;
-            dummy.mesh.position.x = Math.round((this.corps.position.x - Math.sin(this.corps.rotation.y) * distPut * Math.cos(this.tete.rotation.x)) / Graphics.dimCadri) * Graphics.dimCadri;
-            dummy.mesh.position.z = Math.round((this.corps.position.z - Math.cos(this.corps.rotation.y) * distPut * Math.cos(this.tete.rotation.x)) / Graphics.dimCadri) * Graphics.dimCadri;
+            dummy.mesh.position.y = Math.round((this.corps.position.y + Math.sin(this.tete.rotation.x) * distPut + Config.dimCadri / 2) / Config.dimCadri) * Config.dimCadri;
+            dummy.mesh.position.x = Math.round((this.corps.position.x - Math.sin(this.corps.rotation.y) * distPut * Math.cos(this.tete.rotation.x)) / Config.dimCadri) * Config.dimCadri;
+            dummy.mesh.position.z = Math.round((this.corps.position.z - Math.cos(this.corps.rotation.y) * distPut * Math.cos(this.tete.rotation.x)) / Config.dimCadri) * Config.dimCadri;
             return canBouge;
         };
 
@@ -207,7 +208,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             var key = this.canGet();
             var objs = Game.getObjects();
             if(key) {
-                Db.remove(objs[key].position.x / Graphics.dimCadri, objs[key].position.y / Graphics.dimCadri, objs[key].position.z / Graphics.dimCadri);
+                Db.remove(objs[key].position.x / Config.dimCadri, objs[key].position.y / Config.dimCadri, objs[key].position.z / Config.dimCadri);
                 Game.removeCubeFromSceneByKey(key);
                 var obj = Db.addInventory({type: CubeTypes.WoodBlock}); // FIXME
                 dbUser.inventory.push(obj);
@@ -219,7 +220,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
 
         this.canGet = function() {
             var objs = Game.getObjects();
-            var distGet = Graphics.dimCadri; // FIXME: à ameliorer
+            var distGet = Config.dimCadri; // FIXME: à ameliorer
             var teteposabs = new THREE.Vector3(this.corps.position.x + this.tete.position.x, this.corps.position.y + this.tete.position.y, this.corps.position.z + this.tete.position.z)
             var vecteur = new THREE.Vector3(dummy.mesh.position.x - teteposabs.x, dummy.mesh.position.y - teteposabs.y, dummy.mesh.position.z - teteposabs.z).normalize();
             var raycaster = new THREE.Raycaster(teteposabs, vecteur);
@@ -236,33 +237,34 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
 
         this.putCube = function() {
             dummy.mesh.visible = false;
-            var obj = {x: dummy.mesh.position.x / Graphics.dimCadri, y: dummy.mesh.position.y / Graphics.dimCadri, z: dummy.mesh.position.z / Graphics.dimCadri};
+            var obj = {x: dummy.mesh.position.x / Config.dimCadri, y: dummy.mesh.position.y / Config.dimCadri, z: dummy.mesh.position.z / Config.dimCadri};
             Game.addCubeToScene(obj);
             Db.put(obj.x, obj.y, obj.z, CubeTypes.WoodBlock);
         };
 
         this.setCamDist = function(distCamPlayer) {
-            this.camera.position.x = this.tete.position.x + Math.sin(this.tete.rotation.y) * distCamPlayer;
-            this.camera.position.z = this.tete.position.z + Math.cos(this.tete.rotation.y) * distCamPlayer;
+            var limit = 5;
+            var dist = distCamPlayer;
+            if(dist < limit) dist = limit ;
+            this.camera.position.x = this.tete.position.x + Math.sin(this.tete.rotation.y) * dist;
+            this.camera.position.z = this.tete.position.z + Math.cos(this.tete.rotation.y) * dist;
+            if(distCamPlayer < limit) {
+                this.camera.fov = Config.viewAngle - distCamPlayer/1.5;
+                this.camera.updateProjectionMatrix();
+            } else if(this.camera.fov!= Config.viewAngle) {
+                this.camera.fov = Config.viewAngle;
+                this.camera.updateProjectionMatrix();
+            }
         };
 
         this.camdist = function(delta) {
-
             distCamPlayer -= delta / 30;
-            //this.camera.fov -= delta / 30;
-            //this.camera.updateProjectionMatrix();
-            //console.log(this.camera.fov);
-
-            if(distCamPlayer < 0)
-                distCamPlayer = 0;
-            if(distCamPlayer > 200)
-                distCamPlayer = 200;
-
+            if(distCamPlayer < -60) distCamPlayer = -60;
+            if(distCamPlayer > 300) distCamPlayer = 300;
             this.setCamDist(distCamPlayer);
-
         };
 
-        this.setCamDist(Graphics.distCamPlayer);
+        this.setCamDist(Config.distCamPlayer);
 
     }
     return {

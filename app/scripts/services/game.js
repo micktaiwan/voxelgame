@@ -21,7 +21,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     var dummy = [];
 
-    var geometry        = new THREE.CubeGeometry(Graphics.dimCadri, Graphics.dimCadri, Graphics.dimCadri);
+    var geometry        = new THREE.CubeGeometry(Config.dimCadri, Config.dimCadri, Config.dimCadri);
     var cubeMaterial    = new THREE.MeshLambertMaterial({map: THREE.ImageUtils.loadTexture('images/boite.jpg')});
 
     var canMove = false;
@@ -29,6 +29,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     var light, light2;
     var objects = [];
     var addMessageCallback = null; // method to add ingame messages
+
+    var textureFlare0 = THREE.ImageUtils.loadTexture( "images/lensflare0.png" );
+    var textureFlare2 = THREE.ImageUtils.loadTexture( "images/lensflare2.png" );
+    var textureFlare3 = THREE.ImageUtils.loadTexture( "images/lensflare3.png" );
 
     function copyVector(to, from) { // FIXME: pas sur que ça serve...
         to.x = from.x;
@@ -42,21 +46,30 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         to.tete.rotation.x = from.tete;
     }
 
-    function init(_addMessageCallback) {
-        addMessageCallback = _addMessageCallback;
-        scene = new THREE.Scene();
-        scene.fog = new THREE.Fog(0x444444, 0, 600);
 
-        light = new THREE.AmbientLight(0x444444);
-        scene.add(light);
-/*
-        light = new THREE.DirectionalLight(0x999988, 1.5);
-        light.position.set(1, 1, 0);
-        scene.add(light);
-*/
-        //light = new THREE.DirectionalLight(0x999988, 1.5);
-        light = new THREE.SpotLight(0xffffff, 1, 10000, 45);
-        light.position.set(0, 1000, 1000);
+    function lensFlareUpdateCallback( object ) {
+
+        var f, fl = object.lensFlares.length;
+        var flare;
+        var vecX = -object.positionScreen.x * 2;
+        var vecY = -object.positionScreen.y * 2;
+
+        for( f = 0; f < fl; f++ ) {
+               flare = object.lensFlares[ f ];
+               flare.x = object.positionScreen.x + vecX * flare.distance;
+               flare.y = object.positionScreen.y + vecY * flare.distance;
+               flare.rotation = 0;
+        }
+
+        object.lensFlares[ 2 ].y += 0.025;
+        object.lensFlares[ 3 ].rotation = object.positionScreen.x * 0.5 + THREE.Math.degToRad( 45 );
+    }
+
+    function addSun( h, s, l, x, y, z ) {
+
+        var light = new THREE.SpotLight( 0xffffff, 1.5, 0, 45);
+        light.color.setHSL( h, s, l );
+        light.position.set( x, y, z );
         light.castShadow = true;
         //light.shadowCameraVisible = true;
         light.shadowCameraNear = 100;
@@ -64,16 +77,40 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         light.shadowCameraFov = 30;
         scene.add(light);
 
-/*
-        light = new THREE.SpotLight(0xffffff);
-        light.position.set(0, 200, 0);
-        light.castShadow = true;
-        light.shadowCameraNear = 500;
-        light.shadowCameraFar = 4000;
-        light.shadowCameraFov = 30;
-        scene.add(light);
-*/
+        light = new THREE.PointLight( 0xffffff, 1, 0);
+        light.color.setHSL( h, s, l );
+        light.position.set( x, y, z );
 
+        var flareColor = new THREE.Color( 0xffffff );
+        flareColor.setHSL( h, s, l + 0.5 );
+
+        var lensFlare = new THREE.LensFlare( textureFlare0, 700, 0.0, THREE.AdditiveBlending, flareColor );
+
+        lensFlare.add( textureFlare2, 512, 0.0, THREE.AdditiveBlending );
+        lensFlare.add( textureFlare2, 512, 0.0, THREE.AdditiveBlending );
+        lensFlare.add( textureFlare2, 512, 0.0, THREE.AdditiveBlending );
+
+        lensFlare.add( textureFlare3, 60, 0.6, THREE.AdditiveBlending );
+        lensFlare.add( textureFlare3, 70, 0.7, THREE.AdditiveBlending );
+        lensFlare.add( textureFlare3, 120, 0.9, THREE.AdditiveBlending );
+        lensFlare.add( textureFlare3, 70, 1.0, THREE.AdditiveBlending );
+
+        lensFlare.customUpdateCallback = lensFlareUpdateCallback;
+        lensFlare.position = light.position;
+
+        scene.add(lensFlare);
+
+    }
+
+    function init(_addMessageCallback) {
+        addMessageCallback = _addMessageCallback;
+        scene = new THREE.Scene();
+        //scene.fog = new THREE.Fog(0x444444, 0, 600);
+
+        light = new THREE.AmbientLight(0xffffff);
+        light.color.setHSL( 0.1, 0.3, 0.2 );
+        scene.add(light);
+        addSun( 0.995, 0.5, 0.9, 0, 500, 300 );
 /*
         light2 = new THREE.PointLight(0xffffff, 2, 50);
         light2.position.set(-1, 1, -1);
@@ -83,7 +120,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         if(Config.modeDebug)
             modeDebug();
 
-        renderer = new THREE.WebGLRenderer();
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true } );
         renderer.setClearColor(0x447777);
         renderer.shadowMapEnabled = true;
         $game_div = $('#game');
@@ -108,7 +145,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     function getCubeFromScene(obj) {
         for (var key in objects) {
-            if(objects[key].position.x / Graphics.dimCadri == obj.x && objects[key].position.y / Graphics.dimCadri == obj.y && objects[key].position.z / Graphics.dimCadri == obj.z) {
+            if(objects[key].position.x / Config.dimCadri == obj.x && objects[key].position.y / Config.dimCadri == obj.y && objects[key].position.z / Config.dimCadri == obj.z) {
                 return key;
             }
         }
@@ -121,9 +158,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             return;
         }
         var mesh = new THREE.Mesh(geometry, cubeMaterial);
-        mesh.position.x = obj.x * Graphics.dimCadri;
-        mesh.position.y = obj.y * Graphics.dimCadri;
-        mesh.position.z = obj.z * Graphics.dimCadri;
+        mesh.position.x = obj.x * Config.dimCadri;
+        mesh.position.y = obj.y * Config.dimCadri;
+        mesh.position.z = obj.z * Config.dimCadri;
         mesh.castShadow = true;
         mesh.receiveShadow = true;
         scene.add(mesh);
@@ -252,20 +289,15 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     function animate() {
         requestAnimationFrame(animate);
-
         rendererStats.update(renderer);
-
         if(!player)
             return;
-
         //player.updateCamera();
-
         if(!isLocked) {
             player.move();
             player.jump();
             //light2.position.set(player.corps.position.x, player.corps.position.y, player.corps.position.z);
         }
-
         renderer.render(scene, player.camera);
         if(player.corps.position.y < -150)
             end();
@@ -275,13 +307,13 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     function end() {
         addMessage("You're dead...");
         player.corps.position.x = 0;
-        player.corps.position.y = Graphics.dimCadri + 10;
+        player.corps.position.y = Config.dimCadri + 10;
         player.corps.position.z = 0;
     }
 
     function posRnd(decalage) {
         decalage = decalage || 0;
-        return Math.floor(Math.random() * Graphics.dimCadri - decalage) * Graphics.dimCadri;
+        return Math.floor(Math.random() * Config.dimCadri - decalage) * Config.dimCadri;
     }
 
     function modeDebug() {
@@ -307,19 +339,19 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
         copyVector(this.corps.position, pos);
 
-        var geometrytorse = new THREE.CubeGeometry(Graphics.dimCadri / 2, Graphics.dimCadri / 2, Graphics.dimCadri / 2);
+        var geometrytorse = new THREE.CubeGeometry(Config.dimCadri / 2, Config.dimCadri / 2, Config.dimCadri / 2);
         var material = new THREE.MeshLambertMaterial({color: 0xffff00});
         var torse = new THREE.Mesh(geometrytorse, material);
         this.corps.add(torse);
         torse.castShadow = true;
         torse.receiveShadow = true;
 
-        var geometrytete = new THREE.CubeGeometry(Graphics.dimCadri / 4, Graphics.dimCadri / 4, Graphics.dimCadri / 4);
+        var geometrytete = new THREE.CubeGeometry(Config.dimCadri / 4, Config.dimCadri / 4, Config.dimCadri / 4);
         this.tete = new THREE.Mesh(geometrytete, material);
         this.tete.castShadow = true;
         this.tete.receiveShadow = true;
-        this.tete.position.y = Graphics.dimCadri / 2;
-        this.tete.position.z = Graphics.dimCadri / 4;
+        this.tete.position.y = Config.dimCadri / 2;
+        this.tete.position.z = Config.dimCadri / 4;
         this.corps.add(this.tete);
 
         var geometryName = new THREE.TextGeometry(name, {
@@ -333,8 +365,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
         var textMaterial = new THREE.MeshPhongMaterial({color: 0xffaa00});
         this.name_label = new THREE.Mesh(geometryName, textMaterial);
-        this.name_label.position.y = Graphics.dimCadri * 0.1;
-        this.name_label.position.z = Graphics.dimCadri * 0.25;
+        this.name_label.position.y = Config.dimCadri * 0.1;
+        this.name_label.position.z = Config.dimCadri * 0.25;
         this.name_label.position.x = -5;
         this.corps.add(this.name_label);
 

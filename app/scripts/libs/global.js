@@ -2,14 +2,11 @@ var CubeTypes = {
     WoodBlock: 1
 }
 
-var Graphics = {
-    dimCadri: 20,
-    distCamPlayer: 80,
-    viewAngle: 45
-}
-
 var Config = {
     modeDebug: false,
+    dimCadri: 20,
+    distCamPlayer: 80,
+    viewAngle: 45,
     playerSpeed: 1
 }
 
