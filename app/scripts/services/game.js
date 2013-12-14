@@ -168,61 +168,58 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     function control() {
 
         var onMouseMove = function(event) {
-            if(!isLocked) {
-                var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-                var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
-                player.corps.rotation.y -= movementX * 0.002;
-                player.tete.rotation.x -= movementY * 0.002;
+            if(isLocked) return;
+            var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+            var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+            player.corps.rotation.y -= movementX * 0.002;
+            player.tete.rotation.x -= movementY * 0.002;
 
-                // camera lag, not nicely done
-                //player.camera.position.x += movementX * 0.01;
-                //player.camera.position.y -= movementY * 0.01;
+            // camera lag, not nicely done
+            //player.camera.position.x += movementX * 0.01;
+            //player.camera.position.y -= movementY * 0.01;
 
-                if(player.tete.rotation.x < - Math.PI / 2)
-                    player.tete.rotation.x = - Math.PI / 2;
-                if(player.tete.rotation.x > Math.PI / 2)
-                    player.tete.rotation.x = Math.PI / 2;
+            if(player.tete.rotation.x < - Math.PI / 2)
+                player.tete.rotation.x = - Math.PI / 2;
+            if(player.tete.rotation.x > Math.PI / 2)
+                player.tete.rotation.x = Math.PI / 2;
 
-                Db.updateRot({corps: player.corps.rotation.y, tete: player.tete.rotation.x});
-            }
+            Db.updateRot({corps: player.corps.rotation.y, tete: player.tete.rotation.x});
         };
 
         var onKeyDown = function(event) {
-            if(!isLocked) {
-                switch (event.keyCode) {
+            if(isLocked) return;
+            switch (event.keyCode) {
 
-                    case 90: // z
-                        player.moveForward = true;
-                        break;
-                    case 81: // q
-                        player.moveLeft = true;
-                        break;
-                    case 83: // s
-                        player.moveBackward = true;
-                        break;
-                    case 68: // d
-                        player.moveRight = true;
-                        break;
-                    case 32: // space
-                        player.jumping = true;
-                        player.jump();
-                        break;
-                    case 65: // a
-                        player.getCube();
-                        break;
-                    case 69: // e
-                        player.putCube();
-                        break;
-                    case 73: // i
-                        player.toggleInventory();
-                        break;
-                }
+                case 90: // z
+                    player.moveForward = true;
+                    break;
+                case 81: // q
+                    player.moveLeft = true;
+                    break;
+                case 83: // s
+                    player.moveBackward = true;
+                    break;
+                case 68: // d
+                    player.moveRight = true;
+                    break;
+                case 32: // space
+                    player.jumping = true;
+                    player.jump();
+                    break;
+                case 65: // a
+                    player.getCube();
+                    break;
+                case 69: // e
+                    player.putCube();
+                    break;
+                case 73: // i
+                    player.toggleInventory();
+                    break;
             }
         };
 
         var onKeyUp = function(event) {
             switch (event.keyCode) {
-
                 case 38: // up
                 case 90: // z
                     player.moveForward = false;
@@ -246,10 +243,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         document.addEventListener('keydown', onKeyDown, false);
         document.addEventListener('keyup', onKeyUp, false);
         document.addEventListener('mousewheel', function(e) {
-            if(!isLocked) {
-                player.camdist(e.wheelDelta);
-                return false;
-            }
+            if(isLocked) return;
+            player.camdist(e.wheelDelta);
+            return false;
         }, false);
         document.addEventListener('mousedown', onDocumentMouseDown, false);
     }
@@ -372,18 +368,16 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     }
 
     function onDocumentMouseDown(event) {
-
-        if(!isLocked) {
-            switch (event.button) {
-                case 0: // left
-                    player.getCube();
-                    break;
-                case 1: // middle
-                    break;
-                case 2: // right
-                    player.putCube();
-                    break;
-            }
+        if(isLocked) return;
+        switch (event.button) {
+            case 0: // left
+                player.getCube();
+                break;
+            case 1: // middle
+                break;
+            case 2: // right
+                player.putCube();
+                break;
         }
     }
 

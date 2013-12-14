@@ -13,6 +13,7 @@ angular.module('gameApp')
         $scope.chat_messages = [];
 
         Notification.enable();
+        console.log('main');
 
         function initUser() {
             $rootScope.isSignedIn = Session.isSignedIn();
@@ -22,9 +23,14 @@ angular.module('gameApp')
 
         initUser();
         Session.onUsersLoad(initUser);
+        Db.onChatMsg(function(msg) {
+            $scope.chat_messages.push(msg);
+            if(msg.date > new Date().getTime() - 10*1000)
+                Notification.add(Notification.types.CHAT, msg.name + ': ' + msg.text);
+        });
+
 
         function getChatMsgIndex(id) {
-            console.log(id);
             var indexes = $.map($scope.chat_messages, function(chat, index) {
                 if(chat.id == id) return index;
             });
@@ -46,21 +52,14 @@ angular.module('gameApp')
             $rootScope.isSignedIn = false;
         };
 
-        // Chat
-        Db.getChatMsg(function(msg) {
-            $scope.chat_messages.push(msg);
-            if(msg.date > new Date().getTime() - 10*1000)
-                Notification.add(Notification.types.CHAT, msg.name + ': ' + msg.text);
-        });
-
         $scope.addMsg = function(name, msg) {
             Db.addMessage(name, msg);
             $scope.msg = '';
         }
         $scope.deleteMsg = function(id) {
             var i = getChatMsgIndex(id);
-            $scope.chat_messages.splice(i, 1);
             Db.deleteMessage(id);
+            $scope.chat_messages.splice(i, 1);
         }
     });
 
