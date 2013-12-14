@@ -106,7 +106,7 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
             tchat_ref.child(id).remove();
         },
 
-        getChatMsg: function(callbackSuccess) {
+        onChatMsg: function(callbackSuccess) {
             tchat_ref.limit(10).on('child_added', function(snapshot) {
                 safeApply($rootScope, function(){
                     callbackSuccess(snapshot.val());

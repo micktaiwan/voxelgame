@@ -10,7 +10,7 @@ var Graphics = {
 
 var Config = {
     modeDebug: false,
-    playerSpeed: 2
+    playerSpeed: 1
 }
 
 // cookies

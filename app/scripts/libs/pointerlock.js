@@ -58,7 +58,7 @@ elem.addEventListener('keyup', function(e) {
             enablePointerLock();
         else
             disablePointerLock();
-        
+
         escDown = false;
     }
 });
