@@ -10,13 +10,14 @@ angular.module('gameApp.services.notification', []).factory('Notification', func
       },
 
       enable : function(){
-          if (webkitNotifications.checkPermission() != 0) {
+          if (typeof webkitNotifications!=='undefined' && webkitNotifications.checkPermission() != 0) {
               console.log('no notification permissions');
               webkitNotifications.requestPermission();
           }
       },
 
       add : function(type, text){
+        if(typeof webkitNotifications==='undefined') return;
         try {
           webkitNotifications.createNotification(
               type.icon,
