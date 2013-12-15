@@ -41,6 +41,9 @@ angular.module('gameApp')
             Session.login($scope.name, $scope.pwd);
             $rootScope.isSignedIn = Session.isSignedIn();
         };
+        $scope.test = function() {
+            console.log('ok');
+        };
 
         $scope.signup = function() {
             Session.signup($scope, $scope.name, $scope.email, $scope.pwd);
@@ -53,6 +56,7 @@ angular.module('gameApp')
         };
 
         $scope.addMsg = function(name, msg) {
+            if(!msg) return;
             Db.addMessage(name, msg);
             $scope.msg = '';
         }

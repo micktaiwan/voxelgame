@@ -356,7 +356,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     function PNJ(id, name, pos, rot) {
 
         if(!pos)
-            pos = {x: 0, y: 0, z: 0};
+            pos = {x: 0, y: Config.dimCadri, z: 0};
         if(!rot)
             rot = {corps: 0, tete: 0};
         this.id = id;

@@ -7,7 +7,8 @@ var Config = {
     dimCadri: 20,
     distCamPlayer: 80,
     viewAngle: 45,
-    playerSpeed: 1
+    playerSpeed: 1,
+    maxInventory: 20
 }
 
 // cookies

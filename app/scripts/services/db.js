@@ -73,7 +73,7 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
 
         addUser: function(name, email, callback) {
             var id = users_ref.push().name(); // generate a unique id based on timestamp
-            var user = {id: id, name: name, email: email};
+            var user = {id: id, name: name, email: email, date: new Date().getTime()};
             users_ref.child(id).set(user);
             if(callback) callback(user);
         },
@@ -144,6 +144,11 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
                 value['attrs'] = obj.attrs;
             }
             return value;
+        },
+
+        removeInventory: function(id) {
+            if(!user) return;
+            users_ref.child(user.id).child('inventory').child(id).remove();
         },
 
         remove: function(id) {

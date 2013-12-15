@@ -9,7 +9,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
     function player(_id, name, pos, playerUpdateCallback, toggleInventoryCallback) {
 
         if(!pos)
-            pos = {x: 0, y: 0, z: 0};
+            pos = {x: 0, y: 50, z: 0};
         // info player
         var id = _id;
         var dbUser = null;
@@ -208,6 +208,10 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         };
 
         this.getCube = function() {
+            if(dbUser.inventory.length >= Config.maxInventory) {
+                Game.addMessage('Too many objects in inventory');
+                return;
+            }
             var key = this.canGet();
             if(key) {
                 //debugger;
@@ -241,6 +245,12 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         };
 
         this.putCube = function() {
+            var cube = dbUser.inventory.pop();
+            //console.log(cube);
+            if(!cube) {
+                Game.addMessage('Nothing in inventory!');
+                return;
+            }
             var key = this.canGet();
             if(key) {
                 Game.addMessage('There is a cube there');
@@ -248,7 +258,8 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             }
             //dummy.mesh.visible = false;
             var obj = {x: dummy.mesh.position.x / Config.dimCadri, y: dummy.mesh.position.y / Config.dimCadri, z: dummy.mesh.position.z / Config.dimCadri};
-            Db.put(obj.x, obj.y, obj.z, CubeTypes.WoodBlock);
+            Db.put(obj.x, obj.y, obj.z, cube.type);
+            Db.removeInventory(cube.id);
         };
 
         this.setCamDist = function(distCamPlayer) {
