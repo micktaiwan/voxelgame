@@ -31,7 +31,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
 
         var dummy = Game.addGetPutDummy();
         var distCamPlayer = Config.distCamPlayer;
-        var distCollision = 8;
+        var distCollision = Config.dimCadri/1.5;
         var _toggleInventoryCallback = toggleInventoryCallback;
 
         var audio = document.createElement('audio');
@@ -54,7 +54,8 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         map.anisotropy = 16;
 
         var material = new THREE.MeshLambertMaterial({ambient: 0xbbbbbb, map: map});
-        var geometrytorse = new THREE.CubeGeometry(Config.dimCadri / 2, Config.dimCadri / 2, Config.dimCadri / 2);
+        var d = Config.dimCadri;
+        var geometrytorse = new THREE.CubeGeometry(d, d, d);
         //    var material = new THREE.MeshLambertMaterial({color: 0xffff00});
         this.torse = new THREE.Mesh(geometrytorse, material);
         this.torse.castShadow = true;
@@ -62,12 +63,12 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
 
         this.corps.add(this.torse);
 
-        var geometrytete = new THREE.CubeGeometry(Config.dimCadri / 4, Config.dimCadri / 4, Config.dimCadri / 4);
+        var geometrytete = new THREE.CubeGeometry(d / 2, d / 2, d / 2);
         this.tete = new THREE.Mesh(geometrytete, material);
         this.tete.castShadow = true;
         this.tete.receiveShadow = true;
-        this.tete.position.y = Config.dimCadri / 2;
-        this.tete.position.z = -5;
+        this.tete.position.y = d;
+        this.tete.position.z = -d / 4;
         this.corps.add(this.tete);
 
         this.camera = new THREE.PerspectiveCamera(Config.viewwAngle, window.innerWidth / window.innerHeight, 1, 1000);

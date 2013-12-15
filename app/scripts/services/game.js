@@ -364,36 +364,41 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.corps = new THREE.Object3D();
 
         copyVector(this.corps.position, pos);
-
-        var geometrytorse = new THREE.CubeGeometry(Config.dimCadri / 2, Config.dimCadri / 2, Config.dimCadri / 2);
+        var d = Config.dimCadri;
+        var geometrytorse = new THREE.CubeGeometry(d, d, d);
         var material = new THREE.MeshLambertMaterial({color: 0xffff00});
         var torse = new THREE.Mesh(geometrytorse, material);
         this.corps.add(torse);
         torse.castShadow = true;
         torse.receiveShadow = true;
 
-        var geometrytete = new THREE.CubeGeometry(Config.dimCadri / 4, Config.dimCadri / 4, Config.dimCadri / 4);
+        var geometrytete = new THREE.CubeGeometry(d/2, d/2, d/2);
         this.tete = new THREE.Mesh(geometrytete, material);
         this.tete.castShadow = true;
         this.tete.receiveShadow = true;
-        this.tete.position.y = Config.dimCadri / 2;
-        this.tete.position.z = Config.dimCadri / 4;
+        this.tete.position.y = d;
+        this.tete.position.z = d / 4;
         this.corps.add(this.tete);
 
         var geometryName = new THREE.TextGeometry(name, {
             font: 'optimer', // Must be lowercase!
             weight: 'normal',
             style: 'normal',
-            size: 2,
+            size: 4,
             height: 0.5,
+            curveSegments: 2,
             bevelThickness: 0.1, bevelSize: 0.1, bevelEnabled: true
         });
 
         var textMaterial = new THREE.MeshPhongMaterial({color: 0xffaa00});
         this.name_label = new THREE.Mesh(geometryName, textMaterial);
-        this.name_label.position.y = Config.dimCadri * 0.1;
-        this.name_label.position.z = Config.dimCadri * 0.25;
-        this.name_label.position.x = -5;
+        var box = new THREE.Box3();
+        box.setFromObject(this.name_label);
+        console.log(box);
+        var centerOffset = (box.max.x - box.min.x) / 2;
+        this.name_label.position.y = d * 0.25;
+        this.name_label.position.z = d * 0.5;
+        this.name_label.position.x = -centerOffset;
         this.corps.add(this.name_label);
 
         copyRotation(this, rot);
