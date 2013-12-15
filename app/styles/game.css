@@ -49,7 +49,6 @@ body {
     box-align: center;
 
     color: #ffffff;
-
 }
 
 #instruction > p {
@@ -58,12 +57,19 @@ body {
 
 #inventory {
     position: absolute;
-    top: 50px;
+    top: 60px;
     left: 400px;
     width: 500px;
     background-color: rgba(0,0,0,0.7);
     color: white;
     padding: 20px;
+    border: 1px solid black;
+    border-radius: 4px;
+}
+
+#inventory > h1 {
+    margin: 0;
+    padding:0;
 }
 
 #console {

@@ -29,7 +29,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             }
         });
 
-        var dummy = Game.addGetPutDummy();
+        this.dummy = Game.addGetPutDummy();
         var distCamPlayer = Config.distCamPlayer;
         var distCollision = Config.dimCadri/1.5;
         var _toggleInventoryCallback = toggleInventoryCallback;
@@ -165,13 +165,15 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             var distPut = 25;
 
             // Grille
-            dummy.mesh.position.y = Math.round((this.corps.position.y + Math.sin(this.tete.rotation.x) * distPut + Config.dimCadri / 2) / Config.dimCadri) * Config.dimCadri;
-            dummy.mesh.position.x = Math.round((this.corps.position.x - Math.sin(this.corps.rotation.y) * distPut * Math.cos(this.tete.rotation.x)) / Config.dimCadri) * Config.dimCadri;
-            dummy.mesh.position.z = Math.round((this.corps.position.z - Math.cos(this.corps.rotation.y) * distPut * Math.cos(this.tete.rotation.x)) / Config.dimCadri) * Config.dimCadri;
+            this.dummy.mesh.position.y = Math.round((this.corps.position.y + Math.sin(this.tete.rotation.x) * distPut + Config.dimCadri / 2) / Config.dimCadri) * Config.dimCadri;
+            this.dummy.mesh.position.x = Math.round((this.corps.position.x - Math.sin(this.corps.rotation.y) * distPut * Math.cos(this.tete.rotation.x)) / Config.dimCadri) * Config.dimCadri;
+            this.dummy.mesh.position.z = Math.round((this.corps.position.z - Math.cos(this.corps.rotation.y) * distPut * Math.cos(this.tete.rotation.x)) / Config.dimCadri) * Config.dimCadri;
             return canBouge;
         };
 
-        this.jump = function() {
+        this.jump = function(isJumping) {
+            if(isJumping) this.jumping = true;
+
             if(canJump && this.jumping == true) {
                 canJump = false;
                 saut = 4.3;
@@ -228,14 +230,14 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                 Game.addMessage(key + ' (' + obj.id + ')' + ' put in inventory');
             }
             else
-                console.log('no cube here !');
+                Game.addMessage('No cube here !');
         };
 
         this.canGet = function() {
             var objs = Game.getMeshObjects();
-            var distGet = Config.dimCadri; // FIXME: à ameliorer
+            var distGet = Config.dimCadri*2; // FIXME: à améliorer
             var teteposabs = new THREE.Vector3(this.corps.position.x + this.tete.position.x, this.corps.position.y + this.tete.position.y, this.corps.position.z + this.tete.position.z)
-            var vecteur = new THREE.Vector3(dummy.mesh.position.x - teteposabs.x, dummy.mesh.position.y - teteposabs.y, dummy.mesh.position.z - teteposabs.z).normalize();
+            var vecteur = new THREE.Vector3(this.dummy.mesh.position.x - teteposabs.x, this.dummy.mesh.position.y - teteposabs.y, this.dummy.mesh.position.z - teteposabs.z).normalize();
             var raycaster = new THREE.Raycaster(teteposabs, vecteur);
             var intersects = raycaster.intersectObjects(objs);
             if(intersects.length > 0 && intersects[0].distance < distGet) {
@@ -261,7 +263,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                 return;
             }
             //dummy.mesh.visible = false;
-            var obj = {x: dummy.mesh.position.x / Config.dimCadri, y: dummy.mesh.position.y / Config.dimCadri, z: dummy.mesh.position.z / Config.dimCadri};
+            var obj = {x: this.dummy.mesh.position.x / Config.dimCadri, y: this.dummy.mesh.position.y / Config.dimCadri, z: this.dummy.mesh.position.z / Config.dimCadri};
             Db.put(obj.x, obj.y, obj.z, cube.type);
             Db.removeInventory(cube.id);
         };

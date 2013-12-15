@@ -268,8 +268,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
                     player.moveRight = true;
                     break;
                 case 32: // space
-                    player.jumping = true;
-                    player.jump();
+                    player.jump(true);
                     break;
                 case 65: // a
                     player.getCube();
@@ -313,6 +312,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             return false;
         }, false);
         document.addEventListener('mousedown', onDocumentMouseDown, false);
+        document.addEventListener('mouseup', onDocumentMouseUp, false);
     }
 
     function animate() {
@@ -422,15 +422,31 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     function dummyC() {
         this.mesh = new THREE.BoxHelper();
-        this.mesh.material.color.setRGB(0, 1, 0);
-        this.mesh.scale.set(10, 10, 10);
-        this.mesh.position.y = 20;
-        this.mesh.position.x = 15;
+        //this.mesh.material.color.setRGB(0, 1, 0);
+        this.mesh.scale.set(Config.dimCadri/2, Config.dimCadri/2, Config.dimCadri/2);
+        //this.mesh.position.y = 20;
+        //this.mesh.position.x = 15;
         this.mesh.visible = false;
     }
 
     function onDocumentMouseDown(event) {
         if(isLocked) return;
+        switch (event.button) {
+            case 0: // left
+                 player.dummy.mesh.material.color.setRGB(1, 0, 0); // get
+                break;
+            case 1: // middle
+                break;
+            case 2: // right
+                 player.dummy.mesh.material.color.setRGB(0, 1, 0); // put
+                break;
+        }
+        player.dummy.mesh.visible = true;
+    }
+
+    function onDocumentMouseUp(event) {
+        if(isLocked) return;
+        player.dummy.mesh.visible = false;
         switch (event.button) {
             case 0: // left
                 player.getCube();
