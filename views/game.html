@@ -2,23 +2,25 @@
     <div id="title">Click !</div>
     <div id="instructions">
         <p>
-            Z, Q, S, D / Souris = Deplacement<br>
-            ESPACE = Sauter<br>
-            <b>getcube touche E.</b><br>
-            En cours: Inventaire<br>
-            Echap : Pause
+            Deplacements: Z, Q, S, D / Souris<br>
+            Sauter: Espace<br>
+            Poser cube: R / click droit<br>
+            Prendre cube: E / click gauche<br>
+            Inventaire: I<br>
+            Pause: Echap
         </p>
     </div>
 </div>
 
-<div id="inventaire" ng-show="showInventory">
-    <div id="title">Inventaire</div>
-    <p>{{nbInventory}} objects</p>
-    <li ng-repeat="o in inventory">{{o.type}} - {{o.date | date}}</li>
-    <img src="">
-
-    <p>Ca sert à rien mais c'est pour faire une démo :)</p>
-    <strong>Coords:</strong> <li ng-repeat="(key, value) in pos">{{key}}: {{value | number:2}}</li>
+<div id="inventory" ng-show="showInventory">
+    <div id="title">Inventory</div>
+    <p>{{nbInventory}} objects (maintain esc to get your mouse back)</p>
+<!--
+     <ul class="inventory_objects">
+        <li ng-repeat="o in inventory">{{o.type}} - {{o.date | date}}</li>
+    </ul>
+ -->
+    <button ng-repeat="o in inventory" class="btn btn-default" ng-click="console.log('ok')">Wood</button>
 </div>
 
 <ul id="console" class="console" ng-show="showConsole">
