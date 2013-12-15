@@ -40,6 +40,11 @@ angular.module('gameApp')
             $scope.showInventory = !$scope.showInventory;
         }
 
+        $scope.selectInventory = function(obj) {
+            $scope.selectedInventoryObject = obj.id;
+            //$scope.showInventory = false;
+        }
+
         function consummeMessage() {
             $timeout(function() {
                 $scope.msgs.splice(0,1);

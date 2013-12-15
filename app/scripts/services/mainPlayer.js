@@ -180,8 +180,11 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             var canFall = true;
             var raycaster = new THREE.Raycaster(this.corps.position, new THREE.Vector3(0, -1, 0));
             var intersects = raycaster.intersectObjects(Game.getMeshObjects());
-            if(intersects.length > 0 && intersects[0].distance < distCollision) {
+            if(intersects.length > 0 && intersects[0].distance < distCollision) { // FIXME: too simple. Does not take into account the object or player size
                 canFall = false;
+                //this.corps.position.y = intersects[0].object.position.y + Config.dimCadri; // FIXME: should be the player body size
+                //console.log(intersects[0]);
+                //debugger;
             }
 
             if(saut < 0)

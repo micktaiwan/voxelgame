@@ -93,20 +93,6 @@ ul.console > li:before {
     color: red;
 }
 
-ul.inventory_objects {
-    list-style: none;
-    padding:0;
-    margin:0;
-    height: 300px;
-    overflow: auto;
-}
-
-ul.inventory_objects > li {
-    padding-left: 1em;
-    text-indent: -.7em;
-}
-
-ul.inventory_objects > li:before {
-    content: "> ";
-    color: red;
+.active {
+    background-color: red;
 }

@@ -17,7 +17,12 @@ elem.requestPointerLock =
         elem.webkitRequestPointerLock;
 
 var enablePointerLock = function() {
-    if(elem.webkitRequestPointerLock) {
+/*
+    $('#blocker').hide();
+    isLocked = false;
+    return;
+*/
+    if(elem.requestPointerLock) {
         elem.requestPointerLock();
     } else {
         elem.requestFullscreen();
