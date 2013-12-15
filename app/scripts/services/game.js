@@ -91,10 +91,12 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         light.position.set( x, y, z );
         light.castShadow = true;
         //light.shadowCameraVisible = true;
-        light.shadowCameraNear = 100;
+/*
+        light.shadowCameraNear = 10;
         light.shadowCameraFar = 10000;
         light.shadowCameraFov = 30;
-        light.shadowDarkness = 0.5;
+*/
+        light.shadowDarkness = 0.8;
         scene.add(light);
 
         light = new THREE.PointLight( 0xffffff, 1, 0);
@@ -129,11 +131,13 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     function init(_addMessageCallback) {
         addMessageCallback = _addMessageCallback;
         scene = new THREE.Scene();
-        //scene.fog = new THREE.Fog(0x444444, 0, 600);
+        scene.fog = new THREE.Fog(0x333333, 300, 1000);
+
 
         light = new THREE.AmbientLight(0xffffff);
-        light.color.setHSL( 0.1, 0.3, 0.1 );
+        light.color.setHSL( 0.1, 0.3, 0.2 );
         scene.add(light);
+
         addSun( 0.995, 0.5, 0.9, 0, 500, 300 );
 /*
         light2 = new THREE.PointLight(0xffffff, 2, 50);
@@ -144,7 +148,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             modeDebug();
 
         renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true } );
-        renderer.setClearColor(0x225555);
+        renderer.setClearColor(0x333333);
         renderer.shadowMapEnabled = true;
         renderer.shadowMapSoft = true;
         $game_div = $('#game');

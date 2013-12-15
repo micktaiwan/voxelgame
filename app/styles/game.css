@@ -8,8 +8,7 @@ body {
 #game {
     width: 100%;
     height: 100%;
-    overflow-x: hidden;
-    overflow-y: hidden;
+    overflow: hidden;
 }
 
 #blocker {
@@ -18,6 +17,7 @@ body {
     width: 100%;
     height: 100%;
     background-color: rgba(0,0,0,0.7);
+    cursor: pointer;
 }
 
 #title {
@@ -49,10 +49,11 @@ body {
     box-align: center;
 
     color: #ffffff;
-    text-align: center;
 
-    cursor: pointer;
+}
 
+#instruction > p {
+    width: 250px;
 }
 
 #inventory {
