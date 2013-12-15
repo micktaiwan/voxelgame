@@ -27,7 +27,6 @@ var enablePointerLock = function() {
 
 var disablePointerLock = function() {
     $('#blocker').show();
-    $('#inventaire').hide();
 };
 
 var onFullscreenChange = function() {
@@ -58,7 +57,6 @@ elem.addEventListener('keyup', function(e) {
             enablePointerLock();
         else
             disablePointerLock();
-
         escDown = false;
     }
 });

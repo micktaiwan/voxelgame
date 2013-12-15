@@ -5,13 +5,13 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     function safeApply(scope, fn) {
         (scope.$$phase || scope.$root.$$phase) ? fn() : scope.$apply(fn);
     };
-
+/*
     var rendererStats = new THREEx.RendererStats();
     rendererStats.domElement.style.position = 'absolute';
     rendererStats.domElement.style.right     = '0px';
     rendererStats.domElement.style.top      = '50px';
     document.body.appendChild(rendererStats.domElement);
-
+*/
     var $game_div;
     var scene, renderer;
     var geometry, material, mesh;
@@ -165,9 +165,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     }
 
     function getCubeFromScene(obj) {
-        var objs = getMeshObjects();
-        for (var key in objs) {
-            if(objs[key].obj && objs[key].obj.id == obj.id) {
+        for (var key in objects) {
+            if(objects[key].obj && objects[key].obj.id == obj.id) {
                 return key;
             }
         }
@@ -195,6 +194,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     function removeCubeFromScene(obj) {
         var key = getCubeFromScene(obj);
         if(key)   removeCubeFromSceneByKey(key);
+        else {
+            console.error("did not find cube");
+            console.error(obj);
+        }
     }
 
     // type: 'added', 'changed', 'removed'
@@ -310,7 +313,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     function animate() {
         requestAnimationFrame(animate);
-        rendererStats.update(renderer);
+        //rendererStats.update(renderer);
         if(!player)
             return;
         //player.updateCamera();

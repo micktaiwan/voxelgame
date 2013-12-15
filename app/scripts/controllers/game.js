@@ -33,9 +33,10 @@ angular.module('gameApp')
         };
 
         function toggleInventory(inventory) {
-            console.log(inventory);
-            $scope.inventory = inventory;
-            $scope.nbInventory  = inventory.length;
+            if(inventory) {
+                $scope.inventory = inventory;
+                $scope.nbInventory  = inventory.length;
+            }
             $scope.showInventory = !$scope.showInventory;
         }
 

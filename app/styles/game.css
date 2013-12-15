@@ -55,9 +55,9 @@ body {
 
 }
 
-#inventaire {
+#inventory {
     position: absolute;
-    top: 150px;
+    top: 50px;
     left: 400px;
     width: 500px;
     background-color: rgba(0,0,0,0.7);
@@ -88,6 +88,24 @@ ul.console > li {
 }
 
 ul.console > li:before {
+    content: "> ";
+    color: red;
+}
+
+ul.inventory_objects {
+    list-style: none;
+    padding:0;
+    margin:0;
+    height: 300px;
+    overflow: auto;
+}
+
+ul.inventory_objects > li {
+    padding-left: 1em;
+    text-indent: -.7em;
+}
+
+ul.inventory_objects > li:before {
     content: "> ";
     color: red;
 }
