@@ -21,9 +21,9 @@
     <strong>Coords:</strong> <li ng-repeat='(key, value) in pos'>{{key}}: {{value | number:2}}</li>
 </div>
 
-<div id="console" class="console" ng-show="showConsole">
+<ul id="console" class="console" ng-show="showConsole">
     <li ng-repeat="m in msgs">{{m}}</li>
-</div>
+</ul>
 
 <div id="game"></div>
 

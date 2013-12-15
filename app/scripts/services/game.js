@@ -8,8 +8,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     var rendererStats = new THREEx.RendererStats();
     rendererStats.domElement.style.position = 'absolute';
-    rendererStats.domElement.style.left     = '0px';
-    rendererStats.domElement.style.bottom   = '0px';
+    rendererStats.domElement.style.right     = '0px';
+    rendererStats.domElement.style.top      = '50px';
     document.body.appendChild(rendererStats.domElement);
 
     var $game_div;
@@ -217,10 +217,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             player.camera.updateProjectionMatrix();
         }
         var width  = window.innerWidth  - $game_div[0].offsetLeft * 2;
-        var height = window.innerHeight - $game_div[0].offsetTop  * 2;
-        renderer.setSize(width, height);
+        var height = window.innerHeight - $game_div[0].offsetTop-5;
         $game_div[0].style.width  = width;
         $game_div[0].style.height = height;
+        renderer.setSize(width, height);
     }
 
     function control() {
