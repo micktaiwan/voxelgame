@@ -394,7 +394,6 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.name_label = new THREE.Mesh(geometryName, textMaterial);
         var box = new THREE.Box3();
         box.setFromObject(this.name_label);
-        console.log(box);
         var centerOffset = (box.max.x - box.min.x) / 2;
         this.name_label.position.y = d * 0.25;
         this.name_label.position.z = d * 0.5;

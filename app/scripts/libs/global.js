@@ -5,7 +5,7 @@ var CubeTypes = {
 var Config = {
     modeDebug: false,
     dimCadri: 20,
-    distCamPlayer: 80,
+    distCamPlayer: 120,
     viewAngle: 45,
     playerSpeed: 1,
     maxInventory: 20
