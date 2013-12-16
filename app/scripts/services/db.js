@@ -10,6 +10,9 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
     var cubes_ref = new Firebase(CONFIG.firebaseUrl + '/cubes');
     var cubelist_ref = new Firebase(CONFIG.firebaseUrl + '/cubelist');
     var user = null;
+    var lastPosUpdate = new Date().getTime();
+    var lastRotUpdate = new Date().getTime();
+    var minUpdateInterval = 1 * 1000;
     $rootScope.users = [];
 
     function safeApply(scope, fn) {
@@ -164,12 +167,18 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
         // Update current logged user position
         updatePos: function(pos) {
             if(!user) return;
+            var time = new Date().getTime();
+            if(lastPosUpdate > time - minUpdateInterval) return;
+            lastPosUpdate = time;
             var node = users_ref.child(user.id);
             node.child('pos').update(pos);
-            node.update({date: new Date().getTime()});
+            node.update({date: time});
         },
         updateRot: function(rot) {
             if(!user) return;
+            var time = new Date().getTime();
+            if(lastRotUpdate > time - minUpdateInterval) return;
+            lastRotUpdate = time;
             var node = users_ref.child(user.id);
             node.child('rot').update(rot);
             node.update({date: new Date().getTime()});

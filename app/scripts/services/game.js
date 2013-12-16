@@ -232,10 +232,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     function control() {
 
-        function onmove(event) {
+        function onMove(event) {
             if(isLocked) return;
-            var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || event.pageX || 0;
-            var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || event.pageY || 0;
+            var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;// event.pageX || 0;
+            var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0; //event.pageY || 0;
             player.corps.rotation.y -= movementX * 0.002;
             player.tete.rotation.x  -= movementY * 0.002;
 
@@ -261,7 +261,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         calls your existing onmousemove handler. That would be for handling events from iOS devices running mobile Safari.
         You'll probably have to add some additional translations to handle other devices/browsers as well.
 */
-        var ontouchmove = function(event) {
+        var onTouch = function(event) {
             onmove(event);
         }
 
@@ -317,8 +317,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             }
 
         };
-        document.addEventListener('mousemove', onMouseMove, false);
-        document.addEventListener('touch', onTouch, false);
+        document.addEventListener('mousemove', onMove, false);
+        //var is_touch_device = 'ontouchstart' in document.documentElement;
+        //document.addEventListener('touch', onTouch, false);
         document.addEventListener('keydown', onKeyDown, false);
         document.addEventListener('keyup', onKeyUp, false);
         document.addEventListener('mousewheel', function(e) {
