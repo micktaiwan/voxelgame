@@ -55,7 +55,11 @@
         <h2>Dernière connection des joueurs</h2>
         <div>
             <ul class="chats">
-                <li ng-repeat="u in users | orderBy:'-date'">{{u.date | date:'dd-MMM HH:mm'}}: {{u.name}}</li>
+                <li ng-repeat="u in users | orderBy:'-date'">
+                    <strong ng-show="u.connections">connected</strong>
+                    <span ng-hide="u.connections">{{u.date | date:'dd-MMM HH:mm'}}</span>
+                    {{u.name}}
+                </li>
             </ul>
         </div>
     </div>

@@ -19,6 +19,33 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
         (scope.$$phase || scope.$root.$$phase) ? fn() : scope.$apply(fn);
     };
 
+    function connect() {
+        if(!user) throw "connect called without any user"
+        // since I can connect from multiple devices or browser tabs, we store each connection instance separately
+        // any time that connectionsRef's value is null (i.e. has no children) I am offline
+        var myConnectionsRef = new Firebase(CONFIG.firebaseUrl + '/users/'+user.id+'/connections');
+
+        // stores the timestamp of my last disconnect (the last time I was seen online)
+        var lastOnlineRef = new Firebase(CONFIG.firebaseUrl + '/users/'+user.id+'/date');
+
+        var connectedRef = new Firebase(CONFIG.firebaseUrl + '/.info/connected');
+        connectedRef.on('value', function(snap) {
+            if (snap.val() === true) {
+                // We're connected (or reconnected)! Do anything here that should happen only if online (or on reconnect)
+                lastOnlineRef.set(Firebase.ServerValue.TIMESTAMP);
+                // add this device to my connections list
+                // this value could contain info about the device or a timestamp too
+                var con = myConnectionsRef.push(true);
+
+                // when I disconnect, remove this device
+                con.onDisconnect().remove();
+
+                // when I disconnect, update the last time I was seen online
+                lastOnlineRef.onDisconnect().set(Firebase.ServerValue.TIMESTAMP);
+            }
+        });
+    };
+
     // get all users once
     function getUsers (callbackSuccess) {
         users_ref.once('value', function(snapshot) {
@@ -72,11 +99,12 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
 
         setUser : function(u) {
             user = u;
+            connect();
         },
 
         addUser: function(name, email, callback) {
             var id = users_ref.push().name(); // generate a unique id based on timestamp
-            var user = {id: id, name: name, email: email, date: new Date().getTime()};
+            var user = {id: id, name: name, email: email, date: Firebase.ServerValue.TIMESTAMP};
             users_ref.child(id).set(user);
             if(callback) callback(user);
         },
@@ -102,7 +130,7 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
 
         addMessage: function(name, text) {
             var id = tchat_ref.push().name();
-            tchat_ref.child(id).set({id: id, name: name, text: text, date: new Date().getTime()});
+            tchat_ref.child(id).set({id: id, name: name, text: text, date: Firebase.ServerValue.TIMESTAMP});
         },
 
         deleteMessage: function(id) {
@@ -140,7 +168,7 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
         addInventory: function(obj) {
             if(!user) return;
             var id = users_ref.child(user.id).child('inventory').push().name();
-            var value = {id: id, type: obj.type, date: new Date().getTime()};
+            var value = {id: id, type: obj.type, date: Firebase.ServerValue.TIMESTAMP};
             users_ref.child(user.id).child('inventory').child(id).update(value);
             if(obj.attrs) {
                 users_ref.child(user.id).child('inventory').child(id).child('attrs').update(obj.attrs);
