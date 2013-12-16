@@ -232,12 +232,12 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     function control() {
 
-        var onMouseMove = function(event) {
+        function onmove(event) {
             if(isLocked) return;
-            var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-            var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+            var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || event.pageX || 0;
+            var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || event.pageY || 0;
             player.corps.rotation.y -= movementX * 0.002;
-            player.tete.rotation.x -= movementY * 0.002;
+            player.tete.rotation.x  -= movementY * 0.002;
 
             // camera lag, not nicely done
             //player.camera.position.x += movementX * 0.01;
@@ -249,7 +249,21 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
                 player.tete.rotation.x = Math.PI / 2;
 
             Db.updateRot({corps: player.corps.rotation.y, tete: player.tete.rotation.x});
+        }
+
+        var onMouseMove = function(event) {
+            onmove(event);
         };
+
+        // TODO
+/*
+        add an ontouchmove handler that translates the event's screenX and screenY to pageX and pageY and then
+        calls your existing onmousemove handler. That would be for handling events from iOS devices running mobile Safari.
+        You'll probably have to add some additional translations to handle other devices/browsers as well.
+*/
+        var ontouchmove = function(event) {
+            onmove(event);
+        }
 
         var onKeyDown = function(event) {
             if(isLocked) return;
@@ -304,6 +318,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
         };
         document.addEventListener('mousemove', onMouseMove, false);
+        document.addEventListener('touch', onTouch, false);
         document.addEventListener('keydown', onKeyDown, false);
         document.addEventListener('keyup', onKeyUp, false);
         document.addEventListener('mousewheel', function(e) {
