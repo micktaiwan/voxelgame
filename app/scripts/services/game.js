@@ -262,6 +262,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             if (isLocked) return;
             var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0; // event.pageX || 0;
             var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0; //event.pageY || 0;
+
+            // FIXME: devrait appeller une fonction de player, qui elle met à jour les données et la DB
             player.corps.rotation.y -= movementX * 0.002;
             player.tete.rotation.x -= movementY * 0.002;
 
@@ -429,6 +431,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             };
         this.id = p.id;
         this.name = p.name;
+        this.onlinePresence = false;
         this.corps = new THREE.Object3D();
 
         copyVector(this.corps.position, p.pos);
@@ -484,6 +487,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         });
 
         this.updateOnlinePresence = function(isOnline) {
+            this.onlinePresence = isOnline;
             if (isOnline) {
                 this.torse.material.opacity = 1;
             } else {

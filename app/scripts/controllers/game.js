@@ -28,7 +28,15 @@ angular.module('gameApp')
             var p = getPNJById(id)
             if (!p) return;
             p.move(obj.pos, obj.rot);
-            p.updateOnlinePresence(obj.connections != null);
+            var isOnline = (obj.connections != null);
+            if (p.onlinePresence != isOnline)
+                Game.addMessage({
+                    text: p.name + " is now " + (isOnline ? "online" : "offline"),
+                    delay: 10,
+                    type: (isOnline ? "info" : "error")
+                });
+            p.updateOnlinePresence(isOnline);
+
             //else console.log('player '+id+' not found')
             // when Db.newPlayer is called the callback is called but the pnj does not exists yet...
         };
