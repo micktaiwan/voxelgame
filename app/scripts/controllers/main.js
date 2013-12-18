@@ -6,7 +6,7 @@ Date.prototype.getWeek = function() {
 }
 
 angular.module('gameApp')
-    .controller('MainCtrl', function($rootScope, $scope, $location, $timeout, Db, Session, Notification) {
+    .controller('MainCtrl', function($rootScope, $scope, $location, $timeout, Db, Session, Notification, Game) {
 
         $rootScope.current_date = new Date().getTime();
         $rootScope.weekNumber   = new Date().getWeek();
@@ -14,6 +14,7 @@ angular.module('gameApp')
 
         Notification.enable();
         console.log('main');
+        Game.stop();
 
         function initUser() {
             $rootScope.isSignedIn = Session.isSignedIn();

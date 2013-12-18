@@ -63,20 +63,22 @@ angular.module('gameApp')
             consummeMessage();
         }
 
-        Game.init(addMessage);
-        var p = MainPlayer.newPlayer(user.id, user.name, user.pos, updatePlayer, toggleInventory);
-        Game.addMainPlayer(p);
-        var u = $rootScope.users;
-        var pnjs = [];
-        for(var i in u) {
-            if(u[i].id != user.id) {
-                // FIXME: il ne devrait pas y avoir deux méthodes, ne pour la Db et l'autre pour le game... non ????
-                var p = Db.newPlayer(u[i].id, u[i].name, u[i].pos, u[i].rot, updatePNJ);
-                pnjs.push(Game.addPNJ(p.id, p.name, p.pos, p.rot));
+        var already_initialized = Game.init(addMessage);
+        if(!already_initialized) {
+            Game.addMainPlayer(MainPlayer.newPlayer(user.id, user.name, user.pos, updatePlayer, toggleInventory));
+            var u = $rootScope.users;
+            var pnjs = [];
+            for(var i in u) {
+                if(u[i].id != user.id) {
+                    // FIXME: il ne devrait pas y avoir deux méthodes, ne pour la Db et l'autre pour le game... non ????
+                    var p = Db.newPlayer(u[i].id, u[i].name, u[i].pos, u[i].rot, updatePNJ);
+                    pnjs.push(Game.addPNJ(p.id, p.name, p.pos, p.rot));
+                }
             }
+            console.log(pnjs.length + ' pnjs');
         }
-        console.log(pnjs.length + ' pnjs');
-        Game.animate();
+        else
+            console.log('was initialized');
 
         $('#instructions').click(function() {
             enablePointerLock();

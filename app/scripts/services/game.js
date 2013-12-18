@@ -6,6 +6,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         (scope.$$phase || scope.$root.$$phase) ? fn() : scope.$apply(fn);
     };
 
+    var initialized = false;
+    var rendererIsStopped = true;
     var rendererStats = null;
 
     var $game_div;
@@ -126,11 +128,12 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         return objects.map(function(o) { return o.mesh;});
     }
 
-    function init(_addMessageCallback) {
-        addMessageCallback = _addMessageCallback;
+    function real_init() {
+
         scene = new THREE.Scene();
         scene.fog = new THREE.Fog(0x333333, 300, 1000);
 
+        objects.length = 0; // reset all objects
 
         light = new THREE.AmbientLight(0xffffff);
         light.color.setHSL( 0.1, 0.3, 0.2 );
@@ -162,7 +165,22 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
         control();
         Db.onCube(onCube);
+
+        initialized = true;
+
     }
+
+    function init(_addMessageCallback) {
+        var was_already_initialized = initialized;
+        addMessageCallback = _addMessageCallback;
+        rendererIsStopped = false;
+        if(!initialized)
+            real_init();
+        else
+            $game_div.append(renderer.domElement);
+        animate();
+        return was_already_initialized;
+   }
 
     function addMessage(msg) {
         if(!addMessageCallback) return;
@@ -338,18 +356,20 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     var nowMsec, fps;
     var speedFactor = 1;
     function animate() {
-        requestAnimationFrame(animate);
+        if(!rendererIsStopped) requestAnimationFrame(animate);
         nowMsec = new Date().getTime()
         fps   =  1000.0 / (nowMsec - lastTimeMsec)
         lastTimeMsec    = nowMsec
         speedFactor = (60 / fps);
-/*
-        if(fps < 40 || fps > 70)
-            console.log(speedFactor + ", " + fps);
-*/
+
+//        if(fps < 40 || fps > 70)
+//            console.log(speedFactor + ", " + fps);
+
         rendererStats.update(renderer);
-        if(!player)
+        if(!player) {
+            console.error("no main player!");
             return;
+        }
         //player.updateCamera();
         if(!isLocked) {
             player.move();
@@ -491,10 +511,11 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     return {
         init: function(addMessageCallback) {
-            init(addMessageCallback);
+            return init(addMessageCallback);
         },
-        animate: function() {
-            animate();
+        stop: function() {
+            rendererIsStopped = true;
+            console.log("rendered has been stopped");
         },
         addMainPlayer: function(p) {
             player = p;
