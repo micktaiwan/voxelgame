@@ -7,7 +7,7 @@ var Config = {
     dimCadri: 20,
     distCamPlayer: 120,
     viewAngle: 45,
-    playerSpeed: 1,
+    playerSpeed: 1.3,
     maxInventory: 20
 }
 

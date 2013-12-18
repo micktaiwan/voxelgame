@@ -87,8 +87,8 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             var cm = this.canMove();
             if(cm && (cm.x != 0 || cm.z != 0)) {
                 positionNew.copy(this.corps.position);
-                positionNew.x += cm.x*Config.playerSpeed;
-                positionNew.z += cm.z*Config.playerSpeed;
+                positionNew.x += cm.x * Config.playerSpeed * Game.speedFactor();
+                positionNew.z += cm.z * Config.playerSpeed * Game.speedFactor();
                 this.corps.position.copy(positionNew);
                 var pos = {x: positionNew.x, y: positionNew.y, z: positionNew.z};
                 Db.updatePos(pos);

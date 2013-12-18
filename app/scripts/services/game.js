@@ -5,13 +5,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     function safeApply(scope, fn) {
         (scope.$$phase || scope.$root.$$phase) ? fn() : scope.$apply(fn);
     };
-/*
-    var rendererStats = new THREEx.RendererStats();
-    rendererStats.domElement.style.position = 'absolute';
-    rendererStats.domElement.style.right     = '0px';
-    rendererStats.domElement.style.top      = '50px';
-    document.body.appendChild(rendererStats.domElement);
-*/
+
+    var rendererStats = null;
+
     var $game_div;
     var scene, renderer;
     var geometry, material, mesh;
@@ -65,6 +61,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         object.lensFlares[ 3 ].rotation = object.positionScreen.x * 0.5 + THREE.Math.degToRad(45);
     }
 
+    // TODO: tilt shifting
+/*
     function initPostprocessing() {
         var renderPass = new THREE.RenderPass( scene, camera );
 
@@ -82,7 +80,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         composer.addPass( renderPass );
         composer.addPass( bokehPass );
     }
-
+*/
     function addSun( h, s, l, x, y, z ) {
 
         var light = new THREE.DirectionalLight( 0xffffff, 1.5); //, 0, 45);
@@ -146,6 +144,11 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 */
         if(Config.modeDebug)
             modeDebug();
+        rendererStats = new THREEx.RendererStats();
+        rendererStats.domElement.style.position = 'absolute';
+        rendererStats.domElement.style.right     = '0px';
+        rendererStats.domElement.style.top      = '50px';
+        document.body.appendChild(rendererStats.domElement);
 
         renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true } );
         renderer.setClearColor(0x333333);
@@ -331,9 +334,20 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         document.addEventListener('mouseup', onDocumentMouseUp, false);
     }
 
+    var lastTimeMsec = new Date().getTime();
+    var nowMsec, fps;
+    var speedFactor = 1;
     function animate() {
         requestAnimationFrame(animate);
-        //rendererStats.update(renderer);
+        nowMsec = new Date().getTime()
+        fps   =  1000.0 / (nowMsec - lastTimeMsec)
+        lastTimeMsec    = nowMsec
+        speedFactor = (60 / fps);
+/*
+        if(fps < 40 || fps > 70)
+            console.log(speedFactor + ", " + fps);
+*/
+        rendererStats.update(renderer);
         if(!player)
             return;
         //player.updateCamera();
@@ -513,8 +527,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         },
         addMessage: function(msg) {
             addMessage(msg);
-        }
-
+        },
+        speedFactor: function() {
+            return speedFactor;
+        },
     };
 
 });
