@@ -36,7 +36,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
 
         this.dummy = Game.addGetPutDummy();
         var distCamPlayer = Config.distCamPlayer;
-        var distCollision = Config.dimCadri / 1.5;
+        var distCollision = Config.dimCadri * 0.66;
         var _toggleInventoryCallback = toggleInventoryCallback;
 
         var audio = document.createElement('audio');

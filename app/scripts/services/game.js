@@ -196,6 +196,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             randomizeRot(mesh, Config.randomCubeRotationFactor);
         mesh.castShadow = true;
         mesh.receiveShadow = true;
+
         scene.add(mesh);
         objects.push({
             obj: obj,

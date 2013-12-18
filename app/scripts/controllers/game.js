@@ -71,7 +71,7 @@ angular.module('gameApp')
                 $scope.selectedInventoryObject = null;
             else
                 $scope.selectedInventoryObject = obj.id;
-            //$scope.showInventory = false;
+            $scope.showInventory = false;
         }
 
         function consummeMessage(delay) {
