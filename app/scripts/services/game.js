@@ -414,33 +414,34 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         scene.add(dummy[2].mesh);
     }
 
-    function PNJ(id, name, pos, rot) {
+    function PNJ(p) {
 
-        if (!pos)
-            pos = {
+        if (!p.pos)
+            p.pos = {
                 x: 0,
                 y: Config.dimCadri,
                 z: 0
             };
-        if (!rot)
-            rot = {
+        if (!p.rot)
+            p.rot = {
                 corps: 0,
                 tete: 0
             };
-        this.id = id;
-        this.name = name;
+        this.id = p.id;
+        this.name = p.name;
         this.corps = new THREE.Object3D();
 
-        copyVector(this.corps.position, pos);
+        copyVector(this.corps.position, p.pos);
         var d = Config.dimCadri;
         var geometrytorse = new THREE.CubeGeometry(d, d, d);
         var material = new THREE.MeshLambertMaterial({
-            color: 0xffff00
+            color: 0xffff00,
+            transparent: true
         });
-        var torse = new THREE.Mesh(geometrytorse, material);
-        this.corps.add(torse);
-        torse.castShadow = true;
-        torse.receiveShadow = true;
+        this.torse = new THREE.Mesh(geometrytorse, material);
+        this.corps.add(this.torse);
+        this.torse.castShadow = true;
+        this.torse.receiveShadow = true;
 
         var geometrytete = new THREE.CubeGeometry(d / 2, d / 2, d / 2);
         this.tete = new THREE.Mesh(geometrytete, material);
@@ -450,7 +451,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.tete.position.z = d / 4;
         this.corps.add(this.tete);
 
-        var geometryName = new THREE.TextGeometry(name, {
+        var geometryName = new THREE.TextGeometry(p.name, {
             font: 'optimer', // Must be lowercase!
             weight: 'normal',
             style: 'normal',
@@ -463,7 +464,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         });
 
         var textMaterial = new THREE.MeshPhongMaterial({
-            color: 0xffaa00
+            color: 0xffaa00,
+            transparent: true
         });
         this.name_label = new THREE.Mesh(geometryName, textMaterial);
         var box = new THREE.Box3();
@@ -474,12 +476,22 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.name_label.position.x = -centerOffset;
         this.corps.add(this.name_label);
 
-        copyRotation(this, rot);
+        copyRotation(this, p.rot);
 
         scene.add(this.corps);
         objects.push({
-            mesh: torse
+            mesh: this.torse
         });
+
+        this.updateOnlinePresence = function(isOnline) {
+            if (isOnline) {
+                this.torse.material.opacity = 1;
+            } else {
+                this.torse.material.opacity = 0.4;
+                //this.torse.material.color = 0xffff00;
+                this.name_label.material.opacity = 0.4;
+            }
+        }
 
         this.move = function(pos, rot) {
             copyVector(this.corps.position, pos);
@@ -550,9 +562,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             player = p;
             scene.add(player.corps);
         },
-        addPNJ: function(id, name, pos, rot) {
-            //console.log('adding PNJ '+id)
-            return new PNJ(id, name, pos, rot);
+        addPNJ: function(p) {
+            //console.log('adding PNJ '+p.id)
+            return new PNJ(p);
         },
         getObjects: function() {
             return objects;

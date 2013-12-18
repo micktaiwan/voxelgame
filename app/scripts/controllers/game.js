@@ -4,7 +4,7 @@ angular.module('gameApp')
     .controller('GameCtrl', function($rootScope, $scope, $timeout, $location, Db, Game, Session, MainPlayer) {
 
         var user = Session.getUser();
-        if(!user) {
+        if (!user) {
             $location.path("/");
             return;
         }
@@ -14,16 +14,21 @@ angular.module('gameApp')
         $scope.msgs = [];
 
         function getPNJById(id) {
-          var rv = null;
-          pnjs.some(function(s) {
-            if(s.id==id) { rv = s; return; }
-          });
-          return rv;
+            var rv = null;
+            pnjs.some(function(s) {
+                if (s.id == id) {
+                    rv = s;
+                    return;
+                }
+            });
+            return rv;
         }
 
         function updatePNJ(id, obj) {
             var p = getPNJById(id)
-            if(p) p.move(obj.pos, obj.rot);
+            if (!p) return;
+            p.move(obj.pos, obj.rot);
+            p.updateOnlinePresence(obj.connections != null);
             //else console.log('player '+id+' not found')
             // when Db.newPlayer is called the callback is called but the pnj does not exists yet...
         };
@@ -33,13 +38,13 @@ angular.module('gameApp')
         };
 
         function toggleInventory(inventory) {
-            if(inventory)
+            if (inventory)
                 $scope.inventory = inventory;
             $scope.showInventory = !$scope.showInventory;
         }
 
         $scope.selectInventory = function(obj) {
-            if($scope.selectedInventoryObject == obj.id)
+            if ($scope.selectedInventoryObject == obj.id)
                 $scope.selectedInventoryObject = null;
             else
                 $scope.selectedInventoryObject = obj.id;
@@ -47,10 +52,10 @@ angular.module('gameApp')
         }
 
         function consummeMessage(delay) {
-            delay = delay ? delay*1000 : 4000;
+            delay = delay ? delay * 1000 : 4000;
             $timeout(function() {
-                $scope.msgs.splice(0,1);
-                if($scope.msgs.length == 0)
+                $scope.msgs.splice(0, 1);
+                if ($scope.msgs.length == 0)
                     $scope.showConsole = false;
                 else
                     consummeMessage($scope.msgs[0].delay);
@@ -60,32 +65,33 @@ angular.module('gameApp')
         function addMessage(msg) {
             $scope.msgs.push(msg);
             $scope.showConsole = true;
-            if($scope.msgs.length==1)
+            if ($scope.msgs.length == 1)
                 consummeMessage(msg.delay);
         }
 
         var already_initialized = Game.init(addMessage);
-        if(!already_initialized) {
+        if (!already_initialized) {
             Game.addMainPlayer(MainPlayer.newPlayer(user.id, user.name, user.pos, updatePlayer, toggleInventory));
             var u = $rootScope.users;
             var pnjs = [];
-            for(var i in u) {
-                if(u[i].id != user.id) {
+            for (var i in u) {
+                if (u[i].id != user.id) {
                     // FIXME: il ne devrait pas y avoir deux méthodes, ne pour la Db et l'autre pour le game... non ????
                     var p = Db.newPlayer(u[i].id, u[i].name, u[i].pos, u[i].rot, updatePNJ);
-                    pnjs.push(Game.addPNJ(p.id, p.name, p.pos, p.rot));
+                    var gp = Game.addPNJ(p);
+                    gp.updateOnlinePresence(p.connections != null);
+                    pnjs.push(gp);
                 }
             }
             console.log(pnjs.length + ' pnjs');
-        }
-        else
+        } else
             console.log('Game was already initialized');
 
         $('#instructions').click(function() {
             enablePointerLock();
         });
 
-/*        Db.getUsers(function(players) {
+        /*        Db.getUsers(function(players) {
             var p = Game.addMainPlayer(user.name, user.pos);
             Game.init(p);
             $scope.players = [];
