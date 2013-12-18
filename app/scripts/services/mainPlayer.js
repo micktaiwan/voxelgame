@@ -215,7 +215,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
 
         this.getCube = function() {
             if(dbUser.inventory.length >= Config.maxInventory) {
-                Game.addMessage('Too many objects in inventory');
+                Game.addMessage({text: 'Too many objects in inventory', delay: 5, type: 'error'});
                 return;
             }
             var key = this.canGet();
@@ -227,10 +227,10 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                 //Game.removeCubeFromSceneByKey(key);
                 var obj = Db.addInventory({type: CubeTypes.WoodBlock}); // FIXME: type
                 dbUser.inventory.push(obj);
-                Game.addMessage(key + ' (' + obj.id + ')' + ' put in inventory');
+                Game.addMessage({text: 'ok, in inventory', delay: 3, type: 'info'});
             }
             else
-                Game.addMessage('No cube here !');
+                Game.addMessage({text: 'No cube here !', delay:3, type: 'error'});
         };
 
         this.canGet = function() {
@@ -254,12 +254,12 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             var cube = dbUser.inventory.pop();
             //console.log(cube);
             if(!cube) {
-                Game.addMessage('Nothing in inventory!');
+                Game.addMessage({text: 'Nothing in inventory!', delay:3, type: 'error'});
                 return;
             }
             var key = this.canGet();
             if(key) {
-                Game.addMessage('There is a cube there');
+                Game.addMessage({text: 'There is a cube there', delay:3, type: 'error'});
                 return;
             }
             //dummy.mesh.visible = false;

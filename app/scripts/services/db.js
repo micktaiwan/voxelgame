@@ -20,13 +20,13 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
     };
 
     function connect() {
-        if(!user) throw "connect called without any user"
+        if (!user) throw "connect called without any user"
         // since I can connect from multiple devices or browser tabs, we store each connection instance separately
         // any time that connectionsRef's value is null (i.e. has no children) I am offline
-        var myConnectionsRef = new Firebase(CONFIG.firebaseUrl + '/users/'+user.id+'/connections');
+        var myConnectionsRef = new Firebase(CONFIG.firebaseUrl + '/users/' + user.id + '/connections');
 
         // stores the timestamp of my last disconnect (the last time I was seen online)
-        var lastOnlineRef = new Firebase(CONFIG.firebaseUrl + '/users/'+user.id+'/date');
+        var lastOnlineRef = new Firebase(CONFIG.firebaseUrl + '/users/' + user.id + '/date');
 
         var connectedRef = new Firebase(CONFIG.firebaseUrl + '/.info/connected');
         connectedRef.on('value', function(snap) {
@@ -47,10 +47,11 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
     };
 
     // get all users once
-    function getUsers (callbackSuccess) {
+
+    function getUsers(callbackSuccess) {
         users_ref.once('value', function(snapshot) {
-            if(snapshot.val() !== null) {
-                safeApply($rootScope, function(){
+            if (snapshot.val() !== null) {
+                safeApply($rootScope, function() {
                     callbackSuccess(snapshot.val());
                 });
             }
@@ -58,10 +59,11 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
     };
 
     // listen to users changes
+
     function listenUsers(callbackSuccess) {
         users_ref.on('child_added', function(snapshot) {
-            if(snapshot.val() !== null) {
-                safeApply($rootScope, function(){
+            if (snapshot.val() !== null) {
+                safeApply($rootScope, function() {
                     callbackSuccess(snapshot.val());
                 });
             }
@@ -97,26 +99,31 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
             return user;
         },
 
-        setUser : function(u) {
+        setUser: function(u) {
             user = u;
             connect();
         },
 
         addUser: function(name, email, callback) {
             var id = users_ref.push().name(); // generate a unique id based on timestamp
-            var user = {id: id, name: name, email: email, date: Firebase.ServerValue.TIMESTAMP};
+            var user = {
+                id: id,
+                name: name,
+                email: email,
+                date: Firebase.ServerValue.TIMESTAMP
+            };
             users_ref.child(id).set(user);
-            if(callback) callback(user);
+            if (callback) callback(user);
         },
 
         newUser: newUser,
 
         newPlayer: function(id, name, pos, rot, callbackSuccess) {
-            var player_ref = new Firebase(CONFIG.firebaseUrl + '/users/'+id);
+            var player_ref = new Firebase(CONFIG.firebaseUrl + '/users/' + id);
             player_ref.on('value', function(snapshot) {
-                safeApply($rootScope, function(){
-                  callbackSuccess(id, snapshot.val());
-                  return;
+                safeApply($rootScope, function() {
+                    callbackSuccess(id, snapshot.val());
+                    return;
                 });
             });
 
@@ -130,7 +137,12 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
 
         addMessage: function(name, text) {
             var id = tchat_ref.push().name();
-            tchat_ref.child(id).set({id: id, name: name, text: text, date: Firebase.ServerValue.TIMESTAMP});
+            tchat_ref.child(id).set({
+                id: id,
+                name: name,
+                text: text,
+                date: Firebase.ServerValue.TIMESTAMP
+            });
         },
 
         deleteMessage: function(id) {
@@ -140,37 +152,60 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
         onChatMsg: function(callbackSuccess) {
             tchat_ref.off('child_added'); // FIXME....ugly
             tchat_ref.limit(10).on('child_added', function(snapshot) {
-                safeApply($rootScope, function(){
+                safeApply($rootScope, function() {
                     callbackSuccess(snapshot.val());
                 });
             });
         },
 
         onCube: function(callbackSuccess) {
-            cubelist_ref.on('child_added',   function(snapshot) { cube_changed('added', snapshot, callbackSuccess)});
-            cubelist_ref.on('child_changed', function(snapshot) { cube_changed('changed', snapshot, callbackSuccess)});
-            cubelist_ref.on('child_removed', function(snapshot) { cube_changed('removed', snapshot, callbackSuccess)});
+            cubelist_ref.on('child_added', function(snapshot) {
+                cube_changed('added', snapshot, callbackSuccess)
+            });
+            cubelist_ref.on('child_changed', function(snapshot) {
+                cube_changed('changed', snapshot, callbackSuccess)
+            });
+            cubelist_ref.on('child_removed', function(snapshot) {
+                cube_changed('removed', snapshot, callbackSuccess)
+            });
         },
 
-        put: function(x,y,z,type, callbackSuccess) {
-            if(!user) return;
+        put: function(x, y, z, type, callbackSuccess) {
+            if (!user) return;
             cubes_ref.child('pos').child(x).child(y).child(z).once('value', function(snapshot) {
-                if(snapshot.val()) throw "There is a cube in Db here";
+                if (snapshot.val()) throw "There is a cube in Db here";
                 var id = cubelist_ref.push().name();
                 var date = new Date().getTime();
-                cubes_ref.child('pos').child(x).child(y).child(z).update({id: id, type: type, user: user.id, date: date});
-                var obj = {id: id, type: type, user: user.id, date: date, x: x, y: y, z: z};
+                cubes_ref.child('pos').child(x).child(y).child(z).update({
+                    id: id,
+                    type: type,
+                    user: user.id,
+                    date: date
+                });
+                var obj = {
+                    id: id,
+                    type: type,
+                    user: user.id,
+                    date: date,
+                    x: x,
+                    y: y,
+                    z: z
+                };
                 cubelist_ref.child(id).update(obj);
-                if(callbackSuccess) callbackSuccess(obj);
+                if (callbackSuccess) callbackSuccess(obj);
             });
         },
 
         addInventory: function(obj) {
-            if(!user) return;
+            if (!user) return;
             var id = users_ref.child(user.id).child('inventory').push().name();
-            var value = {id: id, type: obj.type, date: Firebase.ServerValue.TIMESTAMP};
+            var value = {
+                id: id,
+                type: obj.type,
+                date: Firebase.ServerValue.TIMESTAMP
+            };
             users_ref.child(user.id).child('inventory').child(id).update(value);
-            if(obj.attrs) {
+            if (obj.attrs) {
                 users_ref.child(user.id).child('inventory').child(id).child('attrs').update(obj.attrs);
                 value['attrs'] = obj.attrs;
             }
@@ -178,15 +213,15 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
         },
 
         removeInventory: function(id) {
-            if(!user) return;
+            if (!user) return;
             users_ref.child(user.id).child('inventory').child(id).remove();
         },
 
         remove: function(id) {
-            if(!user) return;
+            if (!user) return;
             cubelist_ref.child(id).once('value', function(snapshot) {
                 var obj = snapshot.val();
-                if(!obj) throw "no cube in Db here";
+                if (!obj) throw "no cube in Db here";
                 cubes_ref.child('pos').child(obj.x).child(obj.y).child(obj.z).remove();
                 cubelist_ref.child(id).remove();
             });
@@ -194,22 +229,26 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
 
         // Update current logged user position
         updatePos: function(pos) {
-            if(!user) return;
+            if (!user) return;
             var time = new Date().getTime();
-            if(lastPosUpdate > time - minUpdateInterval) return;
+            if (lastPosUpdate > time - minUpdateInterval) return;
             lastPosUpdate = time;
             var node = users_ref.child(user.id);
             node.child('pos').update(pos);
-            node.update({date: time});
+            node.update({
+                date: time
+            });
         },
         updateRot: function(rot) {
-            if(!user) return;
+            if (!user) return;
             var time = new Date().getTime();
-            if(lastRotUpdate > time - minUpdateInterval) return;
+            if (lastRotUpdate > time - minUpdateInterval) return;
             lastRotUpdate = time;
             var node = users_ref.child(user.id);
             node.child('rot').update(rot);
-            node.update({date: new Date().getTime()});
+            node.update({
+                date: new Date().getTime()
+            });
         },
 
     };

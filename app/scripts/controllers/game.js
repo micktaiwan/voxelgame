@@ -46,21 +46,22 @@ angular.module('gameApp')
             //$scope.showInventory = false;
         }
 
-        function consummeMessage() {
+        function consummeMessage(delay) {
+            delay = delay ? delay*1000 : 4000;
             $timeout(function() {
                 $scope.msgs.splice(0,1);
                 if($scope.msgs.length == 0)
                     $scope.showConsole = false;
                 else
-                    consummeMessage();
-            }, 4000);
+                    consummeMessage($scope.msgs[0].delay);
+            }, delay);
         }
 
         function addMessage(msg) {
-            //console.log(msg);
             $scope.msgs.push(msg);
             $scope.showConsole = true;
-            consummeMessage();
+            if($scope.msgs.length==1)
+                consummeMessage(msg.delay);
         }
 
         var already_initialized = Game.init(addMessage);

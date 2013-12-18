@@ -26,7 +26,8 @@ angular.module('gameApp')
         Session.onUsersLoad(initUser);
         Db.onChatMsg(function(msg) {
             $scope.chat_messages.push(msg);
-            if(msg.date > new Date().getTime() - 10*1000)
+            Game.addMessage({text: msg.name+": "+msg.text, delay: 10, type:'chat'} );
+            if(msg.date > new Date().getTime() - 5*1000)
                 Notification.add(Notification.types.CHAT, msg.name + ': ' + msg.text);
         });
 

@@ -2,13 +2,20 @@
     <div id="title">Click !</div>
     <div id="instructions">
         <p>
-            <b>Deplacements:</b> Z, Q, S, D / Souris<br/>
-            <b>Sauter:</b> Espace<br/>
-            <b>Poser cube:</b> R / click droit<br/>
-            <b>Prendre cube:</b> E / click gauche<br/>
-            <b>Inventaire:</b> I<br/>
-            <b>Select object in inventory:</b> A<br/>
-            <b>Pause:</b> Echap<br/>
+            <b>Deplacements:</b> Z, Q, S, D / Souris
+            <br/>
+            <b>Sauter:</b> Espace
+            <br/>
+            <b>Poser cube:</b> R / click droit
+            <br/>
+            <b>Prendre cube:</b> E / click gauche
+            <br/>
+            <b>Inventaire:</b> I
+            <br/>
+            <b>Select object in inventory:</b> A
+            <br/>
+            <b>Pause:</b> Echap
+            <br/>
         </p>
     </div>
 </div>
@@ -16,7 +23,7 @@
 <div id="inventory" ng-show="showInventory">
     <h1>Inventory</h1>
     <p>{{inventory.length}} objects (maintain esc to get your mouse back)</p>
-<!--
+    <!--
      <ul class="inventory_objects">
         <li ng-repeat="o in inventory">{{o.type}} - {{o.date | date}}</li>
     </ul>
@@ -25,8 +32,7 @@
 </div>
 
 <ul id="console" class="console" ng-show="showConsole">
-    <li ng-repeat="m in msgs">{{m}}</li>
+    <li ng-repeat="m in msgs" class="{{m.type}}">{{m.text}}</li>
 </ul>
 
 <div id="game"></div>
-

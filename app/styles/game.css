@@ -94,10 +94,24 @@ ul.console > li {
     text-indent: -.7em;
 }
 
+ul.console > li.error {
+    color:#FA0;
+}
+
+ul.console > li.info {
+    color:#DFD;
+}
+
 ul.console > li:before {
     content: "> ";
     color: red;
 }
+
+ul.console > li.chat:before {
+    content: "(chat) ";
+    color: red;
+}
+
 
 .active {
     background-color: red;
