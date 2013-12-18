@@ -78,7 +78,7 @@ angular.module('gameApp')
             console.log(pnjs.length + ' pnjs');
         }
         else
-            console.log('was initialized');
+            console.log('Game was already initialized');
 
         $('#instructions').click(function() {
             enablePointerLock();

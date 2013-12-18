@@ -129,16 +129,12 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     }
 
     function real_init() {
-
         scene = new THREE.Scene();
         scene.fog = new THREE.Fog(0x333333, 300, 1000);
-
-        objects.length = 0; // reset all objects
-
+        //objects.length = 0; // reset all objects
         light = new THREE.AmbientLight(0xffffff);
         light.color.setHSL( 0.1, 0.3, 0.2 );
         scene.add(light);
-
         addSun( 0.995, 0.5, 0.9, 0, 500, 300 );
 /*
         light2 = new THREE.PointLight(0xffffff, 2, 50);
@@ -151,23 +147,17 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         rendererStats.domElement.style.position = 'absolute';
         rendererStats.domElement.style.right     = '0px';
         rendererStats.domElement.style.top      = '50px';
-        document.body.appendChild(rendererStats.domElement);
 
         renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true } );
         renderer.setClearColor(0x333333);
         renderer.shadowMapEnabled = true;
         renderer.shadowMapSoft = true;
-        $game_div = $('#game');
-        onWindowResize();
-
-        $game_div.append(renderer.domElement);
         window.addEventListener('resize', onWindowResize, false);
 
         control();
         Db.onCube(onCube);
 
         initialized = true;
-
     }
 
     function init(_addMessageCallback) {
@@ -176,8 +166,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         rendererIsStopped = false;
         if(!initialized)
             real_init();
-        else
-            $game_div.append(renderer.domElement);
+        $game_div = $('#game');
+        onWindowResize();
+        $game_div.append(rendererStats.domElement);
+        $game_div.append(renderer.domElement);
         animate();
         return was_already_initialized;
    }
@@ -366,10 +358,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 //            console.log(speedFactor + ", " + fps);
 
         rendererStats.update(renderer);
-        if(!player) {
-            console.error("no main player!");
-            return;
-        }
+        if(!player) return;
         //player.updateCamera();
         if(!isLocked) {
             player.move();
@@ -514,8 +503,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             return init(addMessageCallback);
         },
         stop: function() {
+            if(!rendererIsStopped)
+                console.log("Game rendering has been stopped but still receive DB updates");
             rendererIsStopped = true;
-            console.log("rendered has been stopped");
         },
         addMainPlayer: function(p) {
             player = p;
