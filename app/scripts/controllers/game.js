@@ -13,6 +13,21 @@ angular.module('gameApp')
         $scope.showConsole = false;
         $scope.msgs = [];
 
+        $timeout(function() {
+            Game.addMessage({
+                text: "Welcome !",
+                type: 'system',
+                delay: 4
+            });
+        }, 4 * 1000);
+
+        $timeout(function() {
+            Game.addMessage({
+                text: "La position des autres joueurs n'est pas mise à jour en temps réel. C'est normal pour l'instant. Ce n'est pas du lag :)",
+                type: 'system',
+                delay: 7
+            });
+        }, 6 * 1000);
         function getPNJById(id) {
             var rv = null;
             pnjs.some(function(s) {
