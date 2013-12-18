@@ -8,8 +8,12 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
 
     function player(_id, name, pos, playerUpdateCallback, toggleInventoryCallback) {
 
-        if(!pos)
-            pos = {x: 0, y: 50, z: 0};
+        if (!pos)
+            pos = {
+                x: 0,
+                y: 50,
+                z: 0
+            };
         // info player
         var id = _id;
         var dbUser = null;
@@ -17,11 +21,12 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             dbUser = Session.getUser();
             //console.log(dbUser);
             //console.log("Inventory: "+dbUser.inventory);
-            if(!dbUser.inventory) {
-                var obj = Db.addInventory({type: CubeTypes.WoodBlock}); // attrs: {test: 'ok'}
+            if (!dbUser.inventory) {
+                var obj = Db.addInventory({
+                    type: CubeTypes.WoodBlock
+                }); // attrs: {test: 'ok'}
                 dbUser['inventory'] = [obj];
-            }
-            else {
+            } else {
                 var array = $.map(dbUser.inventory, function(value, index) {
                     return [value];
                 });
@@ -31,7 +36,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
 
         this.dummy = Game.addGetPutDummy();
         var distCamPlayer = Config.distCamPlayer;
-        var distCollision = Config.dimCadri/1.5;
+        var distCollision = Config.dimCadri / 1.5;
         var _toggleInventoryCallback = toggleInventoryCallback;
 
         var audio = document.createElement('audio');
@@ -53,7 +58,10 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         map.wrapS = map.wrapT = THREE.RepeatWrapping;
         map.anisotropy = 16;
 
-        var material = new THREE.MeshLambertMaterial({ambient: 0xbbbbbb, map: map});
+        var material = new THREE.MeshLambertMaterial({
+            ambient: 0xbbbbbb,
+            map: map
+        });
         var d = Config.dimCadri;
         var geometrytorse = new THREE.CubeGeometry(d, d, d);
         //    var material = new THREE.MeshLambertMaterial({color: 0xffff00});
@@ -85,17 +93,22 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             // if(! (this.moveForward || this.moveRight || this.moveLeft || this.moveBackward) ) return;
             // can't do that or getputdummy is not updated...
             var cm = this.canMove();
-            if(cm && (cm.x != 0 || cm.z != 0)) {
+            if (cm && (cm.x != 0 || cm.z != 0)) {
                 positionNew.copy(this.corps.position);
                 positionNew.x += cm.x * Config.playerSpeed * Game.speedFactor();
                 positionNew.z += cm.z * Config.playerSpeed * Game.speedFactor();
                 this.corps.position.copy(positionNew);
-                var pos = {x: positionNew.x, y: positionNew.y, z: positionNew.z};
+                var pos = {
+                    x: positionNew.x,
+                    y: positionNew.y,
+                    z: positionNew.z
+                };
                 Db.updatePos(pos);
-/*                safeApply($rootScope, function(){
+                /*                safeApply($rootScope, function(){
                     playerUpdateCallback({pos: pos});
                 });
-*/            }
+*/
+            }
         };
 
         this.canMove = function() {
@@ -110,7 +123,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             deltaX[2] = 0;
             deltaZ[2] = 0;
 
-            if(this.moveForward) {
+            if (this.moveForward) {
                 deltaX[0] -= Math.sin(this.corps.rotation.y - pangle);
                 deltaZ[0] -= Math.cos(this.corps.rotation.y - pangle);
                 deltaX[1] -= Math.sin(this.corps.rotation.y);
@@ -118,7 +131,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                 deltaX[2] -= Math.sin(this.corps.rotation.y + pangle);
                 deltaZ[2] -= Math.cos(this.corps.rotation.y + pangle);
             }
-            if(this.moveBackward) {
+            if (this.moveBackward) {
                 deltaX[0] += Math.sin(this.corps.rotation.y - pangle);
                 deltaZ[0] += Math.cos(this.corps.rotation.y - pangle);
                 deltaX[1] += Math.sin(this.corps.rotation.y);
@@ -126,7 +139,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                 deltaX[2] += Math.sin(this.corps.rotation.y + pangle);
                 deltaZ[2] += Math.cos(this.corps.rotation.y + pangle);
             }
-            if(this.moveLeft) {
+            if (this.moveLeft) {
                 deltaX[0] -= Math.sin(this.corps.rotation.y + Math.PI / 2 - pangle);
                 deltaZ[0] -= Math.cos(this.corps.rotation.y + Math.PI / 2 - pangle);
                 deltaX[1] -= Math.sin(this.corps.rotation.y + Math.PI / 2);
@@ -134,7 +147,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                 deltaX[2] -= Math.sin(this.corps.rotation.y + Math.PI / 2 + pangle);
                 deltaZ[2] -= Math.cos(this.corps.rotation.y + Math.PI / 2 + pangle);
             }
-            if(this.moveRight) {
+            if (this.moveRight) {
                 deltaX[0] -= Math.sin(this.corps.rotation.y - Math.PI / 2 - pangle);
                 deltaZ[0] -= Math.cos(this.corps.rotation.y - Math.PI / 2 - pangle);
                 deltaX[1] -= Math.sin(this.corps.rotation.y - Math.PI / 2);
@@ -143,7 +156,10 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                 deltaZ[2] -= Math.cos(this.corps.rotation.y - Math.PI / 2 + pangle);
             }
 
-            var canBouge = {x: deltaX[1], z: deltaZ[1]};
+            var canBouge = {
+                x: deltaX[1],
+                z: deltaZ[1]
+            };
             var objs = Game.getMeshObjects();
             //console.log(objs);
             //debugger;
@@ -151,11 +167,11 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                 var raycaster = new THREE.Raycaster(this.corps.position, new THREE.Vector3(deltaX[i] * distCollision, 0, deltaZ[i] * distCollision).normalize());
                 var intersects = raycaster.intersectObjects(objs);
 
-                if(intersects.length > 0 && intersects[0].distance < distCollision) {
+                if (intersects.length > 0 && intersects[0].distance < distCollision) {
                     audio.play();
                     canBouge = false;
                 }
-/*                if(Config.modeDebug) {
+                /*                if(Config.modeDebug) {
                     dummy[i].mesh.position.y = this.corps.position.y;
                     dummy[i].mesh.position.x = this.corps.position.x + deltaX[i] * distCollision;
                     dummy[i].mesh.position.z = this.corps.position.z + deltaZ[i] * distCollision;
@@ -172,9 +188,9 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         };
 
         this.jump = function(isJumping) {
-            if(isJumping) this.jumping = true;
+            if (isJumping) this.jumping = true;
 
-            if(canJump && this.jumping == true) {
+            if (canJump && this.jumping == true) {
                 canJump = false;
                 saut = 4.3;
             }
@@ -182,23 +198,22 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             var canFall = true;
             var raycaster = new THREE.Raycaster(this.corps.position, new THREE.Vector3(0, -1, 0));
             var intersects = raycaster.intersectObjects(Game.getMeshObjects());
-            if(intersects.length > 0 && intersects[0].distance < distCollision) { // FIXME: too simple. Does not take into account the object or player size
+            if (intersects.length > 0 && intersects[0].distance < distCollision) { // FIXME: too simple. Does not take into account the object or player size
                 canFall = false;
                 //this.corps.position.y = intersects[0].object.position.y + Config.dimCadri; // FIXME: should be the player body size
                 //console.log(intersects[0]);
                 //debugger;
             }
 
-            if(saut < 0)
+            if (saut < 0)
                 this.jumping = false;
 
-            if(canFall || this.jumping == true) {
-                if(saut > -5)
+            if (canFall || this.jumping == true) {
+                if (saut > -5)
                     saut -= 0.2;
                 this.corps.position.y += saut;
-            }
-            else {
-                if(saut < 0)
+            } else {
+                if (saut < 0)
                     saut = 0;
                 canJump = true;
                 this.jumping = false;
@@ -206,43 +221,56 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         };
 
         this.toggleInventory = function() {
-            if(_toggleInventoryCallback) {
-                safeApply($rootScope, function(){
+            if (_toggleInventoryCallback) {
+                safeApply($rootScope, function() {
                     _toggleInventoryCallback(dbUser.inventory);
                 });
             }
         };
 
         this.getCube = function() {
-            if(dbUser.inventory.length >= Config.maxInventory) {
-                Game.addMessage({text: 'Too many objects in inventory', delay: 5, type: 'error'});
+            if (dbUser.inventory.length >= Config.maxInventory) {
+                Game.addMessage({
+                    text: 'Too many objects in inventory',
+                    delay: 5,
+                    type: 'error'
+                });
                 return;
             }
             var key = this.canGet();
-            if(key) {
+            if (key) {
                 //debugger;
                 var objs = Game.getObjects();
                 //console.log(key);
                 Db.remove(objs[key].obj.id);
                 //Game.removeCubeFromSceneByKey(key);
-                var obj = Db.addInventory({type: CubeTypes.WoodBlock}); // FIXME: type
+                var obj = Db.addInventory({
+                    type: CubeTypes.WoodBlock
+                }); // FIXME: type
                 dbUser.inventory.push(obj);
-                Game.addMessage({text: 'ok, in inventory', delay: 3, type: 'info'});
-            }
-            else
-                Game.addMessage({text: 'No cube here !', delay:3, type: 'error'});
+                Game.addMessage({
+                    text: 'ok, in inventory',
+                    delay: 3,
+                    type: 'info'
+                });
+            } else
+                Game.addMessage({
+                    text: 'No cube here !',
+                    delay: 3,
+                    type: 'error'
+                });
         };
 
         this.canGet = function() {
             var objs = Game.getMeshObjects();
-            var distGet = Config.dimCadri*2; // FIXME: à améliorer
+            var distGet = Config.dimCadri * 2; // FIXME: à améliorer
             var teteposabs = new THREE.Vector3(this.corps.position.x + this.tete.position.x, this.corps.position.y + this.tete.position.y, this.corps.position.z + this.tete.position.z)
             var vecteur = new THREE.Vector3(this.dummy.mesh.position.x - teteposabs.x, this.dummy.mesh.position.y - teteposabs.y, this.dummy.mesh.position.z - teteposabs.z).normalize();
             var raycaster = new THREE.Raycaster(teteposabs, vecteur);
             var intersects = raycaster.intersectObjects(objs);
-            if(intersects.length > 0 && intersects[0].distance < distGet) {
+            if (intersects.length > 0 && intersects[0].distance < distGet) {
                 for (var key in objs) {
-                    if(objs[key]['id'] == intersects[0].object.id) {
+                    if (objs[key]['id'] == intersects[0].object.id) {
                         return key;
                     }
                 }
@@ -253,17 +281,29 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         this.putCube = function() {
             var cube = dbUser.inventory.pop();
             //console.log(cube);
-            if(!cube) {
-                Game.addMessage({text: 'Nothing in inventory!', delay:3, type: 'error'});
+            if (!cube) {
+                Game.addMessage({
+                    text: 'Nothing in inventory!',
+                    delay: 3,
+                    type: 'error'
+                });
                 return;
             }
             var key = this.canGet();
-            if(key) {
-                Game.addMessage({text: 'There is a cube there', delay:3, type: 'error'});
+            if (key) {
+                Game.addMessage({
+                    text: 'There is a cube there',
+                    delay: 3,
+                    type: 'error'
+                });
                 return;
             }
             //dummy.mesh.visible = false;
-            var obj = {x: this.dummy.mesh.position.x / Config.dimCadri, y: this.dummy.mesh.position.y / Config.dimCadri, z: this.dummy.mesh.position.z / Config.dimCadri};
+            var obj = {
+                x: this.dummy.mesh.position.x / Config.dimCadri,
+                y: this.dummy.mesh.position.y / Config.dimCadri,
+                z: this.dummy.mesh.position.z / Config.dimCadri
+            };
             Db.put(obj.x, obj.y, obj.z, cube.type);
             Db.removeInventory(cube.id);
         };
@@ -271,13 +311,13 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         this.setCamDist = function(distCamPlayer) {
             var limit = 5;
             var dist = distCamPlayer;
-            if(dist < limit) dist = limit ;
+            if (dist < limit) dist = limit;
             this.camera.position.x = this.tete.position.x + Math.sin(this.tete.rotation.y) * dist;
             this.camera.position.z = this.tete.position.z + Math.cos(this.tete.rotation.y) * dist;
-            if(distCamPlayer < limit) {
-                this.camera.fov = Config.viewAngle - distCamPlayer/1.5;
+            if (distCamPlayer < limit) {
+                this.camera.fov = Config.viewAngle - distCamPlayer / 1.5;
                 this.camera.updateProjectionMatrix();
-            } else if(this.camera.fov!= Config.viewAngle) {
+            } else if (this.camera.fov != Config.viewAngle) {
                 this.camera.fov = Config.viewAngle;
                 this.camera.updateProjectionMatrix();
             }
@@ -285,8 +325,8 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
 
         this.camdist = function(delta) {
             distCamPlayer -= delta / 10;
-            if(distCamPlayer < -60) distCamPlayer = -60;
-            if(distCamPlayer > 300) distCamPlayer = 300;
+            if (distCamPlayer < -60) distCamPlayer = -60;
+            if (distCamPlayer > 300) distCamPlayer = 300;
             this.setCamDist(distCamPlayer);
         };
 
