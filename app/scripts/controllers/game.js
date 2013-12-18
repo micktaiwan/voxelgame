@@ -86,6 +86,7 @@ angular.module('gameApp')
         }
 
         function addMessage(msg) {
+            console.log(msg);
             $scope.msgs.push(msg);
             $scope.showConsole = true;
             if ($scope.msgs.length == 1)
