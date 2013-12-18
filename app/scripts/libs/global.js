@@ -12,9 +12,10 @@ var Config = {
 }
 
 // cookies
+
 function writeCookie(name, value, days) {
     var date, expires;
-    if(days) {
+    if (days) {
         date = new Date();
         date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
         expires = "; expires=" + date.toGMTString();
@@ -32,7 +33,7 @@ function readCookie(name) {
         while (c.charAt(0) == ' ') {
             c = c.substring(1, c.length);
         }
-        if(c.indexOf(nameEQ) == 0) {
+        if (c.indexOf(nameEQ) == 0) {
             return c.substring(nameEQ.length, c.length);
         }
     }

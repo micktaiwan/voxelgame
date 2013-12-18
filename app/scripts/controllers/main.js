@@ -1,15 +1,15 @@
 'use strict';
 
 Date.prototype.getWeek = function() {
-  var onejan = new Date(this.getFullYear(),0,1);
-  return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()+1)/7);
+    var onejan = new Date(this.getFullYear(), 0, 1);
+    return Math.ceil((((this - onejan) / 86400000) + onejan.getDay() + 1) / 7);
 }
 
 angular.module('gameApp')
     .controller('MainCtrl', function($rootScope, $scope, $location, $timeout, Db, Session, Notification, Game) {
 
         $rootScope.current_date = new Date().getTime();
-        $rootScope.weekNumber   = new Date().getWeek();
+        $rootScope.weekNumber = new Date().getWeek();
         $scope.chat_messages = [];
 
         Notification.enable();
@@ -19,22 +19,26 @@ angular.module('gameApp')
         function initUser() {
             $rootScope.isSignedIn = Session.isSignedIn();
             var user = Session.getUser();
-            if(user) $scope.name = user.name;
+            if (user) $scope.name = user.name;
         };
 
         initUser();
         Session.onUsersLoad(initUser);
         Db.onChatMsg(function(msg) {
             $scope.chat_messages.push(msg);
-            Game.addMessage({text: msg.name+": "+msg.text, delay: 10, type:'chat'} );
-            if(msg.date > new Date().getTime() - 5*1000)
+            Game.addMessage({
+                text: msg.name + ": " + msg.text,
+                delay: 10,
+                type: 'chat'
+            });
+            if (msg.date > new Date().getTime() - 5 * 1000)
                 Notification.add(Notification.types.CHAT, msg.name + ': ' + msg.text);
         });
 
 
         function getChatMsgIndex(id) {
             var indexes = $.map($scope.chat_messages, function(chat, index) {
-                if(chat.id == id) return index;
+                if (chat.id == id) return index;
             });
             return indexes[0];
         };
@@ -58,7 +62,7 @@ angular.module('gameApp')
         };
 
         $scope.addMsg = function(name, msg) {
-            if(!msg) return;
+            if (!msg) return;
             Db.addMessage(name, msg);
             $scope.msg = '';
         }
@@ -68,4 +72,3 @@ angular.module('gameApp')
             $scope.chat_messages.splice(i, 1);
         }
     });
-
