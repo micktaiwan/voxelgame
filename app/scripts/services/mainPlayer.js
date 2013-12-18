@@ -95,8 +95,8 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             var cm = this.canMove();
             if (cm && (cm.x != 0 || cm.z != 0)) {
                 positionNew.copy(this.corps.position);
-                positionNew.x += cm.x * Config.playerSpeed * Game.speedFactor();
-                positionNew.z += cm.z * Config.playerSpeed * Game.speedFactor();
+                positionNew.x += cm.x * Config.playerSpeed * Config.speedFactor;
+                positionNew.z += cm.z * Config.playerSpeed * Config.speedFactor;
                 this.corps.position.copy(positionNew);
                 var pos = {
                     x: positionNew.x,
@@ -104,6 +104,17 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                     z: positionNew.z
                 };
                 Db.updatePos(pos);
+                if (Config.randomCubeRotation && !this.jumping) {
+                    var rot = {
+                        rotation: {
+                            x: 0,
+                            y: 0,
+                            z: 0
+                        }
+                    }
+                    randomizeRot(rot, 0.02);
+                    copyVector(this.torse.rotation, rot.rotation);
+                }
                 /*                safeApply($rootScope, function(){
                     playerUpdateCallback({pos: pos});
                 });
@@ -210,7 +221,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
 
             if (canFall || this.jumping == true) {
                 if (saut > -5)
-                    saut -= 0.2;
+                    saut -= 0.2 * Config.speedFactor;
                 this.corps.position.y += saut;
             } else {
                 if (saut < 0)

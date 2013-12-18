@@ -21,7 +21,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     var geometry = new THREE.CubeGeometry(Config.dimCadri, Config.dimCadri, Config.dimCadri);
     var cubeMaterial = new THREE.MeshLambertMaterial({
-        map: THREE.ImageUtils.loadTexture('images/boite.jpg')
+        map: THREE.ImageUtils.loadTexture('images/crate01.jpg')
     });
 
     var canMove = false;
@@ -33,20 +33,6 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     var textureFlare0 = THREE.ImageUtils.loadTexture("images/lensflare0.png");
     var textureFlare2 = THREE.ImageUtils.loadTexture("images/lensflare2.png");
     var textureFlare3 = THREE.ImageUtils.loadTexture("images/lensflare3.png");
-
-    function copyVector(to, from) { // FIXME: pas sur que ça serve...
-        to.x = from.x;
-        to.y = from.y;
-        to.z = from.z;
-    }
-
-    // { corps: player.corps.rotation.y, tete: player.tete.rotation.x }
-
-    function copyRotation(to, from) {
-        to.corps.rotation.y = from.corps;
-        to.tete.rotation.x = from.tete;
-    }
-
 
     function lensFlareUpdateCallback(object) {
 
@@ -206,6 +192,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         mesh.position.x = obj.x * Config.dimCadri;
         mesh.position.y = obj.y * Config.dimCadri;
         mesh.position.z = obj.z * Config.dimCadri;
+        if (Config.randomCubeRotation)
+            randomizeRot(mesh, Config.randomCubeRotationFactor);
         mesh.castShadow = true;
         mesh.receiveShadow = true;
         scene.add(mesh);
@@ -270,11 +258,6 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             // camera lag, not nicely done
             //player.camera.position.x += movementX * 0.01;
             //player.camera.position.y -= movementY * 0.01;
-
-            if (player.tete.rotation.x < -Math.PI / 2)
-                player.tete.rotation.x = -Math.PI / 2;
-            if (player.tete.rotation.x > Math.PI / 2)
-                player.tete.rotation.x = Math.PI / 2;
 
             Db.updateRot({
                 corps: player.corps.rotation.y,
@@ -364,17 +347,16 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     var lastTimeMsec = new Date().getTime();
     var nowMsec, fps;
-    var speedFactor = 1;
 
     function animate() {
         if (!rendererIsStopped) requestAnimationFrame(animate);
         nowMsec = new Date().getTime()
         fps = 1000.0 / (nowMsec - lastTimeMsec)
         lastTimeMsec = nowMsec
-        speedFactor = (60 / fps);
+        Config.speedFactor = (60 / fps);
 
         //        if(fps < 40 || fps > 70)
-        //            console.log(speedFactor + ", " + fps);
+        //            console.log(Config.speedFactor + ", " + fps);
 
         rendererStats.update(renderer);
         if (!player) return;
@@ -490,10 +472,18 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             this.onlinePresence = isOnline;
             if (isOnline) {
                 this.torse.material.opacity = 1;
+                this.tete.castShadow = true;
+                this.tete.receiveShadow = true;
+                this.torse.castShadow = true;
+                this.torse.receiveShadow = true;
             } else {
                 this.torse.material.opacity = 0.4;
                 //this.torse.material.color = 0xffff00;
                 this.name_label.material.opacity = 0.4;
+                this.tete.castShadow = false;
+                this.tete.receiveShadow = false;
+                this.torse.castShadow = false;
+                this.torse.receiveShadow = false;
             }
         }
 
@@ -594,9 +584,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         addMessage: function(msg) {
             addMessage(msg);
         },
-        speedFactor: function() {
-            return speedFactor;
+        /*        speedFactor: function() {
+            return Config.speedFactor;
         },
+*/
     };
 
 });
