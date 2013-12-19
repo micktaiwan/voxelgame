@@ -101,9 +101,9 @@ angular.module('gameApp')
             for (var i in u) {
                 if (u[i].id != user.id) {
                     // FIXME: il ne devrait pas y avoir deux méthodes, ne pour la Db et l'autre pour le game... non ????
-                    var p = Db.newPlayer(u[i].id, u[i].name, u[i].pos, u[i].rot, updatePNJ);
+                    var p = Db.newPlayer(u[i].id, u[i].name, u[i].pos, u[i].rot, updatePNJ); // p.connections is always false here
                     var gp = Game.addPNJ(p);
-                    gp.updateOnlinePresence(p.connections != null);
+                    gp.updateOnlinePresence(false);
                     pnjs.push(gp);
                 }
             }

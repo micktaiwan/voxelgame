@@ -76,7 +76,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     function addSun(h, s, l, x, y, z) {
 
         var light = new THREE.DirectionalLight(0xffffff, 1.5); //, 0, 45);
-        //var light = new THREE.SpotLight( 0xffffff, 1.5, 0, 45);
+        //var light = new THREE.SpotLight( 0xffffff, 1.5, 0);
         light.color.setHSL(h, s, l);
         light.position.set(x, y, z);
         light.castShadow = true;
@@ -85,7 +85,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         light.shadowCameraNear = 10;
         light.shadowCameraFar = 10000;
         light.shadowCameraFov = 30;
-*/
+        */
         light.shadowDarkness = 0.8;
         scene.add(light);
 
@@ -132,7 +132,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         light2 = new THREE.PointLight(0xffffff, 2, 50);
         light2.position.set(-1, 1, -1);
         scene.add(light2);
-*/
+        */
         if (Config.modeDebug)
             modeDebug();
         rendererStats = new THREEx.RendererStats();
@@ -486,7 +486,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
                 this.torse.castShadow = false;
                 this.torse.receiveShadow = false;
             }
-        }
+        };
 
         this.move = function(pos, rot) {
             copyVector(this.corps.position, pos);
@@ -585,10 +585,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         addMessage: function(msg) {
             addMessage(msg);
         },
-        /*        speedFactor: function() {
-            return Config.speedFactor;
-        },
-*/
+
     };
 
 });

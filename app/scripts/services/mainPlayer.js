@@ -337,7 +337,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         this.camdist = function(delta) {
             distCamPlayer -= delta / 10;
             if (distCamPlayer < -60) distCamPlayer = -60;
-            if (distCamPlayer > 300) distCamPlayer = 300;
+            //if (distCamPlayer > 300) distCamPlayer = 300;
             this.setCamDist(distCamPlayer);
         };
 

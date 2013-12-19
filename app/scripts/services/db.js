@@ -1,6 +1,6 @@
 'use stcrict';
 
-angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $location) {
+angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $location, $timeout) {
 
     var CONFIG = {
         firebaseUrl: 'https://voxelgame.firebaseio.com'
@@ -10,13 +10,33 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
     var cubes_ref = new Firebase(CONFIG.firebaseUrl + '/cubes');
     var cubelist_ref = new Firebase(CONFIG.firebaseUrl + '/cubelist');
     var user = null;
-    var lastPosUpdate = new Date().getTime();
-    var lastRotUpdate = new Date().getTime();
-    var minUpdateInterval = 1 * 1000;
+    var gameStartTime = new Date().getTime();
+    var lastPosUpdate = gameStartTime;
+    var lastRotUpdate = gameStartTime;
+    var updateDbInterval = 1 * 1000;
+    var posUpdateTimeoutRef = rotUpdateTimeoutRef = null;
     $rootScope.users = [];
 
     function safeApply(scope, fn) {
         (scope.$$phase || scope.$root.$$phase) ? fn() : scope.$apply(fn);
+    };
+
+    function doUpdatePos(pos) {
+        lastPosUpdate = new Date().getTime();
+        var node = users_ref.child(user.id);
+        node.child('pos').update(pos);
+        node.update({
+            date: Firebase.ServerValue.TIMESTAMP
+        });
+    };
+
+    function doUpdateRot(rot) {
+        lastRotUpdate = new Date().getTime();
+        var node = users_ref.child(user.id);
+        node.child('rot').update(rot);
+        node.update({
+            date: Firebase.ServerValue.TIMESTAMP
+        });
     };
 
     function connect() {
@@ -231,24 +251,31 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
         updatePos: function(pos) {
             if (!user) return;
             var time = new Date().getTime();
-            if (lastPosUpdate > time - minUpdateInterval) return;
+            if (lastPosUpdate > time - updateDbInterval) {
+                $timeout.cancel(posUpdateTimeoutRef);
+                posUpdateTimeoutRef = $timeout(function() { // in cas user does not move any more we set a timer to update DB anyway
+                    doUpdatePos(pos);
+                }, updateDbInterval - (time - lastPosUpdate));
+                return;
+            }
+            $timeout.cancel(posUpdateTimeoutRef);
+            doUpdatePos(pos);
             lastPosUpdate = time;
-            var node = users_ref.child(user.id);
-            node.child('pos').update(pos);
-            node.update({
-                date: time
-            });
         },
+        // Update current logged user rotation
         updateRot: function(rot) {
             if (!user) return;
             var time = new Date().getTime();
-            if (lastRotUpdate > time - minUpdateInterval) return;
+            if (lastRotUpdate > time - updateDbInterval) {
+                $timeout.cancel(rotUpdateTimeoutRef);
+                rotUpdateTimeoutRef = $timeout(function() { // in cas user does not move any more we set a timer to update DB anyway
+                    doUpdateRot(rot);
+                }, updateDbInterval - (time - lastRotUpdate));
+                return;
+            }
+            $timeout.cancel(rotUpdateTimeoutRef);
+            doUpdateRot(rot);
             lastRotUpdate = time;
-            var node = users_ref.child(user.id);
-            node.child('rot').update(rot);
-            node.update({
-                date: new Date().getTime()
-            });
         },
 
     };
