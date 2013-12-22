@@ -6,44 +6,16 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         (scope.$$phase || scope.$root.$$phase) ? fn() : scope.$apply(fn);
     };
 
-    function player(_id, name, pos, rot, playerUpdateCallback, toggleInventoryCallback) {
-
-        if (!pos)
-            pos = {
-                x: 0,
-                y: 50,
-                z: 0
-            };
-        if (!rot)
-            rot = {
-                x: 0,
-                y: -100,
-                z: 0
-            };
+    function player(_dbUser, callbacks) {
         // info player
-        var id = _id;
-        var dbUser = null;
-        Session.onUsersLoad(function() {
-            dbUser = Session.getUser();
-            //console.log(dbUser);
-            //console.log("Inventory: "+dbUser.inventory);
-            if (!dbUser.inventory) {
-                var obj = Db.addInventory({
-                    type: CubeTypes.WoodBlock
-                }); // attrs: {test: 'ok'}
-                dbUser['inventory'] = [obj];
-            } else {
-                var array = $.map(dbUser.inventory, function(value, index) {
-                    return [value];
-                });
-                dbUser.inventory = array;
-            }
-        });
-
+        //console.log(_dbUser.pos);
+        var dbUser = _dbUser;
+        var id = dbUser.id;
+        var positionNew = new THREE.Vector3(dbUser.pos.x, dbUser.pos.y, dbUser.pos.z);
         this.dummy = Game.addGetPutDummy();
         var distCamPlayer = Config.distCamPlayer;
         var distCollision = Config.dimCadri * 0.66;
-        var _toggleInventoryCallback = toggleInventoryCallback;
+        var _toggleInventoryCallback = callbacks.toggleInventoryCallback;
 
         var audio = document.createElement('audio');
         var source = document.createElement('source');
@@ -53,12 +25,11 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
 
         var canJump = true;
         var saut = 0;
-        var positionNew = new THREE.Vector3(pos.x, pos.y, pos.z); // FIXME: ça sert à rien de l'initialiser ici (utilisé dans move)
 
         this.name = name;
         this.jumping = false;
         this.corps = new THREE.Object3D();
-        this.corps.position.copy(pos);
+        this.corps.position.copy(dbUser.pos);
 
         var map = THREE.ImageUtils.loadTexture('images/ash_uvgrid01.jpg');
         map.wrapS = map.wrapT = THREE.RepeatWrapping;
@@ -85,19 +56,18 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         this.tete.position.z = -d / 4;
         this.corps.add(this.tete);
 
-        // initializing rotation
-        this.corps.rotation.y = rot.corps;
-        this.tete.rotation.x  = rot.tete;
-
         this.camera = new THREE.PerspectiveCamera(Config.viewwAngle, window.innerWidth / window.innerHeight, 1, 1000);
         this.camera.position.x += Math.sin(this.corps.rotation.y) * distCamPlayer;
         this.camera.position.z += Math.cos(this.corps.rotation.y) * distCamPlayer;
         this.tete.add(this.camera);
 
+        this.corps.rotation.y = dbUser.rot.corps;
+        this.tete.rotation.x = dbUser.rot.tete;
+
         this.updateCamera = function() {
             this.camera.position.x += (this.tete.position.x - this.camera.position.x) / 10;
             this.camera.position.y += (this.tete.position.y - this.camera.position.y - Config.dimCadri / 2) / 10;
-        }
+        };
 
         this.move = function() {
             // if(! (this.moveForward || this.moveRight || this.moveLeft || this.moveBackward) ) return;
@@ -125,10 +95,11 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                     randomizeRot(rot, 0.02);
                     copyVector(this.torse.rotation, rot.rotation);
                 }
-                /*                safeApply($rootScope, function(){
-                    playerUpdateCallback({pos: pos});
+                /*
+                safeApply($rootScope, function(){
+                    callbacks.playerUpdateCallback({pos: pos});
                 });
-*/
+                */
             }
         };
 
@@ -192,12 +163,13 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                     audio.play();
                     canBouge = false;
                 }
-                /*                if(Config.modeDebug) {
+                /*
+                if(Config.modeDebug) {
                     dummy[i].mesh.position.y = this.corps.position.y;
                     dummy[i].mesh.position.x = this.corps.position.x + deltaX[i] * distCollision;
                     dummy[i].mesh.position.z = this.corps.position.z + deltaZ[i] * distCollision;
                 }
-*/
+                */
             }
             var distPut = 25;
 
@@ -353,13 +325,12 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
 
         this.setCamDist(Config.distCamPlayer);
 
-    }
+    };
+
     return {
-
-        newPlayer: function(id, name, pos, playerUpdateCallback, toggleInventoryCallback) {
-            return new player(id, name, pos, playerUpdateCallback, toggleInventoryCallback);
+        newPlayer: function(_player, callbacks) {
+            return new player(_player, callbacks);
         },
-
     };
 
 });

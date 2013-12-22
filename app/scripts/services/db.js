@@ -67,7 +67,6 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
     };
 
     // get all users once
-
     function getUsers(callbackSuccess) {
         users_ref.once('value', function(snapshot) {
             if (snapshot.val() !== null) {
@@ -79,7 +78,6 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
     };
 
     // listen to users changes
-
     function listenUsers(callbackSuccess) {
         users_ref.on('child_added', function(snapshot) {
             if (snapshot.val() !== null) {
@@ -90,14 +88,31 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
         });
     };
 
-    function newUser(id, name, email, pos, rot, inventory) {
+    // returns a well initialized object
+    function newUser(id, name, email, pos, rot, inventory, robots) {
+        if (!pos)
+            pos = {
+                x: 0,
+                y: 50,
+                z: 0
+            };
+        if (!rot)
+            rot = {
+                corps: 0,
+                tete: 100
+            };
+
+        if(!inventory) inventory = [];
+        if(!robots) robots = [];
+
         return {
             id: id,
             name: name,
             email: email,
             pos: pos,
             rot: rot,
-            inventory: inventory
+            inventory: inventory,
+            robots: robots
         }
     };
 
@@ -136,23 +151,20 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
             if (callback) callback(user);
         },
 
+        // get elements and return a well initialized object
         newUser: newUser,
 
-        newPlayer: function(id, name, pos, rot, callbackSuccess) {
-            var player_ref = new Firebase(CONFIG.firebaseUrl + '/users/' + id);
+        // add firebase onvalue callback to a dbUser
+        newPlayer: function(dbUser, callbackSuccess) {
+            var player_ref = new Firebase(CONFIG.firebaseUrl + '/users/' + dbUser.id);
             player_ref.on('value', function(snapshot) {
                 safeApply($rootScope, function() {
-                    callbackSuccess(id, snapshot.val());
+                    callbackSuccess(dbUser.id, snapshot.val());
                     return;
                 });
             });
 
-            return {
-                id: id,
-                name: name,
-                pos: pos,
-                rot: rot
-            }
+            return dbUser;
         },
 
         addMessage: function(name, text) {

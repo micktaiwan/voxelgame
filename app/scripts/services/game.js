@@ -400,24 +400,13 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     }
 
     function PNJ(p) {
-
-        if (!p.pos)
-            p.pos = {
-                x: 0,
-                y: Config.dimCadri,
-                z: 0
-            };
-        if (!p.rot)
-            p.rot = {
-                corps: 0,
-                tete: 0
-            };
+        //console.log(p);
         this.id = p.id;
         this.name = p.name;
         this.onlinePresence = false;
         this.corps = new THREE.Object3D();
-
         copyVector(this.corps.position, p.pos);
+
         var d = Config.dimCadri;
         var geometrytorse = new THREE.CubeGeometry(d, d, d);
         var material = new THREE.MeshLambertMaterial({

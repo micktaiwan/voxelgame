@@ -21,9 +21,9 @@ angular.module('gameApp')
             var user = Session.getUser();
             if (user) $scope.name = user.name;
         };
-
         initUser();
         Session.onUsersLoad(initUser);
+
         Db.onChatMsg(function(msg) {
             $scope.chat_messages.push(msg);
             Game.addMessage({
