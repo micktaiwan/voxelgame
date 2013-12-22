@@ -3,15 +3,25 @@ var CubeTypes = {
 }
 
 var Config = {
+    // geek mode
     modeDebug: false,
+
+    // World
     dimCadri: 20,
+    randomCubeRotation: true, // if cubes are randomly rotated or not
+    randomCubeRotationFactor: 0.1, // how much cubes are rotated
+
+    // Camera
     distCamPlayer: 120,
     viewAngle: 45,
+
+    // Player
     playerSpeed: 1.3, // constant
     speedFactor: 1, // will be updated depending of the fps
     maxInventory: 20,
-    randomCubeRotation: true,
-    randomCubeRotationFactor: 0.1
+
+    // Robots
+    pov: 'robot' // camera start mode: 'player', 'robot'
 }
 
 function randomizeRot(mesh, factor) {

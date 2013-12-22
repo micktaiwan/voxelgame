@@ -253,7 +253,7 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
             var time = new Date().getTime();
             if (lastPosUpdate > time - updateDbInterval) {
                 $timeout.cancel(posUpdateTimeoutRef);
-                posUpdateTimeoutRef = $timeout(function() { // in cas user does not move any more we set a timer to update DB anyway
+                posUpdateTimeoutRef = $timeout(function() { // in case user does not move any more we set a timer to update DB anyway
                     doUpdatePos(pos);
                 }, updateDbInterval - (time - lastPosUpdate));
                 return;
@@ -268,7 +268,7 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
             var time = new Date().getTime();
             if (lastRotUpdate > time - updateDbInterval) {
                 $timeout.cancel(rotUpdateTimeoutRef);
-                rotUpdateTimeoutRef = $timeout(function() { // in cas user does not move any more we set a timer to update DB anyway
+                rotUpdateTimeoutRef = $timeout(function() { // in case user does not move any more we set a timer to update DB anyway
                     doUpdateRot(rot);
                 }, updateDbInterval - (time - lastRotUpdate));
                 return;
@@ -277,6 +277,22 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
             doUpdateRot(rot);
             lastRotUpdate = time;
         },
+        // add a robot to the game belonging to the connected current user
+        addRobot: function(obj) {
+            if (!user) return;
+            var id = users_ref.child(user.id).child('robots').push().name();
+            var value = {
+                id: id,
+                type: obj.type,
+                date: Firebase.ServerValue.TIMESTAMP
+            };
+            users_ref.child(user.id).child('robots').child(id).update(value);
+            if (obj.attrs) {
+                users_ref.child(user.id).child('robots').child(id).child('attrs').update(obj.attrs);
+                value['attrs'] = obj.attrs;
+            }
+            return value;
+        }
 
     };
 });

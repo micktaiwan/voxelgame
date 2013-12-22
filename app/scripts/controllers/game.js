@@ -9,6 +9,8 @@ angular.module('gameApp')
             return;
         }
 
+        //Db.addRobot({type: 'holefiller'});
+
         $scope.showInventory = false;
         $scope.showConsole = false;
         $scope.msgs = [];
@@ -95,7 +97,7 @@ angular.module('gameApp')
 
         var already_initialized = Game.init(addMessage);
         if (!already_initialized) {
-            Game.addMainPlayer(MainPlayer.newPlayer(user.id, user.name, user.pos, updatePlayer, toggleInventory));
+            Game.addMainPlayer(MainPlayer.newPlayer(user.id, user.name, user.pos, user.rot, updatePlayer, toggleInventory));
             var u = $rootScope.users;
             var pnjs = [];
             for (var i in u) {

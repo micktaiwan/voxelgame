@@ -6,12 +6,18 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         (scope.$$phase || scope.$root.$$phase) ? fn() : scope.$apply(fn);
     };
 
-    function player(_id, name, pos, playerUpdateCallback, toggleInventoryCallback) {
+    function player(_id, name, pos, rot, playerUpdateCallback, toggleInventoryCallback) {
 
         if (!pos)
             pos = {
                 x: 0,
                 y: 50,
+                z: 0
+            };
+        if (!rot)
+            rot = {
+                x: 0,
+                y: -100,
                 z: 0
             };
         // info player
@@ -47,7 +53,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
 
         var canJump = true;
         var saut = 0;
-        var positionNew = new THREE.Vector3(pos.x, pos.y, pos.z);
+        var positionNew = new THREE.Vector3(pos.x, pos.y, pos.z); // FIXME: ça sert à rien de l'initialiser ici (utilisé dans move)
 
         this.name = name;
         this.jumping = false;
@@ -78,6 +84,10 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         this.tete.position.y = d;
         this.tete.position.z = -d / 4;
         this.corps.add(this.tete);
+
+        // initializing rotation
+        this.corps.rotation.y = rot.corps;
+        this.tete.rotation.x  = rot.tete;
 
         this.camera = new THREE.PerspectiveCamera(Config.viewwAngle, window.innerWidth / window.innerHeight, 1, 1000);
         this.camera.position.x += Math.sin(this.corps.rotation.y) * distCamPlayer;
