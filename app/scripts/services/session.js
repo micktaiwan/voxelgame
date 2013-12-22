@@ -9,7 +9,7 @@ angular.module('gameApp.services.session', [])
 
         Db.getUsers(function(u) {
             for (var i in u) {
-                //console.log(u[i].pos);
+                //console.log(u[i].robots);
                 users.push(Db.newUser(i, u[i].name, u[i].email, u[i].pos, u[i].rot, u[i].inventory,  u[i].robots));
             }
             if (onUserLoadCallback) onUserLoadCallback();

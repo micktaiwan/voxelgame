@@ -89,7 +89,7 @@ angular.module('gameApp')
         }
 
         function addMessage(msg) {
-            console.log(msg);
+            //console.log(msg);
             $scope.msgs.push(msg);
             $scope.showConsole = true;
             if ($scope.msgs.length == 1)
@@ -98,7 +98,7 @@ angular.module('gameApp')
 
         var already_initialized = Game.init(addMessage);
         if (!already_initialized) {
-            console.log(user);
+            //console.log(user);
             Game.addMainPlayer(MainPlayer.newPlayer(user, {
                 playerUpdateCallback: updatePlayer,
                 toggleInventoryCallback: toggleInventory

@@ -67,6 +67,7 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
     };
 
     // get all users once
+
     function getUsers(callbackSuccess) {
         users_ref.once('value', function(snapshot) {
             if (snapshot.val() !== null) {
@@ -78,6 +79,7 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
     };
 
     // listen to users changes
+
     function listenUsers(callbackSuccess) {
         users_ref.on('child_added', function(snapshot) {
             if (snapshot.val() !== null) {
@@ -89,6 +91,7 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
     };
 
     // returns a well initialized object
+
     function newUser(id, name, email, pos, rot, inventory, robots) {
         if (!pos)
             pos = {
@@ -102,8 +105,12 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
                 tete: 100
             };
 
-        if(!inventory) inventory = [];
-        if(!robots) robots = [];
+        if (!inventory) inventory = [];
+        if (!robots) robots = [];
+        else {
+            console.log('robots in DB for user ' + name + '!');
+            console.log(robots);
+        }
 
         return {
             id: id,
