@@ -347,16 +347,20 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     function animate() {
         if (!rendererIsStopped) requestAnimationFrame(animate);
+
         nowMsec = new Date().getTime()
         fps = 1000.0 / (nowMsec - lastTimeMsec)
         lastTimeMsec = nowMsec
         Config.speedFactor = (60 / fps);
-
         //        if(fps < 40 || fps > 70)
         //            console.log(Config.speedFactor + ", " + fps);
 
         rendererStats.update(renderer);
         if (!player) return;
+
+        player.updateRobots();
+
+
         //player.updateCamera();
         if (!isLocked) {
             player.move();
@@ -541,6 +545,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         addMainPlayer: function(p) {
             player = p;
             scene.add(player.corps);
+        },
+        addRobot: function(r) {
+            scene.add(r.corps);
         },
         addPNJ: function(p) {
             //console.log('adding PNJ '+p.id)

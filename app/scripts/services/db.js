@@ -86,6 +86,22 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
         });
     };
 
+    function addInventory(obj) {
+        if (!user) throw "no user!";
+        var id = users_ref.child(user.id).child('inventory').push().name();
+        var value = {
+            id: id,
+            type: obj.type,
+            date: Firebase.ServerValue.TIMESTAMP
+        };
+        users_ref.child(user.id).child('inventory').child(id).update(value);
+        if (obj.attrs) {
+            users_ref.child(user.id).child('inventory').child(id).child('attrs').update(obj.attrs);
+            value['attrs'] = obj.attrs;
+        }
+        return value;
+    };
+
     // returns a well initialized object
 
     function newUser(id, name, email, pos, rot, inventory, robots) {
@@ -101,9 +117,18 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
                 tete: 100
             };
 
-        if (!inventory) inventory = [];
+        if (!inventory) {
+            inventory = [];
+            /*            var obj = addInventory({
+                type: CubeTypes.WoodBlock
+            }); // attrs: {test: 'ok'}
+            inventory = [obj];*/
+        } else {
+            inventory = toArray(inventory);
+        }
         if (!robots) robots = [];
         else {
+            robots = toArray(robots);
             console.log('robots in DB for user ' + name + '!');
             console.log(robots);
         }
@@ -231,21 +256,8 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
             });
         },
 
-        addInventory: function(obj) {
-            if (!user) return;
-            var id = users_ref.child(user.id).child('inventory').push().name();
-            var value = {
-                id: id,
-                type: obj.type,
-                date: Firebase.ServerValue.TIMESTAMP
-            };
-            users_ref.child(user.id).child('inventory').child(id).update(value);
-            if (obj.attrs) {
-                users_ref.child(user.id).child('inventory').child(id).child('attrs').update(obj.attrs);
-                value['attrs'] = obj.attrs;
-            }
-            return value;
-        },
+        // obj = {type: '', attrs :{}}
+        addInventory: addInventory,
 
         removeInventory: function(id) {
             if (!user) return;

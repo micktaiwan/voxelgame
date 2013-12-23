@@ -42,6 +42,7 @@ angular.module('gameApp')
             return rv;
         }
 
+        // TODO: update players robots
         function updatePNJ(id, obj) {
             var p = getPNJById(id)
             if (!p) return;

@@ -60,6 +60,17 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         this.corps.rotation.y = dbUser.rot.corps;
         this.tete.rotation.x = dbUser.rot.tete;
 
+        var robots = [];
+        dbUser.robots.forEach(function(r) {
+            console.log("robot: " + r.id);
+        });
+
+        this.updateRobots = function() {
+            robots.forEach(function(r){
+                r.update();
+            });
+        };
+
         this.updateCamera = function() {
             this.camera.position.x += (this.tete.position.x - this.camera.position.x) / 10;
             this.camera.position.y += (this.tete.position.y - this.camera.position.y - Config.dimCadri / 2) / 10;
@@ -268,20 +279,20 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         };
 
         this.putCube = function() {
-            var cube = dbUser.inventory.pop();
-            //console.log(cube);
-            if (!cube) {
+            //console.log(dbUser.inventory);
+            var key = this.canGet();
+            if (key) {
                 Game.addMessage({
-                    text: 'Nothing in inventory!',
+                    text: 'There is a cube there',
                     delay: 3,
                     type: 'error'
                 });
                 return;
             }
-            var key = this.canGet();
-            if (key) {
+            var cube = dbUser.inventory.pop();
+            if (!cube) {
                 Game.addMessage({
-                    text: 'There is a cube there',
+                    text: 'Nothing in inventory!',
                     delay: 3,
                     type: 'error'
                 });

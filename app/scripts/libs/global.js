@@ -24,6 +24,12 @@ var Config = {
     pov: 'robot' // camera start mode: 'player', 'robot'
 };
 
+function toArray(object) {
+    return $.map(object, function(value, index) {
+        return [value];
+    });
+}
+
 function safeApply(scope, fn) {
     (scope.$$phase || scope.$root.$$phase) ? fn() : scope.$apply(fn);
 }
