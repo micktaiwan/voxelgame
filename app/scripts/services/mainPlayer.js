@@ -11,7 +11,8 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         this.dummy = Game.addGetPutDummy();
         var distCamPlayer = Config.distCamPlayer;
         var distCollision = Config.dimCadri * 0.66;
-        var _toggleInventoryCallback = callbacks.toggleInventoryCallback;
+
+        var selectedObject = null;
 
         var audio = document.createElement('audio');
         var source = document.createElement('source');
@@ -79,8 +80,8 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         this.rotate = function(corps, tete) {
             this.corps.rotation.y -= corps * 0.002;
             this.tete.rotation.x -= tete * 0.002;
-            if(this.tete.rotation.x > Math.PI/2) this.tete.rotation.x = Math.PI/2;
-            if(this.tete.rotation.x < -Math.PI/2) this.tete.rotation.x = -Math.PI/2;
+            if (this.tete.rotation.x > Math.PI / 2) this.tete.rotation.x = Math.PI / 2;
+            if (this.tete.rotation.x < -Math.PI / 2) this.tete.rotation.x = -Math.PI / 2;
         }
 
         this.move = function() {
@@ -228,13 +229,24 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         };
 
         this.toggleInventory = function() {
-            if (_toggleInventoryCallback) {
+            if (callbacks.toggleInventoryCallback && callbacks.updateInventoryCallback) {
                 safeApply($rootScope, function() {
-                    _toggleInventoryCallback(dbUser.inventory);
+                    callbacks.updateInventoryCallback(dbUser.inventory)
+                    callbacks.toggleInventoryCallback();
                 });
             }
         };
 
+        function getInventoryObjecyById(id) {
+            var rv = null;
+            dbUser.inventory.some(function(s) {
+                if (s.id == id) {
+                    rv = s;
+                    return;
+                }
+            });
+            return rv;
+        }
         this.getCube = function() {
             if (dbUser.inventory.length >= Config.maxInventory) {
                 Game.addMessage({
@@ -283,22 +295,31 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             return getCubeByCoords(this.dummy.mesh.position);
         };
 
+        function selectNextInventoryObject() {
+            // TODO: select object in UI
+            if (dbUser.inventory.length == 0) {
+                selectedObject = null;
+            } else {
+                selectedObject = dbUser.inventory[0];
+            }
+        }
+
         this.putCube = function() {
             //console.log(dbUser.inventory);
             var key = this.canGet();
             if (key) {
                 Game.addMessage({
                     text: 'There is a cube there',
-                    delay: 3,
+                    delay: 2,
                     type: 'error'
                 });
                 return;
             }
-            var cube = dbUser.inventory.pop();
-            if (!cube) {
+
+            if (!selectedObject) {
                 Game.addMessage({
-                    text: 'Nothing in inventory!',
-                    delay: 3,
+                    text: 'Nothing in hand!',
+                    delay: 2,
                     type: 'error'
                 });
                 return;
@@ -309,8 +330,13 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                 y: this.dummy.mesh.position.y / Config.dimCadri,
                 z: this.dummy.mesh.position.z / Config.dimCadri
             };
-            Db.put(obj.x, obj.y, obj.z, cube.type);
-            Db.removeInventory(cube.id);
+            Db.put(obj.x, obj.y, obj.z, selectedObject.type);
+            Db.removeInventory(selectedObject.id);
+            var index = getInventoryObjecyById(selectedObject.id);
+            dbUser.inventory.splice(index, 1);
+            callbacks.updateInventoryCallback(dbUser.inventory);
+            selectNextInventoryObject();
+            console.log(dbUser.inventory.length);
         };
 
         this.setCamDist = function(distCamPlayer) {
@@ -337,11 +363,16 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
 
         this.setCamDist(Config.distCamPlayer);
 
+        this.setSelectedObject = function(id) {
+            selectedObject = getInventoryObjecyById(id);
+        };
+
     };
 
     return {
         newPlayer: function(_player, callbacks) {
-            return new player(_player, callbacks);
+            player = new player(_player, callbacks);
+            return player;
         },
     };
 

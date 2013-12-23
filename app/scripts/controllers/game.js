@@ -14,6 +14,7 @@ angular.module('gameApp')
         $scope.showInventory = false;
         $scope.showConsole = false;
         $scope.msgs = [];
+        var player = null;
 
         $timeout(function() {
             Game.addMessage({
@@ -43,6 +44,7 @@ angular.module('gameApp')
         }
 
         // TODO: update players robots
+
         function updatePNJ(id, obj) {
             var p = getPNJById(id)
             if (!p) return;
@@ -58,23 +60,55 @@ angular.module('gameApp')
 
             //else console.log('player '+id+' not found')
             // when Db.newPlayer is called the callback is called but the pnj does not exists yet...
-        };
+        }
 
         function updatePlayer(obj) {
             $scope.pos = obj.pos;
-        };
+        }
 
-        function toggleInventory(inventory) {
-            if (inventory)
-                $scope.inventory = inventory;
+        function toggleInventory() {
             $scope.showInventory = !$scope.showInventory;
         }
 
-        $scope.selectInventory = function(obj) {
-            if ($scope.selectedInventoryObject == obj.id)
+        /*        function getInventoryObjecyById(id) {
+            var rv = null;
+            $scope.inventory.some(function(s) {
+                if (s.id == id) {
+                    rv = s;
+                    return;
+                }
+            });
+            return rv;
+        }*/
+        /*
+        function selectNextInventoryObject() {
+            if ($scope.inventory.length == 0) {
                 $scope.selectedInventoryObject = null;
-            else
+                MainPlayer.setSelectedObject(null);
+            } else {
+                $scope.selectedInventoryObject = $scope.inventory[0];
+                MainPlayer.setSelectedObject($scope.inventory[0].id);
+            }
+        }
+*/
+
+        function updateInventory(inventory) {
+            $scope.inventory = inventory;
+            /*
+            var index = getInventoryObjecyById(id);
+            $scope.inventory.splice(index, 1);
+            selectNextInventoryObject();
+            */
+        }
+
+        $scope.selectInventory = function(obj) {
+            if ($scope.selectedInventoryObject == obj.id) {
+                $scope.selectedInventoryObject = null;
+                player.setSelectedObject(null);
+            } else {
                 $scope.selectedInventoryObject = obj.id;
+                player.setSelectedObject(obj.id);
+            }
             //$scope.showInventory = false;
         }
 
@@ -100,10 +134,12 @@ angular.module('gameApp')
         var already_initialized = Game.init(addMessage);
         if (!already_initialized) {
             //console.log(user);
-            Game.addMainPlayer(MainPlayer.newPlayer(user, {
+            player = MainPlayer.newPlayer(user, {
                 playerUpdateCallback: updatePlayer,
-                toggleInventoryCallback: toggleInventory
-            }));
+                toggleInventoryCallback: toggleInventory,
+                updateInventoryCallback: updateInventory
+            });
+            Game.addMainPlayer(player);
             var u = $rootScope.users;
             var pnjs = [];
             for (var i in u) {
