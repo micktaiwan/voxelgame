@@ -66,7 +66,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         });
 
         this.updateRobots = function() {
-            robots.forEach(function(r){
+            robots.forEach(function(r) {
                 r.update();
             });
         };
@@ -178,7 +178,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                 }
                 */
             }
-            var distPut = 25;
+            var distPut = Config.dimCadri + 5;
 
             // Grille
             this.dummy.mesh.position.y = Math.round((this.corps.position.y + Math.sin(this.tete.rotation.x) * distPut + Config.dimCadri / 2) / Config.dimCadri) * Config.dimCadri;
@@ -261,21 +261,19 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                 });
         };
 
-        this.canGet = function() {
+
+        function getCubeByCoords(pos) {
             var objs = Game.getMeshObjects();
-            var distGet = Config.dimCadri * 2; // FIXME: à améliorer
-            var teteposabs = new THREE.Vector3(this.corps.position.x + this.tete.position.x, this.corps.position.y + this.tete.position.y, this.corps.position.z + this.tete.position.z)
-            var vecteur = new THREE.Vector3(this.dummy.mesh.position.x - teteposabs.x, this.dummy.mesh.position.y - teteposabs.y, this.dummy.mesh.position.z - teteposabs.z).normalize();
-            var raycaster = new THREE.Raycaster(teteposabs, vecteur);
-            var intersects = raycaster.intersectObjects(objs);
-            if (intersects.length > 0 && intersects[0].distance < distGet) {
-                for (var key in objs) {
-                    if (objs[key]['id'] == intersects[0].object.id) {
-                        return key;
-                    }
+            for (var key in objs) {
+                if (objs[key].position.x == pos.x && objs[key].position.y == pos.y && objs[key].position.z == pos.z) {
+                    return key;
                 }
             }
             return null;
+        }
+
+        this.canGet = function() {
+            return getCubeByCoords(this.dummy.mesh.position);
         };
 
         this.putCube = function() {

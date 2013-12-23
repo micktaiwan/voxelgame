@@ -1,3 +1,4 @@
+===============================================================
 // how to convert 2D mouse coordinates into 3D selection
 
     var elem = renderer.domElement,
@@ -14,3 +15,21 @@
     projector.unprojectVector( vector, camera );
     var ray = new THREE.Ray( camera.position, vector.subSelf( camera.position ).normalize() );
     var intersects = ray.intersectObjects( scene.children );
+
+=============================================================
+Raytracer, était dans canGet
+
+var objs = Game.getMeshObjects();
+var distGet = Config.dimCadri * 2; // FIXME: à améliorer
+var teteposabs = new THREE.Vector3(this.corps.position.x + this.tete.position.x, this.corps.position.y + this.tete.position.y, this.corps.position.z + this.tete.position.z)
+var vecteur = new THREE.Vector3(this.dummy.mesh.position.x - teteposabs.x, this.dummy.mesh.position.y - teteposabs.y, this.dummy.mesh.position.z - teteposabs.z).normalize();
+var raycaster = new THREE.Raycaster(teteposabs, vecteur);
+var intersects = raycaster.intersectObjects(objs);
+if (intersects.length > 0 && intersects[0].distance < distGet) {
+    for (var key in objs) {
+        if (objs[key]['id'] == intersects[0].object.id) {
+            return key;
+        }
+    }
+}
+return null;
