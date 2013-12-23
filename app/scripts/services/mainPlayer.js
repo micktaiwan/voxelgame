@@ -2,10 +2,6 @@
 
 angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function($rootScope, $location, Db, Session, Game) {
 
-    function safeApply(scope, fn) {
-        (scope.$$phase || scope.$root.$$phase) ? fn() : scope.$apply(fn);
-    };
-
     function player(_dbUser, callbacks) {
         // info player
         //console.log(_dbUser.pos);
@@ -23,11 +19,11 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         audio.appendChild(source);
         audio.play();
 
+        this.name = name;
         var canJump = true;
         var saut = 0;
-
-        this.name = name;
         this.jumping = false;
+
         this.corps = new THREE.Object3D();
         this.corps.position.copy(dbUser.pos);
 

@@ -2,10 +2,6 @@
 
 angular.module('gameApp.services.game', []).factory('Game', function($rootScope, $location, Db, Session) {
 
-    function safeApply(scope, fn) {
-        (scope.$$phase || scope.$root.$$phase) ? fn() : scope.$apply(fn);
-    };
-
     var initialized = false;
     var rendererIsStopped = true;
     var rendererStats = null;

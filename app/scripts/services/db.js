@@ -17,10 +17,6 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
     var posUpdateTimeoutRef = rotUpdateTimeoutRef = null;
     $rootScope.users = [];
 
-    function safeApply(scope, fn) {
-        (scope.$$phase || scope.$root.$$phase) ? fn() : scope.$apply(fn);
-    };
-
     function doUpdatePos(pos) {
         lastPosUpdate = new Date().getTime();
         var node = users_ref.child(user.id);

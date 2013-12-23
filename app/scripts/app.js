@@ -9,6 +9,7 @@ angular.module('gameApp', [
     'gameApp.services.notification',
     'gameApp.services.game',
     'gameApp.services.mainplayer',
+    'gameApp.services.robot',
 ])
         .config(function($routeProvider) {
             $routeProvider

@@ -1,6 +1,6 @@
 var CubeTypes = {
     WoodBlock: 1
-}
+};
 
 var Config = {
     // geek mode
@@ -22,6 +22,10 @@ var Config = {
 
     // Robots
     pov: 'robot' // camera start mode: 'player', 'robot'
+};
+
+function safeApply(scope, fn) {
+    (scope.$$phase || scope.$root.$$phase) ? fn() : scope.$apply(fn);
 }
 
 function randomizeRot(mesh, factor) {
