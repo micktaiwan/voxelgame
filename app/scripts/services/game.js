@@ -248,9 +248,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0; // event.pageX || 0;
             var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0; //event.pageY || 0;
 
-            // FIXME: devrait appeller une fonction de player, qui elle met à jour les données et la DB
-            player.corps.rotation.y -= movementX * 0.002;
-            player.tete.rotation.x -= movementY * 0.002;
+            player.rotate(movementX, movementY);
 
             // camera lag, not nicely done
             //player.camera.position.x += movementX * 0.01;

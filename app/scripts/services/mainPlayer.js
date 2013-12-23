@@ -76,6 +76,13 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             this.camera.position.y += (this.tete.position.y - this.camera.position.y - Config.dimCadri / 2) / 10;
         };
 
+        this.rotate = function(corps, tete) {
+            this.corps.rotation.y -= corps * 0.002;
+            this.tete.rotation.x -= tete * 0.002;
+            if(this.tete.rotation.x > Math.PI/2) this.tete.rotation.x = Math.PI/2;
+            if(this.tete.rotation.x < -Math.PI/2) this.tete.rotation.x = -Math.PI/2;
+        }
+
         this.move = function() {
             // if(! (this.moveForward || this.moveRight || this.moveLeft || this.moveBackward) ) return;
             // can't do that or getputdummy is not updated...
