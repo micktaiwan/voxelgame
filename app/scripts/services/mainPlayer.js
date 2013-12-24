@@ -270,27 +270,26 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             }
             var key = this.canGet();
             if (key) {
-                //debugger;
-                var objs = Game.getObjects();
-                var obj = objs[key].obj;
-                Db.remove(obj.id); // will call onCube 'removed'
-                //Game.removeCubeFromSceneByKey(key);
-                console.log(obj);
+                var obj = Game.getObjects()[key].obj;
+                Db.remove(obj.id); // will call onCube 'removed' and Game.removeCubeFromSceneByKey(key);
                 var obj = Db.addInventory({
                     type: obj.type
                 });
                 dbUser.inventory.push(obj);
+                selectedObject = obj;
+                callbacks.updateInventoryCallback(dbUser.inventory, obj.id);
                 Game.addMessage({
                     text: 'ok, in inventory',
                     delay: 3,
                     type: 'info'
                 });
-            } else
+            } else {
                 Game.addMessage({
                     text: 'No cube here !',
                     delay: 3,
                     type: 'error'
                 });
+            }
         };
 
 
@@ -309,11 +308,11 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         };
 
         function selectNextInventoryObject() {
-            // TODO: select object in UI
             if (dbUser.inventory.length == 0) {
                 selectedObject = null;
             } else {
                 selectedObject = dbUser.inventory[0];
+                callbacks.updateInventoryCallback(dbUser.inventory, selectedObject.id);
             }
         }
 
