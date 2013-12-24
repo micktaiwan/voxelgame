@@ -1,6 +1,21 @@
 var CubeTypes = {
-    WoodBlock: 1
+    WoodBox: 0,
+    WoodBlock: 1,
 };
+
+var Objects = [{
+    type: CubeTypes.WoodBox,
+    display: 'Box',
+    material: new THREE.MeshLambertMaterial({
+        map: THREE.ImageUtils.loadTexture('images/boite.jpg')
+    })
+}, {
+    type: CubeTypes.WoodBlock,
+    display: 'Wood',
+    material: new THREE.MeshLambertMaterial({
+        map: THREE.ImageUtils.loadTexture('images/crate01.jpg')
+    })
+}, ];
 
 var Config = {
     // geek mode

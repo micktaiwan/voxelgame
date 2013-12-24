@@ -92,6 +92,7 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
         var value = {
             id: id,
             type: obj.type,
+            display: Objects[obj.type].display,
             date: Firebase.ServerValue.TIMESTAMP
         };
         users_ref.child(user.id).child('inventory').child(id).update(value);
@@ -119,10 +120,12 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
 
         if (!inventory) {
             inventory = [];
-            /*            var obj = addInventory({
+            /* marche pas parce que le user n'existe pas quand on appelle newUser
+            var obj = addInventory({
                 type: CubeTypes.WoodBlock
             }); // attrs: {test: 'ok'}
-            inventory = [obj];*/
+            inventory = [obj];
+            */
         } else {
             inventory = toArray(inventory);
         }
@@ -143,7 +146,6 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
             robots: robots
         }
     };
-
 
     function cube_changed(type, snapshot, callbackSuccess) {
         safeApply($rootScope, function() {
@@ -239,12 +241,14 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
                 cubes_ref.child('pos').child(x).child(y).child(z).update({
                     id: id,
                     type: type,
+                    display: Objects[type].display, // FIXME: hack, should use a find function
                     user: user.id,
                     date: date
                 });
                 var obj = {
                     id: id,
                     type: type,
+                    display: Objects[type].display, // FIXME: hack, should use a find function
                     user: user.id,
                     date: date,
                     x: x,

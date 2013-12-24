@@ -70,35 +70,8 @@ angular.module('gameApp')
             $scope.showInventory = !$scope.showInventory;
         }
 
-        /*        function getInventoryObjecyById(id) {
-            var rv = null;
-            $scope.inventory.some(function(s) {
-                if (s.id == id) {
-                    rv = s;
-                    return;
-                }
-            });
-            return rv;
-        }*/
-        /*
-        function selectNextInventoryObject() {
-            if ($scope.inventory.length == 0) {
-                $scope.selectedInventoryObject = null;
-                MainPlayer.setSelectedObject(null);
-            } else {
-                $scope.selectedInventoryObject = $scope.inventory[0];
-                MainPlayer.setSelectedObject($scope.inventory[0].id);
-            }
-        }
-*/
-
         function updateInventory(inventory) {
             $scope.inventory = inventory;
-            /*
-            var index = getInventoryObjecyById(id);
-            $scope.inventory.splice(index, 1);
-            selectNextInventoryObject();
-            */
         }
 
         $scope.selectInventory = function(obj) {

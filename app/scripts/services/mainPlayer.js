@@ -237,7 +237,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             }
         };
 
-        function getInventoryObjecyById(id) {
+        function getInventoryObjectById(id) {
             var rv = null;
             dbUser.inventory.some(function(s) {
                 if (s.id == id) {
@@ -247,6 +247,18 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             });
             return rv;
         }
+
+        function getInventoryIndexById(id) {
+            var objects = dbUser.inventory;
+            for (var key in objects) {
+                if (objects[key].id == id) {
+                    return key;
+                }
+            }
+            return null;
+        }
+
+
         this.getCube = function() {
             if (dbUser.inventory.length >= Config.maxInventory) {
                 Game.addMessage({
@@ -260,12 +272,13 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             if (key) {
                 //debugger;
                 var objs = Game.getObjects();
-                //console.log(key);
-                Db.remove(objs[key].obj.id);
+                var obj = objs[key].obj;
+                Db.remove(obj.id); // will call onCube 'removed'
                 //Game.removeCubeFromSceneByKey(key);
+                console.log(obj);
                 var obj = Db.addInventory({
-                    type: CubeTypes.WoodBlock
-                }); // FIXME: type
+                    type: obj.type
+                });
                 dbUser.inventory.push(obj);
                 Game.addMessage({
                     text: 'ok, in inventory',
@@ -330,13 +343,14 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                 y: this.dummy.mesh.position.y / Config.dimCadri,
                 z: this.dummy.mesh.position.z / Config.dimCadri
             };
+            //console.log(selectedObject);
             Db.put(obj.x, obj.y, obj.z, selectedObject.type);
             Db.removeInventory(selectedObject.id);
-            var index = getInventoryObjecyById(selectedObject.id);
+            var index = getInventoryIndexById(selectedObject.id);
             dbUser.inventory.splice(index, 1);
             callbacks.updateInventoryCallback(dbUser.inventory);
             selectNextInventoryObject();
-            console.log(dbUser.inventory.length);
+            //console.log(dbUser.inventory.length);
         };
 
         this.setCamDist = function(distCamPlayer) {
@@ -364,7 +378,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         this.setCamDist(Config.distCamPlayer);
 
         this.setSelectedObject = function(id) {
-            selectedObject = getInventoryObjecyById(id);
+            selectedObject = getInventoryObjectById(id);
         };
 
     };

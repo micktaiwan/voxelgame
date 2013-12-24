@@ -16,10 +16,6 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     var dummy = [];
 
     var geometry = new THREE.CubeGeometry(Config.dimCadri, Config.dimCadri, Config.dimCadri);
-    var cubeMaterial = new THREE.MeshLambertMaterial({
-        map: THREE.ImageUtils.loadTexture('images/crate01.jpg')
-    });
-
     var canMove = false;
 
     var light, light2;
@@ -184,7 +180,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     function addCubeToScene(obj) {
         if (getCubeFromScene(obj))
             throw ('There is a cube there. Check it before you call addCubeToScene.');
-        var mesh = new THREE.Mesh(geometry, cubeMaterial);
+        // FIXME: material and geometry should depends on obj.type
+        var mesh = new THREE.Mesh(geometry, Objects[obj.type].material);
         mesh.position.x = obj.x * Config.dimCadri;
         mesh.position.y = obj.y * Config.dimCadri;
         mesh.position.z = obj.z * Config.dimCadri;
