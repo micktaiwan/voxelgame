@@ -1,4 +1,4 @@
-'use stcrict';
+'use strict';
 
 angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $location, $timeout) {
 
@@ -14,7 +14,8 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
     var lastPosUpdate = gameStartTime;
     var lastRotUpdate = gameStartTime;
     var updateDbInterval = 1 * 1000;
-    var posUpdateTimeoutRef = rotUpdateTimeoutRef = null;
+    var posUpdateTimeoutRef = null;
+    var rotUpdateTimeoutRef = null;
     $rootScope.users = [];
 
     var offsetRef = new Firebase(CONFIG.firebaseUrl + '/.info/serverTimeOffset');
