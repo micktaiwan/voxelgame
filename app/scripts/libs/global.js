@@ -1,6 +1,8 @@
 var CubeTypes = {
     WoodBox: 0,
     WoodBlock: 1,
+    Glass: 2,
+    Metal: 3
 };
 
 var Objects = [{
@@ -17,6 +19,21 @@ var Objects = [{
         map: THREE.ImageUtils.loadTexture('images/crate01.jpg')
     }),
     path: 'crate01.jpg'
+}, {
+    type: CubeTypes.Glass,
+    display: 'Glass',
+    material: new THREE.MeshLambertMaterial({
+        map: THREE.ImageUtils.loadTexture('images/glass.jpg')
+    }),
+    opacity: 0.6,
+    path: 'glass.jpg'
+}, {
+    type: CubeTypes.Metal,
+    display: 'Metal',
+    material: new THREE.MeshLambertMaterial({
+        map: THREE.ImageUtils.loadTexture('images/metal.jpg')
+    }),
+    path: 'metal.jpg'
 }, ];
 
 var Config = {

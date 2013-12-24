@@ -180,8 +180,11 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     function addCubeToScene(obj) {
         if (getCubeFromScene(obj))
             throw ('There is a cube there. Check it before you call addCubeToScene.');
-        // FIXME: material and geometry should depends on obj.type
         var mesh = new THREE.Mesh(geometry, Objects[obj.type].material);
+        if(Objects[obj.type].opacity) {
+            mesh.material.transparent = true;
+            mesh.material.opacity = Objects[obj.type].opacity;
+        }
         mesh.position.x = obj.x * Config.dimCadri;
         mesh.position.y = obj.y * Config.dimCadri;
         mesh.position.z = obj.z * Config.dimCadri;

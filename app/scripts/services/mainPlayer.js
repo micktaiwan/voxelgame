@@ -348,6 +348,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             dbUser.inventory.splice(index, 1);
             callbacks.updateInventoryCallback(dbUser.inventory);
             selectNextInventoryObject();
+
             //console.log(dbUser.inventory.length);
         };
 
