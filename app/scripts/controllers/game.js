@@ -72,8 +72,7 @@ angular.module('gameApp')
 
         function updateInventory(inventory, selected_id) {
             $scope.inventory = inventory;
-            if (selected_id)
-                $scope.selectedInventoryObject = selected_id;
+            $scope.selectedInventoryObject = selected_id;
         }
 
         $scope.selectInventory = function(obj) {

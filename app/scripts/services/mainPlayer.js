@@ -292,7 +292,6 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             }
         };
 
-
         function getCubeByCoords(pos) {
             var objs = Game.getMeshObjects();
             for (var key in objs) {

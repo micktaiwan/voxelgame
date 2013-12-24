@@ -58,6 +58,16 @@ body {
     margin: 0;
     padding:0;
 }
+#selectedObject {
+    position: absolute;
+    top: 220px;
+    right: 0px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0px;
+    border: 0px;
+    zIndex: 1;
+}
 #console {
     position: absolute;
     zIndex: 2;
