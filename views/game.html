@@ -12,7 +12,7 @@
             <br>
             <b>Inventaire:</b> I
             <br>
-            <b>Select object in inventory:</b> A
+            <b>Select object in inventory:</b> press and stay on ESC
             <br>
             <b>Pause:</b> Echap
             <br>
@@ -21,16 +21,15 @@
 </div>
 
 <div id="inventory" ng-show="showInventory">
-    <h1>Inventory</h1>
-    <p>{{inventory.length}} objects (maintain esc to get your mouse back)</p>
-    <!--
-     <ul class="inventory_objects">
-        <li ng-repeat="o in inventory">{{o.type}} - {{o.date | date}}</li>
-    </ul>
- -->
-    <button ng-repeat="o in inventory" class="btn" ng-class="{'btn-warning': selectedInventoryObject==o.id}" ng-click="selectInventory(o)">
-        {{o.display}} {{o.type}}
+    <p>{{inventory.length}} objects in inventory (maintain esc to get your mouse back)</p>
+    <button ng-repeat="o in inventory" class="btn" ng-class="{'btn-warning': selectedInventoryObject.id==o.id}" ng-click="selectInventory(o)">
+        {{o.display}}
     </button>
+</div>
+
+<div id="selectedObject" ng-show="selectedInventoryObject">
+    <img ng-if="selectedInventoryObject" ng-src="/images/{{selectedInventoryObject.path}}" width="100" height="100">
+    <br>
 </div>
 
 <ul id="console" class="console" ng-show="showConsole">

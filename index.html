@@ -12,7 +12,7 @@
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
         <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
 
-        <link rel="stylesheet" href="styles/47c10752.main.css">
+        <link rel="stylesheet" href="styles/2cfcd545.main.css">
     </head>
     <body ng-app="gameApp">
         <!--[if lt IE 7]>
@@ -31,7 +31,7 @@
                     <li ng-class="{ active: isActive('/game')}"><a class="navbar-brand" href="#/game">Play</a></li>
                     <li ng-class="{ active: isActive('/users')}"><a href="#/users">Users</a></li>
                 </ul>
-                <p class="navbar-text" ng-show="isSignedIn">{{current_date | date:'EEE dd-MMM-yyyy'}} - Week {{weekNumber}}</p>
+                <p class="navbar-text" ng-show="isSignedIn" ng-cloak="">{{current_date | date:'EEE dd-MMM-yyyy'}} - Week {{weekNumber}}</p>
 
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown">
@@ -63,10 +63,10 @@
 
         <script src="//cdn.firebase.com/v0/firebase.js"></script>
 
-        <script src="scripts/8fbed098.plugins.js"></script>
+        <script src="scripts/7d8bcc5a.plugins.js"></script>
 
-        <script src="scripts/6b865daa.modules.js"></script>
+        <script src="scripts/395d4bde.modules.js"></script>
 
-        <script src="scripts/be93a805.scripts.js"></script>
+        <script src="scripts/f30f1586.scripts.js"></script>
     </body>
 </html>
