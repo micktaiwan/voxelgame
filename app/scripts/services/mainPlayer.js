@@ -6,13 +6,14 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         // info player
         //console.log(_dbUser.pos);
         var dbUser = _dbUser;
+        var selectedObject = null;
+        sortInventory();
+        selectNextInventoryObject(0);
         var id = dbUser.id;
         var positionNew = new THREE.Vector3(dbUser.pos.x, dbUser.pos.y, dbUser.pos.z);
         this.dummy = Game.addGetPutDummy();
         var distCamPlayer = Config.distCamPlayer;
         var distCollision = Config.dimCadri * 0.66;
-
-        var selectedObject = null;
 
         var audio = document.createElement('audio');
         var source = document.createElement('source');
@@ -258,6 +259,12 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             return null;
         }
 
+        function sortInventory() {
+            if (!dbUser.inventory) return;
+            dbUser.inventory.sort(function(a, b) {
+                return ((a.display < b.display) ? -1 : 1);
+            });
+        }
 
         this.getCube = function() {
             if (dbUser.inventory.length >= Config.maxInventory) {
@@ -276,6 +283,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                     type: obj.type
                 });
                 dbUser.inventory.push(obj);
+                sortInventory();
                 selectedObject = obj;
                 callbacks.updateInventoryCallback(dbUser.inventory, obj);
                 Game.addMessage({
@@ -306,11 +314,13 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             return getCubeByCoords(this.dummy.mesh.position);
         };
 
-        function selectNextInventoryObject() {
+        function selectNextInventoryObject(index) {
             if (dbUser.inventory.length == 0) {
                 selectedObject = null;
             } else {
-                selectedObject = dbUser.inventory[0];
+                if (!index) index = 0;
+                while (index >= dbUser.inventory.length) index--;
+                selectedObject = dbUser.inventory[index];
                 callbacks.updateInventoryCallback(dbUser.inventory, selectedObject);
             }
         }
@@ -347,7 +357,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             var index = getInventoryIndexById(selectedObject.id);
             dbUser.inventory.splice(index, 1);
             callbacks.updateInventoryCallback(dbUser.inventory);
-            selectNextInventoryObject();
+            selectNextInventoryObject(index);
 
             //console.log(dbUser.inventory.length);
         };
