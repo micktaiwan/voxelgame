@@ -277,7 +277,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                 });
                 dbUser.inventory.push(obj);
                 selectedObject = obj;
-                callbacks.updateInventoryCallback(dbUser.inventory, obj.id);
+                callbacks.updateInventoryCallback(dbUser.inventory, obj);
                 Game.addMessage({
                     text: 'ok, in inventory',
                     delay: 3,
@@ -311,7 +311,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                 selectedObject = null;
             } else {
                 selectedObject = dbUser.inventory[0];
-                callbacks.updateInventoryCallback(dbUser.inventory, selectedObject.id);
+                callbacks.updateInventoryCallback(dbUser.inventory, selectedObject);
             }
         }
 
@@ -375,8 +375,8 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
 
         this.setCamDist(Config.distCamPlayer);
 
-        this.setSelectedObject = function(id) {
-            selectedObject = getInventoryObjectById(id);
+        this.setSelectedObject = function(obj) {
+            selectedObject = getInventoryObjectById(obj.id);
         };
 
     };

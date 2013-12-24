@@ -93,6 +93,7 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
             id: id,
             type: obj.type,
             display: Objects[obj.type].display,
+            path: Objects[obj.type].path,
             date: Firebase.ServerValue.TIMESTAMP
         };
         users_ref.child(user.id).child('inventory').child(id).update(value);
@@ -242,6 +243,7 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
                     id: id,
                     type: type,
                     display: Objects[type].display, // FIXME: hack, should use a find function
+                    path: Objects[type].path,
                     user: user.id,
                     date: date
                 });
@@ -249,6 +251,7 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
                     id: id,
                     type: type,
                     display: Objects[type].display, // FIXME: hack, should use a find function
+                    path: Objects[type].path,
                     user: user.id,
                     date: date,
                     x: x,

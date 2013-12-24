@@ -4,6 +4,7 @@ angular.module('gameApp', [
     'ngCookies',
     'ngResource',
     'ngSanitize',
+    'ngRoute',
     'gameApp.services.db',
     'gameApp.services.session',
     'gameApp.services.notification',

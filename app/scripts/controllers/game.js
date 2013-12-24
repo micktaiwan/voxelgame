@@ -70,9 +70,9 @@ angular.module('gameApp')
             $scope.showInventory = !$scope.showInventory;
         }
 
-        function updateInventory(inventory, selected_id) {
+        function updateInventory(inventory, selected) {
             $scope.inventory = inventory;
-            $scope.selectedInventoryObject = selected_id;
+            $scope.selectedInventoryObject = selected;
         }
 
         $scope.selectInventory = function(obj) {
@@ -80,8 +80,8 @@ angular.module('gameApp')
                 $scope.selectedInventoryObject = null;
                 player.setSelectedObject(null);
             } else {
-                $scope.selectedInventoryObject = obj.id;
-                player.setSelectedObject(obj.id);
+                $scope.selectedInventoryObject = obj;
+                player.setSelectedObject(obj);
             }
             //$scope.showInventory = false;
         }

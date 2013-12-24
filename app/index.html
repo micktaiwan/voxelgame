@@ -34,7 +34,7 @@
                     <li ng-class="{ active: isActive('/game')}"><a class="navbar-brand" href="#/game">Play</a></li>
                     <li ng-class="{ active: isActive('/users')}"><a href="#/users">Users</a></li>
                 </ul>
-                <p class="navbar-text" ng-show="isSignedIn">{{current_date | date:'EEE dd-MMM-yyyy'}} - Week {{weekNumber}}</p>
+                <p class="navbar-text" ng-show="isSignedIn" ng-cloak>{{current_date | date:'EEE dd-MMM-yyyy'}} - Week {{weekNumber}}</p>
 
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown">
@@ -70,6 +70,7 @@
         <script src="bower_components/jquery/jquery.js"></script>
         <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
         <script src="bower_components/angular/angular.js"></script>
+        <script src="bower_components/angular-route/angular-route.js"></script>
         <script src="scripts/libs/three.min.js"></script>
         <script src="scripts/libs/threex.rendererstats.js"></script>
         <script src="scripts/libs/pointerlock.js"></script>

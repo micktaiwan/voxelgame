@@ -8,13 +8,15 @@ var Objects = [{
     display: 'Box',
     material: new THREE.MeshLambertMaterial({
         map: THREE.ImageUtils.loadTexture('images/boite.jpg')
-    })
+    }),
+    path: 'boite.jpg'
 }, {
     type: CubeTypes.WoodBlock,
     display: 'Wood',
     material: new THREE.MeshLambertMaterial({
         map: THREE.ImageUtils.loadTexture('images/crate01.jpg')
-    })
+    }),
+    path: 'crate01.jpg'
 }, ];
 
 var Config = {
