@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function($rootScope, $location, Db, Session, Game) {
+angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function($rootScope, $location, Db, Session, Game, Robot) {
 
     function player(_dbUser, callbacks) {
         // info player
@@ -39,7 +39,6 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         });
         var d = Config.dimCadri;
         var geometrytorse = new THREE.CubeGeometry(d, d, d);
-        //    var material = new THREE.MeshLambertMaterial({color: 0xffff00});
         this.torse = new THREE.Mesh(geometrytorse, material);
         this.torse.castShadow = true;
         this.torse.receiveShadow = true;
@@ -62,13 +61,14 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         this.corps.rotation.y = dbUser.rot.corps;
         this.tete.rotation.x = dbUser.rot.tete;
 
-        var robots = [];
+        this.robots = [];
         dbUser.robots.forEach(function(r) {
             console.log("robot: " + r.id);
+            //this.robots.push(new Robot.newRobot(r, this, {}));
         });
 
         this.updateRobots = function() {
-            robots.forEach(function(r) {
+            this.robots.forEach(function(r) {
                 r.update();
             });
         };

@@ -181,7 +181,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         if (getCubeFromScene(obj))
             throw ('There is a cube there. Check it before you call addCubeToScene.');
         var mesh = new THREE.Mesh(geometry, Objects[obj.type].material);
-        if(Objects[obj.type].opacity) {
+        if (Objects[obj.type].opacity) {
             mesh.material.transparent = true;
             mesh.material.opacity = Objects[obj.type].opacity;
         }
@@ -543,6 +543,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         addMainPlayer: function(p) {
             player = p;
             scene.add(player.corps);
+            player.robots.forEach(function(r) {
+                scene.add(r.body);
+            });
         },
         addRobot: function(r) {
             scene.add(r.corps);

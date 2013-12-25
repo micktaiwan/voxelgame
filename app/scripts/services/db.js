@@ -318,7 +318,7 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
             doUpdateRot(rot);
             lastRotUpdate = time;
         },
-        // add a robot to the game belonging to the connected current user
+        // add a robot in the db belonging to the connected current user
         addRobot: function(obj) {
             if (!user) return;
             var id = users_ref.child(user.id).child('robots').push().name();
