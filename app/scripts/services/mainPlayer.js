@@ -62,10 +62,9 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         this.tete.rotation.x = dbUser.rot.tete;
 
         this.robots = [];
-        dbUser.robots.forEach(function(r) {
-            console.log("robot: " + r.id);
-            //this.robots.push(new Robot.newRobot(r, this, {}));
-        });
+        for( var i=0; i < dbUser.robots.length; i++) {
+            this.robots.push(new Robot.newRobot(dbUser.robots[i], this, {}));
+        };
 
         this.updateRobots = function() {
             this.robots.forEach(function(r) {

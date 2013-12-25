@@ -74,6 +74,13 @@ function randomizeRot(mesh, factor) {
     mesh.rotation.z += (Math.random(1) - 0.5) * factor;
 }
 
+function randomizeMove(mesh, factor) {
+    mesh.position.x += (Math.random(1) - 0.5) * factor;
+    //mesh.position.y += (Math.random(1) - 0.5) * factor;
+    mesh.position.z += (Math.random(1) - 0.5) * factor;
+}
+
+
 function copyVector(to, from) { // FIXME: pas sur que ça serve...
     to.x = from.x;
     to.y = from.y;
