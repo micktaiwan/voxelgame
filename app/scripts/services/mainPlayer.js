@@ -39,7 +39,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         ];
     
         var d = Config.dimCadri;
-        var geometrytorse = new THREE.CubeGeometry(d, d, d/2, 1, 1, 1);
+        var geometrytorse = new THREE.CubeGeometry(d, d, d/2);
         this.torse = new THREE.Mesh(geometrytorse, new THREE.MeshFaceMaterial( materials ));
         this.torse.castShadow = true;
         this.torse.receiveShadow = true;

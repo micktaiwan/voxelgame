@@ -405,23 +405,37 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.corps = new THREE.Object3D();
         copyVector(this.corps.position, p.pos);
 
+        var materials = [
+            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/body1.jpg' ) }),
+            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/body2.jpg' ) }),
+            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/body3.jpg' ) }),
+            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/body4.jpg' ) }),
+            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/body5.jpg' ) }),
+            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/body6.jpg' ) })
+        ];
+        
         var d = Config.dimCadri;
-        var geometrytorse = new THREE.CubeGeometry(d, d, d);
-        var material = new THREE.MeshLambertMaterial({
-            color: 0xffff00,
-            transparent: true
-        });
-        this.torse = new THREE.Mesh(geometrytorse, material);
+        var geometrytorse = new THREE.CubeGeometry(d, d, d/2);
+        this.torse = new THREE.Mesh(geometrytorse, new THREE.MeshFaceMaterial( materials ));
         this.corps.add(this.torse);
         this.torse.castShadow = true;
         this.torse.receiveShadow = true;
 
+        var materials = [
+            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/body1.jpg' ) }),
+            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/body2.jpg' ) }),
+            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/head3.jpg' ) }),
+            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/body4.jpg' ) }),
+            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/head5.jpg' ) }),
+            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/head6.jpg' ) })
+        ];
+        
         var geometrytete = new THREE.CubeGeometry(d / 2, d / 2, d / 2);
-        this.tete = new THREE.Mesh(geometrytete, material);
+        this.tete = new THREE.Mesh(geometrytete, new THREE.MeshFaceMaterial( materials ));
         this.tete.castShadow = true;
         this.tete.receiveShadow = true;
         this.tete.position.y = d;
-        this.tete.position.z = d / 4;
+        this.tete.position.z = -d / 4;
         this.corps.add(this.tete);
 
         var geometryName = new THREE.TextGeometry(p.name, {
