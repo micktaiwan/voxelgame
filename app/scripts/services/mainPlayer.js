@@ -210,7 +210,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
 
             if (canJump && this.jumping == true) {
                 canJump = false;
-                saut = 4.3;
+                saut = 6;
             }
 
             var canFall = true;
