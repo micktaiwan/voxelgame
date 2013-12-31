@@ -3,7 +3,7 @@
         <h1>
             <span class="label label-primary">Jethro koull</span>
         </h1>
-        <h1><a href="#/game" class="label label-warning">Play</a>
+        <h1><a href="#/game" class="label label-warning" ng-show="isSignedIn">Play</a>
         </h1>
         <h2>Pourquoi? Comment?</h2>
         <p>
@@ -15,18 +15,8 @@
             <br>Database : <a href="https://www.firebase.com/docs/reading-data.html">Firebase</a>
             <br>Hebergement : Github.io (<a href="http://micktaiwan.github.io/voxelgame/">http://micktaiwan.github.io/voxelgame/</a>)
             <br>
-            <hr>
-            <h2>Release notes</h2>
-            <h3>En cours</h3>
-            </p><p>Inventaire: fait, mais sans sélection spécifique</p>
-            <h3>Done</h3>
-            <p>Réseau: déplacements et pose/prise de cubes OK !</p>
-            <p>collision v1. ok.</p>
-            <p>camera à la wow de base. ok.</p>
-            <p>deplacement et saut de base. ok.
-                <br>-amélioration a faire une fois la colision d'objet en place...
-                <br>-distance à la molette... ok!</p>
-    </div>
+
+    </p></div>
     <div class="col-xs-6">
         <div id="signIn" ng-hide="isSignedIn">
             <h2>Login</h2>
