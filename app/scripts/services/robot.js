@@ -1,6 +1,12 @@
 'use strict';
 
-angular.module('gameApp.services.robot', []).factory('Robot', function($rootScope, $location, Db, Game) {
+angular.module('gameApp.services.robot', []).factory('Robot', function($rootScope, $location, Db, Game, Map) {
+
+    function robotMap() {
+        Map.call(this);
+    }
+
+    robotMap.prototype = Object.create(Map.getPrototype());
 
     function robot(dbRobot, player, callbacks) {
 
@@ -41,8 +47,9 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
 
         this.update = function() {
             //console.log("update");
-            this.moveTowardsPlayer();
+            //this.moveTowardsPlayer();
             //randomizeMove(this.body, 0.2);
+            this.explore();
         };
 
         this.goTo = function(pos, minDist) {
@@ -74,8 +81,8 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
 
         this.explore = function() {
             // determine the case to go
-            var c = map.getNextUnchartedCase();
-            goTo(c.position, 0);
+            //var c = map.getNextUnchartedCase();
+            //goTo(c.position, 0);
         };
 
     };

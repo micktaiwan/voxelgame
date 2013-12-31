@@ -7,7 +7,7 @@ Each cube is linked to its 26 neighbors
 
 angular.module('gameApp.services.map', []).factory('Map', function($rootScope, $location, Db) {
 
-    var map = new map();
+    var _map = new map();
 
     function inverse(i) {
         switch (i) {
@@ -148,11 +148,16 @@ angular.module('gameApp.services.map', []).factory('Map', function($rootScope, $
     return {
 
         addCube: function(obj) {
-            map.addCube(obj);
+            _map.addCube(obj);
         },
 
         removeCube: function(obj) {
-            map.removeCube(obj);
+            _map.removeCube(obj);
+        },
+
+        call: map.call,
+        getPrototype: function() {
+            return map.prototype;
         },
 
     }

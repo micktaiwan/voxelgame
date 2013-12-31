@@ -151,33 +151,35 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     function loadObj(obj) {
 
         var manager = new THREE.LoadingManager();
-        manager.onProgress = function ( item, loaded, total ) {
-                console.log( item, loaded, total );
+        manager.onProgress = function(item, loaded, total) {
+            console.log(item, loaded, total);
         };
-            
-        var texture = new THREE.Texture();
-        var loader = new THREE.ImageLoader( manager );
-        loader.load( 'images/ash_uvgrid01.jpg', function ( image ) {
-                texture.image = image;
-                texture.needsUpdate = true;
-        } );
-                                
-        loader = new THREE.OBJLoader( manager );
-        loader.load( 'obj/'+obj, function ( object ) {
-                object.traverse( function ( child ) {
-                        if ( child instanceof THREE.Mesh ) {
-                                child.material.map = texture;
-                                objects.push({ mesh: child });
-                        }
-                } );
-                object.position.y = 10;
-                object.position.z = -150;
-                object.rotation.y = -Math.PI/2;
-                scene.add( object );
 
-        } );
+        var texture = new THREE.Texture();
+        var loader = new THREE.ImageLoader(manager);
+        loader.load('images/ash_uvgrid01.jpg', function(image) {
+            texture.image = image;
+            texture.needsUpdate = true;
+        });
+
+        loader = new THREE.OBJLoader(manager);
+        loader.load('obj/' + obj, function(object) {
+            object.traverse(function(child) {
+                if (child instanceof THREE.Mesh) {
+                    child.material.map = texture;
+                    objects.push({
+                        mesh: child
+                    });
+                }
+            });
+            object.position.y = 10;
+            object.position.z = -150;
+            object.rotation.y = -Math.PI / 2;
+            scene.add(object);
+
+        });
     }
-    
+
     function init(_addMessageCallback) {
         var was_already_initialized = initialized;
         addMessageCallback = _addMessageCallback;
@@ -210,7 +212,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     function getCubeFromSceneByPos(obj) {
         for (var key in objects) {
-            if (objects[key].obj && objects[key].obj.mesh  && objects[key].obj.mesh.position.x == obj.position.x && objects[key].obj.mesh.position.y == obj.position.y && objects[key].obj.mesh.position.z == obj.position.z) {
+            if (objects[key].obj && objects[key].obj.mesh && objects[key].obj.mesh.position.x == obj.position.x && objects[key].obj.mesh.position.y == obj.position.y && objects[key].obj.mesh.position.z == obj.position.z) {
                 return key;
             }
         }
@@ -441,6 +443,22 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     function PNJ(p) {
         //console.log(p);
+
+        if (!p.pos) {
+            p.pos = {
+                x: 0,
+                y: Config.dimCadri,
+                z: 0
+            }
+        }
+
+        if (!p.rot) {
+            p.rot = {
+                corps: 0,
+                tete: 0
+            }
+        }
+
         this.id = p.id;
         this.name = p.name;
         this.onlinePresence = false;
