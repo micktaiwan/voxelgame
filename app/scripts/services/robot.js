@@ -18,7 +18,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
             }
         }
 
-        console.log(dbRobot);
+        // console.log(dbRobot);
 
         this.body = new THREE.Object3D();
         this.body.position.copy(dbRobot.pos);
