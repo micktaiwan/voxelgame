@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('gameApp.services.game', []).factory('Game', function($rootScope, $location, Db, Session) {
+angular.module('gameApp.services.game', []).factory('Game', function($rootScope, $location, Db, Session, Map) {
 
     var initialized = false;
     var rendererIsStopped = true;
@@ -67,7 +67,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     function addSun(h, s, l, x, y, z) {
 
-        var light = new THREE.DirectionalLight(0xffffff, 1.5); //, 0, 45);
+        var light = new THREE.DirectionalLight(0xffffff, 1); //, 0, 45);
         //var light = new THREE.SpotLight( 0xffffff, 1.5, 0);
         light.color.setHSL(h, s, l);
         light.position.set(x, y, z);
@@ -186,7 +186,6 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         return null;
     }
 
-
     function addCubeToScene(obj) {
         if (getCubeFromSceneByPos(obj))
             throw ('There is a cube there. Check it before you call addCubeToScene.');
@@ -231,8 +230,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         if (obj.date > new Date().getTime() - 10 * 1000)
             console.log('cube ' + type + ' on ' + obj.x + ', ' + obj.y + ', ' + obj.z);
         if (type == "added") {
+            Map.addCube(obj);
             addCubeToScene(obj);
         } else if (type == "removed") {
+            Map.removeCube(obj);
             removeCubeFromScene(obj);
         } else {
             console.error('unknown onCube type ' + type);

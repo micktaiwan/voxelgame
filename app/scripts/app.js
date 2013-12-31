@@ -11,25 +11,26 @@ angular.module('gameApp', [
     'gameApp.services.game',
     'gameApp.services.mainplayer',
     'gameApp.services.robot',
+    'gameApp.services.map',
 ])
-        .config(function($routeProvider) {
-            $routeProvider
-                    .when('/', {
-                        templateUrl: 'views/main.html',
-                        controller: 'MainCtrl'
-                    })
-                    .when('/game', {
-                        templateUrl: 'views/game.html',
-                        controller: 'GameCtrl'
-                    })
-                    .when('/users', {
-                        templateUrl: 'views/users.html',
-                        controller: 'UsersCtrl'
-                    })
-                    .when('/about', {
-                        templateUrl: 'views/about.html'
-                    })
-                    .otherwise({
-                        redirectTo: '/'
-                    });
-        });
+    .config(function($routeProvider) {
+        $routeProvider
+            .when('/', {
+                templateUrl: 'views/main.html',
+                controller: 'MainCtrl'
+            })
+            .when('/game', {
+                templateUrl: 'views/game.html',
+                controller: 'GameCtrl'
+            })
+            .when('/users', {
+                templateUrl: 'views/users.html',
+                controller: 'UsersCtrl'
+            })
+            .when('/about', {
+                templateUrl: 'views/about.html'
+            })
+            .otherwise({
+                redirectTo: '/'
+            });
+    });
