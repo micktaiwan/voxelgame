@@ -449,7 +449,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.torse.castShadow = true;
         this.torse.receiveShadow = true;
 
-        var materials = [
+        materials = [
             new THREE.MeshLambertMaterial({
                 ambient: 0xffffff,
                 map: THREE.ImageUtils.loadTexture('images/body1.jpg')
@@ -503,10 +503,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.name_label = new THREE.Mesh(geometryName, textMaterial);
         var box = new THREE.Box3();
         box.setFromObject(this.name_label);
-        var centerOffset = (box.max.x - box.min.x) / 2;
         this.name_label.position.y = d * 0.25;
-        this.name_label.position.z = d * 0.5;
-        this.name_label.position.x = -centerOffset;
+        this.name_label.position.z = d * 0.25;
+        this.name_label.position.x = -(box.max.x - box.min.x) / 2; // center offset
         this.corps.add(this.name_label);
 
         copyRotation(this, p.rot);
