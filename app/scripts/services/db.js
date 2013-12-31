@@ -20,7 +20,7 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
 
     var offsetRef = new Firebase(CONFIG.firebaseUrl + '/.info/serverTimeOffset');
     offsetRef.on("value", function(snap) {
-      console.log(snap.val()/1000 + "s clock offset");
+        console.log(snap.val() / 1000 + "s clock offset");
     });
 
 
@@ -140,8 +140,6 @@ angular.module('gameApp.services.db', []).factory('Db', function($rootScope, $lo
         if (!robots) robots = [];
         else {
             robots = toArray(robots);
-            console.log('robots in DB for user ' + name + '!');
-            console.log(robots);
         }
 
         return {

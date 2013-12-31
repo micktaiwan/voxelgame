@@ -42,20 +42,41 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
         this.update = function() {
             //console.log("update");
             this.moveTowardsPlayer();
-            randomizeMove(this.body, 0.2);
+            //randomizeMove(this.body, 0.2);
+        };
+
+        this.goTo = function(pos, minDist) {
+            var dist = pos.x - this.body.position.x;
+            if (Math.abs(dist) < minDist) {
+                if (dist < 0)
+                    dist += 50;
+                else
+                    dist -= 50;
+            }
+            this.body.position.x += (dist) / 50;
+
+            dist = pos.y - this.body.position.y;
+            this.body.position.y += (dist) / 50;
+
+            dist = pos.z - this.body.position.z;
+            if (Math.abs(dist) < minDist) {
+                if (dist < 0)
+                    dist += 50;
+                else
+                    dist -= 50;
+            }
+            this.body.position.z += (dist) / 50;
         };
 
         this.moveTowardsPlayer = function() {
-            var dist = player.corps.position.x - this.body.position.x;
-            if (Math.abs(dist) > Config.dimCadri * 2)
-                this.body.position.x += (dist) / 50;
-            dist = player.corps.position.y+20 - this.body.position.y;
-            if (Math.abs(dist) > Config.dimCadri)
-                this.body.position.y += (dist) / 50;
-            dist = player.corps.position.z - this.body.position.z;
-            if (Math.abs(dist) > Config.dimCadri * 2)
-                this.body.position.z += (dist) / 50;
-        }
+            this.goTo(player.corps.position, Config.dimCadri * 2);
+        };
+
+        this.explore = function() {
+            // determine the case to go
+            var c = map.getNextUnchartedCase();
+            goTo(c.position, 0);
+        };
 
     };
 
