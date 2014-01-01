@@ -64,6 +64,23 @@ angular.module('gameApp.services.map', []).factory('Map', function() {
             return rv;
         };
 
+        this.getNeighborsWithoutCorners = function() {
+            var rv = [];
+            for (var i = -1; i <= 1; i++) {
+                for (var j = -1; j <= 1; j++) {
+                    for (var k = -1; k <= 1; k++) {
+                        if (i == 0 && j == 0 && k == 0) continue;
+                        if (i != 0 && j != 0 && k != 0) continue;
+                        var c = this.neighbors[i + 1][j + 1][k + 1];
+                        if (c) rv.push(c);
+                    }
+                }
+            }
+            return rv;
+        };
+
+
+
         // remove self from its neighbors
         this.removeSelfFromNeighbors = function() {
             for (var i = -1; i <= 1; i++) {
@@ -166,6 +183,14 @@ angular.module('gameApp.services.map', []).factory('Map', function() {
         };
         this.first = function() {
             return cubes[0];
+        };
+        // rewind(0) == last()
+        // rewind(1) == cubes[(l-1)-1]
+        this.rewind = function(rewind) {
+            var l = cubes.length;
+            if(l == 0) return null;
+            if (rewind >= l) rewind = l-1;
+            return cubes[(l-1) - rewind];
         };
 
     } // map

@@ -100,6 +100,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
         };
 
         var counter = 0;
+        var rewind = 0;
         this.getNextUnchartedCube = function() {
             if (memory.size() == 0) {
                 var c = this.getRealCubeByCurrentPos();
@@ -107,18 +108,31 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
                     console.error('no cube on current pos');
                 return c;
             };
-            var c = Map.getCubeById(memory.last().id);
-            var neighbors = c.getNeighbors();
+            var pos = this.getCurrentPosCubePos();
+
+            // TODO: too simple
+            var c = Map.getCubeById(memory.getByPos(pos.x, pos.y - 1, pos.z).id);
+
+            var neighbors = c.getNeighborsWithoutCorners();
             var next;
             while (next = neighbors.pop()) {
+                // not in memory and nothing on it
+                // TODO: too simple
                 if (!memory.getById(next.id) && next.neighbors[1][2][1] == null)
                     return next;
             }
-            console.log('All neighbors in memory!');
+            /*
             counter += 1;
             if (counter > 2)
                 active = false;
-            return memory.first();
+            */
+            rewind += 1;
+            console.log('Rewind: ' + rewind);
+            if (rewind == memory.size()) {
+                active = false;
+                console.log('All neighbors in memory!');
+            }
+            return memory.rewind(rewind);
             //return null; // TODO: construct a tree of choices, do a pathfinding to rewind back to a previous choice
         };
 
@@ -141,7 +155,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
 
                 this.goTo({
                     x: cubeToGo.x * Config.dimCadri,
-                    y: (cubeToGo.y + 1) * Config.dimCadri + 5,
+                    y: (cubeToGo.y + 1) * Config.dimCadri,
                     z: cubeToGo.z * Config.dimCadri
                 }, 0);
                 return;
@@ -152,11 +166,13 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
                 console.log('no cube to go');
                 return;
             }
-            if (!memory.getById(cubeToGo.id))
+            if (!memory.getById(cubeToGo.id)) {
                 memory.addCube(cubeToGo);
-            else console.log('should not happen');
+                rewind = 0;
+            }
+            else console.log('cube already in memory');
 
-            console.log(cubeToGo.getNeighbors().length + ' new neighbors for (' + cubeToGo.x + ',' + cubeToGo.y + ',' + cubeToGo.z + ')');
+            //console.log(cubeToGo.getNeighbors().length + ' new neighbors for (' + cubeToGo.x + ',' + cubeToGo.y + ',' + cubeToGo.z + ')');
 
             var size = memory.size();
             if (size != lastMemorySize) {
