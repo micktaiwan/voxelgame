@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function($rootScope, $location, Db, Session, Game, Robot) {
+angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function($rootScope, $location, Db, Session, Game, Robot, Map) {
 
     function player(_dbUser, callbacks) {
         // info player
@@ -30,33 +30,69 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         this.corps.position.copy(dbUser.pos);
 
         var materials = [
-            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/body1.jpg' ) }),
-            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/body2.jpg' ) }),
-            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/body3.jpg' ) }),
-            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/body4.jpg' ) }),
-            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/body5.jpg' ) }),
-            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/body6.jpg' ) })
+            new THREE.MeshLambertMaterial({
+                ambient: 0xffffff,
+                map: THREE.ImageUtils.loadTexture('images/body1.jpg')
+            }),
+            new THREE.MeshLambertMaterial({
+                ambient: 0xffffff,
+                map: THREE.ImageUtils.loadTexture('images/body2.jpg')
+            }),
+            new THREE.MeshLambertMaterial({
+                ambient: 0xffffff,
+                map: THREE.ImageUtils.loadTexture('images/body3.jpg')
+            }),
+            new THREE.MeshLambertMaterial({
+                ambient: 0xffffff,
+                map: THREE.ImageUtils.loadTexture('images/body4.jpg')
+            }),
+            new THREE.MeshLambertMaterial({
+                ambient: 0xffffff,
+                map: THREE.ImageUtils.loadTexture('images/body5.jpg')
+            }),
+            new THREE.MeshLambertMaterial({
+                ambient: 0xffffff,
+                map: THREE.ImageUtils.loadTexture('images/body6.jpg')
+            })
         ];
-    
+
         var d = Config.dimCadri;
-        var geometrytorse = new THREE.CubeGeometry(d, d, d/2);
-        this.torse = new THREE.Mesh(geometrytorse, new THREE.MeshFaceMaterial( materials ));
+        var geometrytorse = new THREE.CubeGeometry(d, d, d / 2);
+        this.torse = new THREE.Mesh(geometrytorse, new THREE.MeshFaceMaterial(materials));
         this.torse.castShadow = true;
         this.torse.receiveShadow = true;
 
         this.corps.add(this.torse);
 
         var materials = [
-            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/body1.jpg' ) }),
-            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/body2.jpg' ) }),
-            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/body3.jpg' ) }),
-            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/body4.jpg' ) }),
-            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/head5.jpg' ) }),
-            new THREE.MeshLambertMaterial({ ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( 'images/body6.jpg' ) })
+            new THREE.MeshLambertMaterial({
+                ambient: 0xffffff,
+                map: THREE.ImageUtils.loadTexture('images/body1.jpg')
+            }),
+            new THREE.MeshLambertMaterial({
+                ambient: 0xffffff,
+                map: THREE.ImageUtils.loadTexture('images/body2.jpg')
+            }),
+            new THREE.MeshLambertMaterial({
+                ambient: 0xffffff,
+                map: THREE.ImageUtils.loadTexture('images/body3.jpg')
+            }),
+            new THREE.MeshLambertMaterial({
+                ambient: 0xffffff,
+                map: THREE.ImageUtils.loadTexture('images/body4.jpg')
+            }),
+            new THREE.MeshLambertMaterial({
+                ambient: 0xffffff,
+                map: THREE.ImageUtils.loadTexture('images/head5.jpg')
+            }),
+            new THREE.MeshLambertMaterial({
+                ambient: 0xffffff,
+                map: THREE.ImageUtils.loadTexture('images/body6.jpg')
+            })
         ];
-        
+
         var geometrytete = new THREE.CubeGeometry(d / 2, d / 2, d / 2);
-        this.tete = new THREE.Mesh(geometrytete, new THREE.MeshFaceMaterial( materials ));
+        this.tete = new THREE.Mesh(geometrytete, new THREE.MeshFaceMaterial(materials));
         this.tete.castShadow = true;
         this.tete.receiveShadow = true;
         this.tete.position.y = d;
@@ -72,7 +108,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         this.tete.rotation.x = dbUser.rot.tete;
 
         this.robots = [];
-        for( var i=0; i < dbUser.robots.length; i++) {
+        for (var i = 0; i < dbUser.robots.length; i++) {
             this.robots.push(new Robot.newRobot(dbUser.robots[i], this, {}));
         };
 
@@ -108,6 +144,20 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                     y: positionNew.y,
                     z: positionNew.z
                 };
+/*
+                var cube = Map.getCubeByPos(Math.round(pos.x / Config.dimCadri), Math.round(pos.y / Config.dimCadri) - 1, Math.round(pos.z / Config.dimCadri));
+                if (cube) {
+                    var neighbors = cube.getNeighbors();
+                    console.log('ok ' + neighbors.length);
+                    for (var i in neighbors) {
+                        var rc = Game.getCubeFromSceneById(neighbors[i]);
+                        if (rc) {
+                            rc.mesh.rotation.y += 0.2;
+                            //console.log(rc.mesh);
+                        }
+                    }
+                }
+*/
                 Db.updatePos(pos);
                 if (Config.randomCubeRotation && !this.jumping) {
                     var rot = {

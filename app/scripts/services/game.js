@@ -152,7 +152,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
         var manager = new THREE.LoadingManager();
         manager.onProgress = function(item, loaded, total) {
-            console.log(item, loaded, total);
+            console.log('loading... ', item, loaded, total);
         };
 
         var texture = new THREE.Texture();
@@ -687,7 +687,13 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         addMessage: function(msg) {
             addMessage(msg);
         },
-
-    };
+        getCubeFromSceneById: function(obj) {
+            var index = getCubeFromSceneById(obj);
+            if (index)
+                return objects[index];
+            else
+                return null;
+        },
+    }
 
 });
