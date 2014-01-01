@@ -164,6 +164,9 @@ angular.module('gameApp.services.map', []).factory('Map', function() {
         this.last = function() {
             return cubes[cubes.length - 1];
         };
+        this.first = function() {
+            return cubes[0];
+        };
 
     } // map
 

@@ -19,6 +19,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
             }
         }
 
+        var active = true;
         var memory = Map.newMap();
         var lastMemorySize = null;
         this.body = new THREE.Object3D();
@@ -46,6 +47,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
         this.body.add(this.torso);
 
         this.update = function() {
+            if (!active) return;
             //console.log("update");
             //this.moveTowardsPlayer();
             //randomizeMove(this.body, 0.2);
@@ -60,10 +62,13 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
                 else
                     dist -= 50;
             }
-            this.body.position.x += (dist) / 50;
+            this.body.position.x += (dist) / (30 / Config.speedFactor);
 
             dist = pos.y - this.body.position.y;
-            this.body.position.y += (dist) / 50;
+            var s;
+            if (dist > 0) s = 10;
+            else s = 30;
+            this.body.position.y += (dist) / (s / Config.speedFactor);
 
             dist = pos.z - this.body.position.z;
             if (Math.abs(dist) < minDist) {
@@ -72,7 +77,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
                 else
                     dist -= 50;
             }
-            this.body.position.z += (dist) / 50;
+            this.body.position.z += (dist) / (30 / Config.speedFactor);
         };
 
         this.moveTowardsPlayer = function() {
@@ -83,32 +88,38 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
 
         this.getCurrentPosCubePos = function() {
             return {
-                x: Math.floor(this.body.position.x / Config.dimCadri),
-                y: Math.floor(this.body.position.y / Config.dimCadri),
-                z: Math.floor(this.body.position.z / Config.dimCadri)
+                x: Math.round(this.body.position.x / Config.dimCadri),
+                y: Math.round(this.body.position.y / Config.dimCadri),
+                z: Math.round(this.body.position.z / Config.dimCadri)
             };
         }
 
         this.getRealCubeByCurrentPos = function() {
             var c = this.getCurrentPosCubePos();
-            return Map.getCubeByPos(c.x, c.y, c.z);
+            return Map.getCubeByPos(c.x, c.y - 1, c.z);
         };
 
+        var counter = 0;
         this.getNextUnchartedCube = function() {
             if (memory.size() == 0) {
                 var c = this.getRealCubeByCurrentPos();
-                if(!c) console.error('no cube on current pos');
+                if (!c)
+                    console.error('no cube on current pos');
                 return c;
             };
             var c = Map.getCubeById(memory.last().id);
             var neighbors = c.getNeighbors();
-            console.log(c.x, c.y, c.z);
-            console.log(neighbors.length + ' neighbors');
             var next;
             while (next = neighbors.pop()) {
-                if (!memory.getById(next.id)) return next;
+                if (!memory.getById(next.id) && next.neighbors[1][2][1] == null)
+                    return next;
             }
-            return null; // TODO: construct a tree of choices, do a pathfinding to rewind back to a previous choice
+            console.log('All neighbors in memory!');
+            counter += 1;
+            if (counter > 2)
+                active = false;
+            return memory.first();
+            //return null; // TODO: construct a tree of choices, do a pathfinding to rewind back to a previous choice
         };
 
         var cubeToGo = null;
@@ -120,14 +131,17 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
                 var currentPos = this.getCurrentPosCubePos();
                 //console.log(currentPos);
                 //console.log(cubeToGo);
-                if (currentPos.x == cubeToGo.x && currentPos.y == cubeToGo.y && currentPos.z == cubeToGo.z) {
+                if (currentPos.x == cubeToGo.x && currentPos.y - 1 == cubeToGo.y && currentPos.z == cubeToGo.z) {
                     cubeToGo = null;
-                    console.log('reached!');
+                    //console.log('reached!');
                     return;
                 }
+
+                //console.log('going to', cubeToGo.x, cubeToGo.y, cubeToGo.z, 'from', currentPos.x, currentPos.y, currentPos.z);
+
                 this.goTo({
                     x: cubeToGo.x * Config.dimCadri,
-                    y: (cubeToGo.y + 1) * Config.dimCadri,
+                    y: (cubeToGo.y + 1) * Config.dimCadri + 5,
                     z: cubeToGo.z * Config.dimCadri
                 }, 0);
                 return;
@@ -142,7 +156,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
                 memory.addCube(cubeToGo);
             else console.log('should not happen');
 
-            console.log(cubeToGo.getNeighbors().length + ' new neighbors!');
+            console.log(cubeToGo.getNeighbors().length + ' new neighbors for (' + cubeToGo.x + ',' + cubeToGo.y + ',' + cubeToGo.z + ')');
 
             var size = memory.size();
             if (size != lastMemorySize) {
