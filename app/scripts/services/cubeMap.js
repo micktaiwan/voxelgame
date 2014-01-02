@@ -79,7 +79,30 @@ angular.module('gameApp.services.map', []).factory('Map', function() {
             return rv;
         };
 
+        this.getNeighborsOnlyAdjacents = function() {
+            var adjs = [
+                [1, 0, 0],
+                [0, 0, 1],
+                [-1, 0, 0],
+                [0, 0, -1],
 
+                [1, -1, 0],
+                [0, -1, 1],
+                [-1, -1, 0],
+                [0, -1, -1],
+
+                [1, 1, 0],
+                [0, 1, 1],
+                [-1, 1, 0],
+                [0, 1, -1]
+            ];
+            var rv = [];
+            for (var i in adjs) {
+                var c = this.neighbors[adjs[i][0] + 1][adjs[i][1] + 1][adjs[i][2] + 1];
+                if (c) rv.push(c);
+            };
+            return rv;
+        }
 
         // remove self from its neighbors
         this.removeSelfFromNeighbors = function() {
@@ -188,9 +211,9 @@ angular.module('gameApp.services.map', []).factory('Map', function() {
         // rewind(1) == cubes[(l-1)-1]
         this.rewind = function(rewind) {
             var l = cubes.length;
-            if(l == 0) return null;
-            if (rewind >= l) rewind = l-1;
-            return cubes[(l-1) - rewind];
+            if (l == 0) return null;
+            if (rewind >= l) rewind = l - 1; // or throw an exception ?
+            return cubes[(l - 1) - rewind];
         };
 
     } // map
@@ -230,7 +253,9 @@ angular.module('gameApp.services.map', []).factory('Map', function() {
         newMap: function() {
             return new map();
         },
-
+        first: function() {
+            return _map.first();
+        },
         last: function() {
             return _map.last();
         },

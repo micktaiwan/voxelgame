@@ -54,30 +54,31 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
             this.explore();
         };
 
+        var rspeed = 30;
         this.goTo = function(pos, minDist) {
             var dist = pos.x - this.body.position.x;
             if (Math.abs(dist) < minDist) {
                 if (dist < 0)
-                    dist += 50;
+                    dist += rspeed;
                 else
-                    dist -= 50;
+                    dist -= rspeed;
             }
-            this.body.position.x += (dist) / (30 / Config.speedFactor);
+            this.body.position.x += (dist) / (rspeed / Config.speedFactor);
 
             dist = pos.y - this.body.position.y;
             var s;
-            if (dist > 0) s = 10;
-            else s = 30;
+            if (dist > 0) s = rspeed / 3;
+            else s = rspeed;
             this.body.position.y += (dist) / (s / Config.speedFactor);
 
             dist = pos.z - this.body.position.z;
             if (Math.abs(dist) < minDist) {
                 if (dist < 0)
-                    dist += 50;
+                    dist += rspeed;
                 else
-                    dist -= 50;
+                    dist -= rspeed;
             }
-            this.body.position.z += (dist) / (30 / Config.speedFactor);
+            this.body.position.z += (dist) / (rspeed / Config.speedFactor);
         };
 
         this.moveTowardsPlayer = function() {
@@ -99,41 +100,43 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
             return Map.getCubeByPos(c.x, c.y - 1, c.z);
         };
 
-        var counter = 0;
+        function getNext(neighbors) {
+            var next;
+            while (next = neighbors.pop()) {
+                // not in memory and nothing on it
+                if (!memory.getById(next.id) && next.neighbors[1][2][1] == null)
+                    return next;
+            }
+            return null;
+        }
+
         var rewind = 0;
         this.getNextUnchartedCube = function() {
             if (memory.size() == 0) {
                 var c = this.getRealCubeByCurrentPos();
-                if (!c)
+                if (!c) {
                     console.error('no cube on current pos');
+                    c = Map.first();
+                }
                 return c;
             };
+            // FIXME: no need to do that every time, we should already know where we are (but what do we do do if the cube disappeared?)
             var pos = this.getCurrentPosCubePos();
-
-            // TODO: too simple
             var c = Map.getCubeById(memory.getByPos(pos.x, pos.y - 1, pos.z).id);
 
-            var neighbors = c.getNeighborsWithoutCorners();
-            var next;
-            while (next = neighbors.pop()) {
-                // not in memory and nothing on it
-                // TODO: too simple
-                if (!memory.getById(next.id) && next.neighbors[1][2][1] == null)
-                    return next;
-            }
-            /*
-            counter += 1;
-            if (counter > 2)
-                active = false;
-            */
-            rewind += 1;
-            console.log('Rewind: ' + rewind);
+            var neighbors = c.getNeighborsOnlyAdjacents();
+            var next = getNext(neighbors);
+            if (next) return next;
+
+            rewind = 1;
+            while (rewind < memory.size() && !(next = getNext(Map.getCubeById(memory.rewind(rewind).id).getNeighborsOnlyAdjacents())))
+                rewind += 1;
+            console.log('Rewinded ' + rewind + ' cubes');
             if (rewind == memory.size()) {
                 active = false;
                 console.log('All neighbors in memory!');
             }
-            return memory.rewind(rewind);
-            //return null; // TODO: construct a tree of choices, do a pathfinding to rewind back to a previous choice
+            return memory.rewind(rewind); // TODO: do pathfinding to it
         };
 
         var cubeToGo = null;
@@ -169,15 +172,14 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
             if (!memory.getById(cubeToGo.id)) {
                 memory.addCube(cubeToGo);
                 rewind = 0;
-            }
-            else console.log('cube already in memory');
+            } else console.log('cube already in memory');
 
             //console.log(cubeToGo.getNeighbors().length + ' new neighbors for (' + cubeToGo.x + ',' + cubeToGo.y + ',' + cubeToGo.z + ')');
 
             var size = memory.size();
             if (size != lastMemorySize) {
                 lastMemorySize = size;
-                console.log('memory size: ' + size);
+                //console.log('memory size: ' + size);
             }
         };
 
