@@ -5,9 +5,9 @@ Each cube is linked to its 26 neighbors
 
 'use strict';
 
-angular.module('gameApp.services.map', []).factory('Map', function($rootScope, $location, Db) {
+angular.module('gameApp.services.map', []).factory('Map', function() {
 
-    var map = new map();
+    var _map = new map();
 
     function inverse(i) {
         switch (i) {
@@ -49,6 +49,60 @@ angular.module('gameApp.services.map', []).factory('Map', function($rootScope, $
                 [null, null, null]
             ]
         ]
+
+        this.getNeighbors = function() {
+            var rv = [];
+            for (var i = -1; i <= 1; i++) {
+                for (var j = -1; j <= 1; j++) {
+                    for (var k = -1; k <= 1; k++) {
+                        if (i == 0 && j == 0 && k == 0) continue;
+                        var c = this.neighbors[i + 1][j + 1][k + 1];
+                        if (c) rv.push(c);
+                    }
+                }
+            }
+            return rv;
+        };
+
+        this.getNeighborsWithoutCorners = function() {
+            var rv = [];
+            for (var i = -1; i <= 1; i++) {
+                for (var j = -1; j <= 1; j++) {
+                    for (var k = -1; k <= 1; k++) {
+                        if (i == 0 && j == 0 && k == 0) continue;
+                        if (i != 0 && j != 0 && k != 0) continue;
+                        var c = this.neighbors[i + 1][j + 1][k + 1];
+                        if (c) rv.push(c);
+                    }
+                }
+            }
+            return rv;
+        };
+
+        this.getNeighborsOnlyAdjacents = function() {
+            var adjs = [
+                [1, 0, 0],
+                [0, 0, 1],
+                [-1, 0, 0],
+                [0, 0, -1],
+
+                [1, -1, 0],
+                [0, -1, 1],
+                [-1, -1, 0],
+                [0, -1, -1],
+
+                [1, 1, 0],
+                [0, 1, 1],
+                [-1, 1, 0],
+                [0, 1, -1]
+            ];
+            var rv = [];
+            for (var i in adjs) {
+                var c = this.neighbors[adjs[i][0] + 1][adjs[i][1] + 1][adjs[i][2] + 1];
+                if (c) rv.push(c);
+            };
+            return rv;
+        }
 
         // remove self from its neighbors
         this.removeSelfFromNeighbors = function() {
@@ -120,10 +174,11 @@ angular.module('gameApp.services.map', []).factory('Map', function($rootScope, $
             for (var i = -1; i <= 1; i++) {
                 for (var j = -1; j <= 1; j++) {
                     for (var k = -1; k <= 1; k++) {
-                        if (i == 0 && j == 0 && k == 0) continue;
+                        if (i == 0 && j == 0 && k == 0) continue; // self
                         var n = this.getByPos(obj.x + i, obj.y + j, obj.z + k);
                         if (!n) continue;
                         c.neighbors[i + 1][j + 1][k + 1] = n;
+                        n.neighbors[inverse(i) + 1][inverse(j) + 1][inverse(k) + 1] = c;
                         //console.log('adding neighbor');
                     }
                 }
@@ -141,6 +196,26 @@ angular.module('gameApp.services.map', []).factory('Map', function($rootScope, $
             c.removeSelfFromNeighbors();
             cubes.splice(index, 1);
         };
+
+        this.size = function() {
+            return cubes.length;
+        };
+
+        this.last = function() {
+            return cubes[cubes.length - 1];
+        };
+        this.first = function() {
+            return cubes[0];
+        };
+        // rewind(0) == last()
+        // rewind(1) == cubes[(l-1)-1]
+        this.rewind = function(rewind) {
+            var l = cubes.length;
+            if (l == 0) return null;
+            if (rewind >= l) rewind = l - 1; // or throw an exception ?
+            return cubes[(l - 1) - rewind];
+        };
+
     } // map
 
     //==========================================================
@@ -148,11 +223,41 @@ angular.module('gameApp.services.map', []).factory('Map', function($rootScope, $
     return {
 
         addCube: function(obj) {
-            map.addCube(obj);
+            _map.addCube(obj);
         },
 
         removeCube: function(obj) {
-            map.removeCube(obj);
+            _map.removeCube(obj);
+        },
+
+        getCubeByPos: function(x, y, z) {
+            //console.log(x, y, z);
+            return _map.getByPos(x, y, z);
+        },
+        getCubeById: function(id) {
+            return _map.getById(id);
+        },
+        /*
+        call: function(obj) {
+            map.call(obj);
+        },
+
+        getPrototype: function() {
+            return map.prototype;
+        },
+*/
+        size: function() {
+            return _map.size();
+        },
+
+        newMap: function() {
+            return new map();
+        },
+        first: function() {
+            return _map.first();
+        },
+        last: function() {
+            return _map.last();
         },
 
     }
