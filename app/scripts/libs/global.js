@@ -22,11 +22,12 @@ var Objects = [{
 }, {
     type: CubeTypes.Glass,
     display: 'Glass',
-    material: new THREE.MeshLambertMaterial({
-        map: THREE.ImageUtils.loadTexture('images/glass.png')
+    material: new THREE.MeshBasicMaterial({
+        map: THREE.ImageUtils.loadTexture('images/glass.png'),
+        side: THREE.DoubleSide
     }),
     transparent: true,
-    opacity:1,
+    opacity:0.9,
     path: 'glass.png'
 }, {
     type: CubeTypes.Metal,
