@@ -11,37 +11,25 @@ body {
 }
 #blocker {
     position: absolute;
+    top: 0px;
+    left: 0px;
     zIndex: 1;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    cursor: pointer;
-}
-#title {
-    width: 100%;
-    color: #ffffff;
-    text-align: center;
-    font-size: 3em;
+    /*background-color: rgba(0, 0, 0, 0.7);*/
+    /*cursor: pointer;*/
 }
 #instructions {
-    width: 100%;
-    height: 100%;
-    display: -webkit-box;
-    display: -moz-box;
-    display: box;
-    -webkit-box-orient: horizontal;
-    -moz-box-orient: horizontal;
-    box-orient: horizontal;
-    -webkit-box-pack: center;
-    -moz-box-pack: center;
-    box-pack: center;
-    -webkit-box-align: center;
-    -moz-box-align: center;
-    box-align: center;
-    color: #ffffff;
+    color: white;
+    position: absolute;
+    top: 60px;
+    left: 0px;
+    width: 300px;
+    border: 1px solid black;
+    background-color: rgba(0, 0, 0, 0.7);
 }
-#instruction > p {
-    width: 250px;
+.strong {
+    color: red;
 }
 #inventory {
     position: absolute;
