@@ -1,22 +1,53 @@
+<div id="game"></div>
+<div id="robots">
+    <b>Robots</b>
+    <br/>
+    <div ng-show="robots.length > 0"></div>
+    <p ng-repeat="r in robots">
+        - {{r.dbRobot.type}}
+        <span ng-hide="r.active" class="strong">not active</span>
+        {{r.printPos()}}
+    </p>
+
+    <p>Soon:
+        <br/>- Create a new robot
+        <br/>- Follow another player
+        <br/>- Make him do some action (get me a Box)
+        <br/>Todo: indicate distance from player
+    </p>
+</div>
 <div id="blocker">
-    <div id="title">Click !</div>
     <div id="instructions">
-        <p>
-            <b>Deplacements:</b> Z, Q, S, D / Souris
-            <br/>
-            <b>Sauter:</b> Espace
-            <br/>
-            <b>Poser cube:</b> R / click droit
-            <br/>
-            <b>Prendre cube:</b> E / click gauche
-            <br/>
-            <b>Inventaire:</b> I
-            <br/>
-            <b>Select object in inventory:</b> press and stay on ESC
-            <br/>
-            <b>Pause:</b> Echap
-            <br/>
-        </p>
+        <table>
+            <tr class="strong">
+                <td>Pause/Unpause:</td>
+                <td>Echap</td>
+            </tr>
+            <tr>
+                <td>Deplacements:</td>
+                <td>Z, Q, S, D / Souris</td>
+            </tr>
+            <tr>
+                <td>Sauter:</td>
+                <td>Espace</td>
+            </tr>
+            <tr>
+                <td>Poser cube:</td>
+                <td>R / click droit</td>
+            </tr>
+            <tr>
+                <td>Prendre cube:</td>
+                <td>E / click gauche</td>
+            </tr>
+            <tr>
+                <td>Inventaire:</td>
+                <td>I</td>
+            </tr>
+            <tr>
+                <td>Select object in inventory:</td>
+                <td>press and stay on ESC</td>
+            </tr>
+        </table>
     </div>
 </div>
 
@@ -35,5 +66,3 @@
 <ul id="console" class="console" ng-show="showConsole">
     <li ng-repeat="m in msgs" class="{{m.type}}">{{m.text}}</li>
 </ul>
-
-<div id="game"></div>

@@ -4,6 +4,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
 
     function robot(dbRobot, player, callbacks) {
         // console.log(dbRobot);
+        this.dbRobot = dbRobot;
 
         if (!dbRobot.pos) {
             dbRobot.pos = {
@@ -19,7 +20,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
             }
         }
 
-        var active = true;
+        this.active = true;
         var memory = Map.newMap();
         var pathfinder = Map.newPF(); //var path = pf.find(memory, memory.first(), memory.last());
         var path = [];
@@ -49,7 +50,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
         this.body.add(this.torso);
 
         this.update = function() {
-            if (!active) return;
+            if (!this.active) return;
             //console.log("update");
             //this.moveTowardsPlayer();
             //randomizeMove(this.body, 0.2);
@@ -57,35 +58,46 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
         };
 
         var rspeed = 30;
+
+        function respectMinDist(dist, minDist) {
+            if (Math.abs(dist) < minDist) {
+                if (dist < 0)
+                    dist += rspeed;
+                else
+                    dist -= rspeed;
+            }
+            return dist;
+        }
+
         this.goTo = function(pos, minDist) {
-            var dist = pos.x - this.body.position.x;
-            if (Math.abs(dist) < minDist) {
-                if (dist < 0)
-                    dist += rspeed;
-                else
-                    dist -= rspeed;
+            var xdist = pos.x - this.body.position.x;
+            var zdist = pos.z - this.body.position.z;
+            xdist = respectMinDist(xdist, minDist);
+            zdist = respectMinDist(zdist, minDist);
+            var ydist = pos.y - this.body.position.y;
+            if (ydist > 5) { // if climbing first move y
+                this.body.position.y += (ydist) / (rspeed / Config.speedFactor);
+                return;
             }
-            this.body.position.x += (dist) / (rspeed / Config.speedFactor);
-
-            dist = pos.y - this.body.position.y;
-            var s;
-            if (dist > 0) s = rspeed / 3;
-            else s = rspeed;
-            this.body.position.y += (dist) / (s / Config.speedFactor);
-
-            dist = pos.z - this.body.position.z;
-            if (Math.abs(dist) < minDist) {
-                if (dist < 0)
-                    dist += rspeed;
-                else
-                    dist -= rspeed;
+            if (xdist > 5 || zdist > 5) { // if descending first move x and y
+                this.body.position.x += (xdist) / (rspeed / Config.speedFactor);
+                this.body.position.z += (zdist) / (rspeed / Config.speedFactor);
+                return;
             }
-            this.body.position.z += (dist) / (rspeed / Config.speedFactor);
+            // else
+            this.body.position.y += (ydist) / (rspeed / Config.speedFactor);
+            this.body.position.x += (xdist) / (rspeed / Config.speedFactor);
+            this.body.position.z += (zdist) / (rspeed / Config.speedFactor);
         };
 
         this.moveTowardsPlayer = function() {
             this.goTo(player.corps.position, Config.dimCadri * 2);
         };
+
+        this.printPos = function() {
+            var pos = this.getCurrentPosCubePos();
+            return '('+pos.x+','+pos.y+','+pos.z+')';
+        }
 
         // get a real map case, not the memory
 
@@ -135,7 +147,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
                 rewind += 1;
             console.log('Rewinded ' + rewind + ' cubes');
             if (rewind == memory.size()) {
-                active = false;
+                this.active = false;
                 console.log('All neighbors in memory!');
             }
             // do pathfinding to it
@@ -150,6 +162,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
 
         var cubeToGo = null;
 
+        // FIXME: does not know when the world has changed, memory is not updated
         this.explore = function() {
             // determine the case to go
 
@@ -174,7 +187,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
             }
 
             if (path.length > 0) { // we are currently going to cube by pathfinding
-                console.log(path.length + ' cubes to go in path');
+                //console.log(path.length + ' cubes to go in path');
                 cubeToGo = path[0];
                 path.splice(0, 1);
             } else {
@@ -187,7 +200,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
             if (!memory.getById(cubeToGo.id)) {
                 memory.addCube(cubeToGo);
                 rewind = 0;
-            } else console.log('cube already in memory');
+            } //else console.log('cube already in memory');
 
             //console.log(cubeToGo.getNeighbors().length + ' new neighbors for (' + cubeToGo.x + ',' + cubeToGo.y + ',' + cubeToGo.z + ')');
 
