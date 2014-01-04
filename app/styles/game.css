@@ -29,6 +29,7 @@ body {
     background-color: rgba(0, 0, 0, 0.7);
 }
 #robots {
+    zIndex: 1;
     color: white;
     position: absolute;
     top: 300px;

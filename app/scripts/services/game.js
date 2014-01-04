@@ -633,7 +633,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             });
         },
         addRobot: function(r) {
-            scene.add(r.corps);
+            scene.add(r.body);
         },
         addPNJ: function(p) {
             //console.log('adding PNJ '+p.id)

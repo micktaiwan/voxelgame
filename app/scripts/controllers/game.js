@@ -9,12 +9,37 @@ angular.module('gameApp')
             return;
         }
 
-        //Db.addRobot({type: 'holefiller'});
-
         $scope.showInventory = false;
         $scope.showConsole = false;
         $scope.msgs = [];
         var player = null;
+        var already_initialized = Game.init(addMessage);
+        if (!already_initialized) {
+            player = MainPlayer.newPlayer(user, {
+                playerUpdateCallback: updatePlayer,
+                toggleInventoryCallback: toggleInventory,
+                updateInventoryCallback: updateInventory,
+                updateRobots: updateRobots,
+            });
+            Game.addMainPlayer(player);
+            var u = $rootScope.users;
+            var pnjs = [];
+            for (var i in u) {
+                if (u[i].id != user.id) {
+                    // FIXME: il ne devrait pas y avoir deux méthodes, ne pour la Db et l'autre pour le game... non ????
+                    var p = Db.newPlayer(u[i], updatePNJ); // p.connections is always false here
+                    var gp = Game.addPNJ(p);
+                    gp.updateOnlinePresence(false);
+                    pnjs.push(gp);
+                }
+            }
+            console.log(pnjs.length + ' pnjs');
+        } else
+            console.log('Game was already initialized');
+
+        $('#instructions').click(function() {
+            enablePointerLock();
+        });
 
         $timeout(function() {
             Game.addMessage({
@@ -34,6 +59,7 @@ angular.module('gameApp')
 
         // to update robots positions, we fake a scope udpate
         // TODO: bwaaaaah, not pretty
+
         function dummyUpdate() {
             $scope.dummy = 1;
             $timeout(function() {
@@ -43,7 +69,9 @@ angular.module('gameApp')
         }
         dummyUpdate();
 
-
+        $scope.createRobot = function() {
+            player.createRobot();
+        }
 
         function getPNJById(id) {
             var rv = null;
@@ -122,33 +150,5 @@ angular.module('gameApp')
                 consummeMessage(msg.delay);
         }
 
-        var already_initialized = Game.init(addMessage);
-        if (!already_initialized) {
-            //console.log(user);
-            player = MainPlayer.newPlayer(user, {
-                playerUpdateCallback: updatePlayer,
-                toggleInventoryCallback: toggleInventory,
-                updateInventoryCallback: updateInventory,
-                updateRobots: updateRobots,
-            });
-            Game.addMainPlayer(player);
-            var u = $rootScope.users;
-            var pnjs = [];
-            for (var i in u) {
-                if (u[i].id != user.id) {
-                    // FIXME: il ne devrait pas y avoir deux méthodes, ne pour la Db et l'autre pour le game... non ????
-                    var p = Db.newPlayer(u[i], updatePNJ); // p.connections is always false here
-                    var gp = Game.addPNJ(p);
-                    gp.updateOnlinePresence(false);
-                    pnjs.push(gp);
-                }
-            }
-            console.log(pnjs.length + ' pnjs');
-        } else
-            console.log('Game was already initialized');
-
-        $('#instructions').click(function() {
-            enablePointerLock();
-        });
 
     });

@@ -1,22 +1,25 @@
 <div id="game"></div>
-<div id="robots">
-    <b>Robots</b>
-    <br/>
-    <div ng-show="robots.length > 0"></div>
-    <p ng-repeat="r in robots">
-        - {{r.dbRobot.type}}
-        <span ng-hide="r.active" class="strong">not active</span>
-        {{r.printPos()}}
-    </p>
-
-    <p>Soon:
-        <br/>- Create a new robot
-        <br/>- Follow another player
-        <br/>- Make him do some action (get me a Box)
-        <br/>Todo: indicate distance from player
-    </p>
-</div>
 <div id="blocker">
+    <div id="robots">
+        <b>Robots</b>
+        <br/>
+        <div ng-hide="robots.length > 0">
+            <br/>
+            <button class="btn btn-default" ng-click="createRobot()">Create</button>
+            <br/>
+            <br/>
+        </div>
+        <div ng-repeat="r in robots">
+            - {{r.dbRobot.type}}
+            <span ng-hide="r.active" class="strong">not active</span>
+            {{r.distanceFromPlayer()}}m away {{r.printPos()}}
+        </div>
+        <br/>
+        <p>Soon:
+            <br/>- Follow another player
+            <br/>- Make him do some action (get me a Box)
+        </p>
+    </div>
     <div id="instructions">
         <table>
             <tr class="strong">

@@ -450,6 +450,13 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             selectedObject = getInventoryObjectById(obj.id);
         };
 
+        this.createRobot = function() {
+            var dbRobot = Db.addRobot({type: 'holefiller'});
+            var robot = new Robot.newRobot(dbRobot, this, {});
+            this.robots.push(robot);
+            Game.addRobot(robot);
+        }
+
     };
 
     return {
