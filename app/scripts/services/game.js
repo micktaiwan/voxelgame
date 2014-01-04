@@ -121,21 +121,13 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         scene.add(light);
         addSun(0.995, 0.5, 0.9, 0, 500, 300);
 
-				// model
-
-				var loader = new THREE.OBJMTLLoader();
-                                
-				loader.addEventListener( 'load', function ( event ) {
-
-					var object = event.content;
-
-					object.position.y = - 80;
-					scene.add( object );
-
-				});
-				loader.load( 'obj/ModelFace2.obj', 'obj/ModelFace2.mtl' );
-
-				//
+        // model
+        var loader = new THREE.OBJMTLLoader();
+        loader.load( 'obj/ModelFace2.obj', 'obj/ModelFace2.mtl', function ( object ) {
+                object.position.y = -80;
+                object.position.z = -500;
+                scene.add( object );
+        } );
 
         /*
         light2 = new THREE.PointLight(0xffffff, 2, 50);
