@@ -21,6 +21,8 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
 
         var active = true;
         var memory = Map.newMap();
+        var pathfinder = Map.newPF(); //var path = pf.find(memory, memory.first(), memory.last());
+        var path = [];
         var lastMemorySize = null;
         this.body = new THREE.Object3D();
         this.body.position.copy(dbRobot.pos);
@@ -51,14 +53,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
             //console.log("update");
             //this.moveTowardsPlayer();
             //randomizeMove(this.body, 0.2);
-            //this.explore();
-            var pf = Map.newPF();
-            memory.addCube(Map.getCubeByPos(0,0,0));
-            memory.addCube(Map.getCubeByPos(1,0,0));
-            memory.addCube(Map.getCubeByPos(2,0,0));
-            memory.addCube(Map.getCubeByPos(2,0,1));
-            var path = pf.find(memory, memory.first(), memory.last());
-            debugger;
+            this.explore();
         };
 
         var rspeed = 30;
@@ -110,8 +105,8 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
         function getNext(neighbors) {
             var next;
             while (next = neighbors.pop()) {
-                // not in memory and nothing on it
-                if (!memory.getById(next.id) && next.neighbors[1][2][1] == null)
+                // not in memory and nothing on it (in real map)
+                if (!memory.getById(next.id) && Map.getCubeById(next.id).neighbors[1][2][1] == null)
                     return next;
             }
             return null;
@@ -136,14 +131,21 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
             if (next) return next;
 
             rewind = 1;
-            while (rewind < memory.size() && !(next = getNext(Map.getCubeById(memory.rewind(rewind).id).getNeighborsOnlyAdjacents())))
+            while (rewind < memory.size() && !getNext(Map.getCubeById(memory.rewind(rewind).id).getNeighborsOnlyAdjacents()))
                 rewind += 1;
             console.log('Rewinded ' + rewind + ' cubes');
             if (rewind == memory.size()) {
                 active = false;
                 console.log('All neighbors in memory!');
             }
-            return memory.rewind(rewind); // TODO: do pathfinding to it
+            // do pathfinding to it
+
+            path = pathfinder.find(memory, c, memory.rewind(rewind));
+            if (path.length == 0) {
+                throw 'no path to cube ???';
+            }
+            console.log('found a path to rewind ' + rewind + ' in ' + (path.length - 1) + ' cubes');
+            return path[0];
         };
 
         var cubeToGo = null;
@@ -171,7 +173,13 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
                 return;
             }
 
-            cubeToGo = this.getNextUnchartedCube();
+            if (path.length > 0) { // we are currently going to cube by pathfinding
+                console.log(path.length + ' cubes to go in path');
+                cubeToGo = path[0];
+                path.splice(0, 1);
+            } else {
+                cubeToGo = this.getNextUnchartedCube();
+            }
             if (!cubeToGo) {
                 console.log('no cube to go');
                 return;

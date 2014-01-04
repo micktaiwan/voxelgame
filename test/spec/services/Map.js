@@ -47,9 +47,15 @@ describe('Map test:', function() {
             expect(map.size()).toEqual(4);
             var pf = Map.newPF();
             var path = pf.find(map, map.first(), map.last());
-            console.log(path.length);
-            console.log(path);
             expect(path.length).toEqual(4);
+            var map = Map.newMap();
+            addCubes(map, [
+                [0, 0, 0],
+                [2, 0, 0]
+            ]);
+            expect(map.size()).toEqual(2);
+            path = pf.find(map, map.first(), map.last());
+            expect(path.length).toEqual(0);
         })
 
     })

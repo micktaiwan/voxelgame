@@ -20,7 +20,6 @@ angular.module('gameApp.services.map', []).factory('Map', function() {
             var closedset = []; // The set of nodes already evaluated.
             var came_from = {}; // the empty map    // The map of navigated nodes.
              // Cost from start along best known path
-            debugger;
             start.g_score = 0;
             // Estimated total cost from start to goal through y.
             start.f_score = start.g_score + heuristic_cost_estimate(start, goal);
@@ -42,14 +41,13 @@ angular.module('gameApp.services.map', []).factory('Map', function() {
 
                 // for each neighbor in neighbor_nodes(current)
                 var adjs = current.getNeighborsOnlyAdjacents();
-                if (adjs.length == 0) { // how we ended here if no adjs ?
+                if (adjs.length == 0) { // how we ended here if no adjs ? Could be if we "landed" here at the start of the game...
                     console.error('no adjs ???');
                     continue;
                 }
 
                 for (var neighbor_index = adjs.length - 1; neighbor_index >= 0; neighbor_index--) {
                     var neighbor = adjs[neighbor_index];
-                    debugger;
                     if (getNodeIndex(closedset, neighbor) != null)
                         continue;
                     var tentative_g_score = current.g_score + heuristic_cost_estimate(current, neighbor); // dist_between(current,neighbor)
@@ -62,7 +60,7 @@ angular.module('gameApp.services.map', []).factory('Map', function() {
                     }
                 }
             }
-            return [];
+            return []; // no path found
         };
         /*
         function getNode(list, node) {
@@ -89,7 +87,6 @@ angular.module('gameApp.services.map', []).factory('Map', function() {
         function getLowerFScore() {
             var node_id = null;
             var score = 9999999;
-            debugger;
             for (var i in openset) {
                 if (score > openset[i].f_score) {
                     node_id = i;
@@ -97,7 +94,6 @@ angular.module('gameApp.services.map', []).factory('Map', function() {
                 }
             }
             if (node_id == null) {
-                debugger;
                 throw 'no node_id'
             }
             return openset[node_id];
@@ -108,7 +104,6 @@ angular.module('gameApp.services.map', []).factory('Map', function() {
         }
 
         function reconstruct_path(came_from, current_node) {
-            debugger;
             if (Object.keys(came_from).indexOf(current_node.id) != -1) {
                 var p = reconstruct_path(came_from, came_from[current_node.id]);
                 return (p.concat([current_node]));
@@ -328,6 +323,9 @@ angular.module('gameApp.services.map', []).factory('Map', function() {
             if (rewind >= l) rewind = l - 1; // or throw an exception ?
             return cubes[(l - 1) - rewind];
         };
+        this.getMap = function() {
+            return cubes;
+        }
 
     } // map
 
