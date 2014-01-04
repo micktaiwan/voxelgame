@@ -116,24 +116,30 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         scene = new THREE.Scene();
         scene.fog = new THREE.Fog(0x333333, 300, 1000);
         //objects.length = 0; // reset all objects
+        
+        // LIGHTS
         light = new THREE.AmbientLight(0xffffff);
         light.color.setHSL(0.1, 0.3, 0.2);
         scene.add(light);
         addSun(0.995, 0.5, 0.9, 0, 500, 300);
-
-        // model
-        var loader = new THREE.OBJMTLLoader();
-        loader.load( 'obj/ModelFace2.obj', 'obj/ModelFace2.mtl', function ( object ) {
-                object.position.y = -80;
-                object.position.z = -500;
-                scene.add( object );
-        } );
 
         /*
         light2 = new THREE.PointLight(0xffffff, 2, 50);
         light2.position.set(-1, 1, -1);
         scene.add(light2);
         */
+       
+        // model
+        var loader = new THREE.OBJMTLLoader();
+//        loader.load( 'obj/ModelFace2.obj', 'obj/ModelFace2.mtl', function ( object ) {
+        loader.load( 'obj/female02.obj', 'obj/female02.mtl', function ( object ) {
+                object.position.x = 40;
+                object.position.y = 10;
+                object.position.z = -200;
+                object.scale.set(0.25,0.25,0.25);
+                scene.add( object );
+        } );
+
         if (Config.modeDebug)
             modeDebug();
         rendererStats = new THREEx.RendererStats();
