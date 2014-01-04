@@ -26,7 +26,7 @@ var Objects = [{
         map: THREE.ImageUtils.loadTexture('images/glass.png')
     }),
     transparent: true,
-    opacity:1,
+    opacity: 1,
     path: 'glass.png'
 }, {
     type: CubeTypes.Metal,
@@ -58,6 +58,19 @@ var Config = {
     // Robots
     pov: 'robot' // camera start mode: 'player', 'robot'
 };
+
+function addCubes(map, coords) {
+
+    for (var i in coords) {
+        map.addCube({
+            id: i,
+            x: coords[i][0],
+            y: coords[i][1],
+            z: coords[i][2],
+            type: 0
+        });
+    }
+}
 
 function getHashLength(hash) {
     return Object.keys(hash).length;

@@ -33,20 +33,6 @@ describe('Map test:', function() {
 
     });
 
-
-    function addCubes(map, coords) {
-
-        for (var i in coords) {
-            map.addCube({
-                id: i,
-                x: coords[i][0],
-                y: coords[i][1],
-                z: coords[i][2],
-                type: 0
-            });
-        }
-    }
-
     describe('when I call Map.pathfinder', function() {
         it('should find a way', function() {
             var $injector = angular.injector(['gameApp.services.map']);
@@ -55,10 +41,10 @@ describe('Map test:', function() {
             addCubes(map, [
                 [0, 0, 0],
                 [1, 0, 0],
-                [1, 0, 1]
+                [1, 0, 1],
                 [1, 0, 2]
             ]);
-            expect(map.size()).toEqual(3);
+            expect(map.size()).toEqual(4);
             var pf = Map.newPF();
             var path = pf.find(map, map.first(), map.last());
             console.log(path.length);

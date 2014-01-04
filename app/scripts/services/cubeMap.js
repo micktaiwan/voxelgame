@@ -13,20 +13,18 @@ angular.module('gameApp.services.map', []).factory('Map', function() {
 
     function PathFinder() {
 
-
         var map = null;
-        var f_score = {};
         var openset; // The set of tentative nodes to be evaluated, initially containing the start node
         this.find = function(m, start, goal) {
             map = m;
             var closedset = []; // The set of nodes already evaluated.
             var came_from = {}; // the empty map    // The map of navigated nodes.
-            openset = [start];
              // Cost from start along best known path
+            debugger;
             start.g_score = 0;
             // Estimated total cost from start to goal through y.
             start.f_score = start.g_score + heuristic_cost_estimate(start, goal);
-            debugger;
+            openset = [start];
 
             while (openset.length > 0) {
                 var current = getLowerFScore(); // the node in openset having the lowest f_score[] value
@@ -91,8 +89,9 @@ angular.module('gameApp.services.map', []).factory('Map', function() {
         function getLowerFScore() {
             var node_id = null;
             var score = 9999999;
+            debugger;
             for (var i in openset) {
-                if (score > i.f_score) {
+                if (score > openset[i].f_score) {
                     node_id = i;
                     score = i.f_score;
                 }
@@ -101,7 +100,7 @@ angular.module('gameApp.services.map', []).factory('Map', function() {
                 debugger;
                 throw 'no node_id'
             }
-            return node_id; // map.getById(node_id);
+            return openset[node_id];
         }
 
         function heuristic_cost_estimate(start, goal) {
