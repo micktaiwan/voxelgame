@@ -120,7 +120,23 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         light.color.setHSL(0.1, 0.3, 0.2);
         scene.add(light);
         addSun(0.995, 0.5, 0.9, 0, 500, 300);
-        loadObj('cabane.obj');
+
+				// model
+
+				var loader = new THREE.OBJMTLLoader();
+                                
+				loader.addEventListener( 'load', function ( event ) {
+
+					var object = event.content;
+
+					object.position.y = - 80;
+					scene.add( object );
+
+				});
+				loader.load( 'obj/ModelFace2.obj', 'obj/ModelFace2.mtl' );
+
+				//
+
         /*
         light2 = new THREE.PointLight(0xffffff, 2, 50);
         light2.position.set(-1, 1, -1);
@@ -146,38 +162,6 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         Db.onCube(onCube);
 
         initialized = true;
-    }
-
-    function loadObj(obj) {
-
-        var manager = new THREE.LoadingManager();
-        manager.onProgress = function(item, loaded, total) {
-            console.log('loading... ', item, loaded, total);
-        };
-
-        var texture = new THREE.Texture();
-        var loader = new THREE.ImageLoader(manager);
-        loader.load('images/ash_uvgrid01.jpg', function(image) {
-            texture.image = image;
-            texture.needsUpdate = true;
-        });
-
-        loader = new THREE.OBJLoader(manager);
-        loader.load('obj/' + obj, function(object) {
-            object.traverse(function(child) {
-                if (child instanceof THREE.Mesh) {
-                    child.material.map = texture;
-                    objects.push({
-                        mesh: child
-                    });
-                }
-            });
-            object.position.y = 10;
-            object.position.z = -150;
-            object.rotation.y = -Math.PI / 2;
-            scene.add(object);
-
-        });
     }
 
     function init(_addMessageCallback) {

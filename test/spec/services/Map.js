@@ -31,6 +31,33 @@ describe('Map test:', function() {
             expect(first.getNeighbors().length).toEqual(1);
         })
 
+    });
+
+    describe('when I call Map.pathfinder', function() {
+        it('should find a way', function() {
+            var $injector = angular.injector(['gameApp.services.map']);
+            var Map = $injector.get('Map');
+            var map = Map.newMap();
+            addCubes(map, [
+                [0, 0, 0],
+                [1, 0, 0],
+                [1, 0, 1],
+                [1, 0, 2]
+            ]);
+            expect(map.size()).toEqual(4);
+            var pf = Map.newPF();
+            var path = pf.find(map, map.first(), map.last());
+            expect(path.length).toEqual(4);
+            var map = Map.newMap();
+            addCubes(map, [
+                [0, 0, 0],
+                [2, 0, 0]
+            ]);
+            expect(map.size()).toEqual(2);
+            path = pf.find(map, map.first(), map.last());
+            expect(path.length).toEqual(0);
+        })
+
     })
 
 });
