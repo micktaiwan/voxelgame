@@ -59,6 +59,10 @@ var Config = {
     pov: 'robot' // camera start mode: 'player', 'robot'
 };
 
+function getHashLength(hash) {
+    return Object.keys(hash).length;
+}
+
 function toArray(object) {
     return $.map(object, function(value, index) {
         return [value];

@@ -9,6 +9,118 @@ angular.module('gameApp.services.map', []).factory('Map', function() {
 
     var _map = new map();
 
+    //==========================================================
+
+    function PathFinder() {
+
+
+        var map = null;
+        var f_score = {};
+        var openset; // The set of tentative nodes to be evaluated, initially containing the start node
+        this.find = function(m, start, goal) {
+            map = m;
+            var closedset = []; // The set of nodes already evaluated.
+            var came_from = {}; // the empty map    // The map of navigated nodes.
+            openset = [start];
+             // Cost from start along best known path
+            start.g_score = 0;
+            // Estimated total cost from start to goal through y.
+            start.f_score = start.g_score + heuristic_cost_estimate(start, goal);
+            debugger;
+
+            while (openset.length > 0) {
+                var current = getLowerFScore(); // the node in openset having the lowest f_score[] value
+                if (current.id == goal.id)
+                    return reconstruct_path(came_from, goal);
+
+                //remove current from openset
+                var index = getNodeIndex(openset, current);
+                if (index == null)
+                    throw 'not found: ' + current.id;
+                openset.splice(index, 1);
+                current.f_score = null;
+                // add current to closedset
+                closedset.push(current);
+
+                // for each neighbor in neighbor_nodes(current)
+                var adjs = current.getNeighborsOnlyAdjacents();
+                if (adjs.length == 0) { // how we ended here if no adjs ?
+                    console.error('no adjs ???');
+                    continue;
+                }
+
+                for (var neighbor_index = adjs.length - 1; neighbor_index >= 0; neighbor_index--) {
+                    var neighbor = adjs[neighbor_index];
+                    debugger;
+                    if (getNodeIndex(closedset, neighbor) != null)
+                        continue;
+                    var tentative_g_score = current.g_score + heuristic_cost_estimate(current, neighbor); // dist_between(current,neighbor)
+                    if (getNodeIndex(openset, neighbor) == null || tentative_g_score < neighbor.g_score) {
+                        came_from[neighbor.id] = current;
+                        neighbor.g_score = tentative_g_score;
+                        neighbor.f_score = neighbor.g_score + heuristic_cost_estimate(neighbor, goal);
+                        if (getNodeIndex(openset, neighbor) == null)
+                            openset.push(neighbor);
+                    }
+                }
+            }
+            return [];
+        };
+        /*
+        function getNode(list, node) {
+            var rv = null;
+            list.some(function(s) {
+                if (s.id == node.id) {
+                    rv = s;
+                    return;
+                }
+            });
+            console.log("node: "+rv);
+            return rv;
+        }
+*/
+
+        function getNodeIndex(list, node) {
+            for (var i = list.length - 1; i >= 0; i--) {
+                if (list[i].id == node.id)
+                    return i;
+            }
+            return null;
+        }
+
+        function getLowerFScore() {
+            var node_id = null;
+            var score = 9999999;
+            for (var i in openset) {
+                if (score > i.f_score) {
+                    node_id = i;
+                    score = i.f_score;
+                }
+            }
+            if (node_id == null) {
+                debugger;
+                throw 'no node_id'
+            }
+            return node_id; // map.getById(node_id);
+        }
+
+        function heuristic_cost_estimate(start, goal) {
+            return Math.abs(start.x - goal.x) + Math.abs(start.y - goal.y) + Math.abs(start.z - goal.z);
+        }
+
+        function reconstruct_path(came_from, current_node) {
+            debugger;
+            if (Object.keys(came_from).indexOf(current_node.id) != -1) {
+                var p = reconstruct_path(came_from, came_from[current_node.id]);
+                return (p.concat([current_node]));
+            } else
+                return [current_node];
+        }
+
+
+    } // PathFinder
+    //==========================================================
+
     function inverse(i) {
         switch (i) {
             case -1:
@@ -21,7 +133,6 @@ angular.module('gameApp.services.map', []).factory('Map', function() {
                 throw 'no inverse for ' + i;
         }
     }
-
 
     //==========================================================
 
@@ -158,6 +269,9 @@ angular.module('gameApp.services.map', []).factory('Map', function() {
         };
 
         this.addCube = function(obj) {
+            if (!obj) {
+                throw 'no obj?';
+            }
             if (this.getById(obj.id)) {
                 console.error('cube ' + obj.id + ' already exists in map (by id)');
                 return;
@@ -258,6 +372,9 @@ angular.module('gameApp.services.map', []).factory('Map', function() {
         },
         last: function() {
             return _map.last();
+        },
+        newPF: function() {
+            return new PathFinder();
         },
 
     }

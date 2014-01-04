@@ -51,7 +51,14 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
             //console.log("update");
             //this.moveTowardsPlayer();
             //randomizeMove(this.body, 0.2);
-            this.explore();
+            //this.explore();
+            var pf = Map.newPF();
+            memory.addCube(Map.getCubeByPos(0,0,0));
+            memory.addCube(Map.getCubeByPos(1,0,0));
+            memory.addCube(Map.getCubeByPos(2,0,0));
+            memory.addCube(Map.getCubeByPos(2,0,1));
+            var path = pf.find(memory, memory.first(), memory.last());
+            debugger;
         };
 
         var rspeed = 30;
