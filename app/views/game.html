@@ -1,3 +1,21 @@
+<div id="game"></div>
+<div id="robots">
+    <b>Robots</b>
+    <br/>
+    <div ng-show="robots.length > 0"></div>
+    <p ng-repeat="r in robots">
+        - {{r.dbRobot.type}}
+        <span ng-hide="r.active" class="strong">not active</span>
+        {{r.printPos()}}
+    </p>
+
+    <p>Soon:
+        <br/>- Create a new robot
+        <br/>- Follow another player
+        <br/>- Make him do some action (get me a Box)
+        <br/>Todo: indicate distance from player
+    </p>
+</div>
 <div id="blocker">
     <div id="instructions">
         <table>
@@ -48,5 +66,3 @@
 <ul id="console" class="console" ng-show="showConsole">
     <li ng-repeat="m in msgs" class="{{m.type}}">{{m.text}}</li>
 </ul>
-
-<div id="game"></div>

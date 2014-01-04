@@ -28,10 +28,12 @@ var enablePointerLock = function() {
         elem.requestFullscreen();
     }
     $('#blocker').hide();
+    $('#robots').hide();
 };
 
 var disablePointerLock = function() {
     $('#blocker').show();
+    $('#robots').show();
 };
 
 var onFullscreenChange = function() {

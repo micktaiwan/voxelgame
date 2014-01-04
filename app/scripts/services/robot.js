@@ -4,6 +4,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
 
     function robot(dbRobot, player, callbacks) {
         // console.log(dbRobot);
+        this.dbRobot = dbRobot;
 
         if (!dbRobot.pos) {
             dbRobot.pos = {
@@ -19,7 +20,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
             }
         }
 
-        var active = true;
+        this.active = true;
         var memory = Map.newMap();
         var pathfinder = Map.newPF(); //var path = pf.find(memory, memory.first(), memory.last());
         var path = [];
@@ -49,7 +50,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
         this.body.add(this.torso);
 
         this.update = function() {
-            if (!active) return;
+            if (!this.active) return;
             //console.log("update");
             //this.moveTowardsPlayer();
             //randomizeMove(this.body, 0.2);
@@ -92,6 +93,11 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
         this.moveTowardsPlayer = function() {
             this.goTo(player.corps.position, Config.dimCadri * 2);
         };
+
+        this.printPos = function() {
+            var pos = this.getCurrentPosCubePos();
+            return '('+pos.x+','+pos.y+','+pos.z+')';
+        }
 
         // get a real map case, not the memory
 
@@ -141,7 +147,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
                 rewind += 1;
             console.log('Rewinded ' + rewind + ' cubes');
             if (rewind == memory.size()) {
-                active = false;
+                this.active = false;
                 console.log('All neighbors in memory!');
             }
             // do pathfinding to it

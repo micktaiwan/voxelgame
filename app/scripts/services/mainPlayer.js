@@ -111,6 +111,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         for (var i = 0; i < dbUser.robots.length; i++) {
             this.robots.push(new Robot.newRobot(dbUser.robots[i], this, {}));
         };
+        callbacks.updateRobots(this.robots);
 
         this.updateRobots = function() {
             this.robots.forEach(function(r) {

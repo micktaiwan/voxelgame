@@ -32,6 +32,19 @@ angular.module('gameApp')
             });
         }, 6 * 1000);
 
+        // to update robots positions, we fake a scope udpate
+        // TODO: bwaaaaah, not pretty
+        function dummyUpdate() {
+            $scope.dummy = 1;
+            $timeout(function() {
+                dummyUpdate();
+            }, 1 * 1000);
+
+        }
+        dummyUpdate();
+
+
+
         function getPNJById(id) {
             var rv = null;
             pnjs.some(function(s) {
@@ -75,6 +88,10 @@ angular.module('gameApp')
             $scope.selectedInventoryObject = selected;
         }
 
+        function updateRobots(robots) {
+            $scope.robots = robots;
+        }
+
         $scope.selectInventory = function(obj) {
             if ($scope.selectedInventoryObject == obj.id) {
                 $scope.selectedInventoryObject = null;
@@ -111,7 +128,8 @@ angular.module('gameApp')
             player = MainPlayer.newPlayer(user, {
                 playerUpdateCallback: updatePlayer,
                 toggleInventoryCallback: toggleInventory,
-                updateInventoryCallback: updateInventory
+                updateInventoryCallback: updateInventory,
+                updateRobots: updateRobots,
             });
             Game.addMainPlayer(player);
             var u = $rootScope.users;
