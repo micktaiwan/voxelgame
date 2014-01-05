@@ -136,7 +136,8 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
             if (memory.size() == 0) {
                 var c = this.getRealCubeByCurrentPos();
                 if (!c) {
-                    console.error('no cube on current pos');
+                    //console.error('no cube on current pos');
+                    // TODO: change goal (go to player pos or something)
                     c = Map.first();
                 }
                 return c;

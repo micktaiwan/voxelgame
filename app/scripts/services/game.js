@@ -116,7 +116,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         scene = new THREE.Scene();
         scene.fog = new THREE.Fog(0x333333, 300, 1000);
         //objects.length = 0; // reset all objects
-        
+
         // LIGHTS
         light = new THREE.AmbientLight(0xffffff);
         light.color.setHSL(0.1, 0.3, 0.2);
@@ -128,7 +128,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         light2.position.set(-1, 1, -1);
         scene.add(light2);
         */
-       
+
         // model
         var loader = new THREE.OBJMTLLoader();
 //        loader.load( 'obj/ModelFace2.obj', 'obj/ModelFace2.mtl', function ( object ) {
@@ -450,27 +450,33 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         var materials = [
             new THREE.MeshLambertMaterial({
                 ambient: 0xffffff,
-                map: THREE.ImageUtils.loadTexture('images/body1.jpg')
+                map: THREE.ImageUtils.loadTexture('images/body1.jpg'),
+                transparent: true
             }),
             new THREE.MeshLambertMaterial({
                 ambient: 0xffffff,
-                map: THREE.ImageUtils.loadTexture('images/body2.jpg')
+                map: THREE.ImageUtils.loadTexture('images/body2.jpg'),
+                transparent: true
             }),
             new THREE.MeshLambertMaterial({
                 ambient: 0xffffff,
-                map: THREE.ImageUtils.loadTexture('images/body3.jpg')
+                map: THREE.ImageUtils.loadTexture('images/body3.jpg'),
+                transparent: true
             }),
             new THREE.MeshLambertMaterial({
                 ambient: 0xffffff,
-                map: THREE.ImageUtils.loadTexture('images/body4.jpg')
+                map: THREE.ImageUtils.loadTexture('images/body4.jpg'),
+                transparent: true
             }),
             new THREE.MeshLambertMaterial({
                 ambient: 0xffffff,
-                map: THREE.ImageUtils.loadTexture('images/body5.jpg')
+                map: THREE.ImageUtils.loadTexture('images/body5.jpg'),
+                transparent: true
             }),
             new THREE.MeshLambertMaterial({
                 ambient: 0xffffff,
-                map: THREE.ImageUtils.loadTexture('images/body6.jpg')
+                map: THREE.ImageUtils.loadTexture('images/body6.jpg'),
+                transparent: true
             })
         ];
 
@@ -484,27 +490,33 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         materials = [
             new THREE.MeshLambertMaterial({
                 ambient: 0xffffff,
-                map: THREE.ImageUtils.loadTexture('images/body1.jpg')
+                map: THREE.ImageUtils.loadTexture('images/body1.jpg'),
+                transparent: true
             }),
             new THREE.MeshLambertMaterial({
                 ambient: 0xffffff,
-                map: THREE.ImageUtils.loadTexture('images/body2.jpg')
+                map: THREE.ImageUtils.loadTexture('images/body2.jpg'),
+                transparent: true
             }),
             new THREE.MeshLambertMaterial({
                 ambient: 0xffffff,
-                map: THREE.ImageUtils.loadTexture('images/head3.jpg')
+                map: THREE.ImageUtils.loadTexture('images/head3.jpg'),
+                transparent: true
             }),
             new THREE.MeshLambertMaterial({
                 ambient: 0xffffff,
-                map: THREE.ImageUtils.loadTexture('images/body4.jpg')
+                map: THREE.ImageUtils.loadTexture('images/body4.jpg'),
+                transparent: true
             }),
             new THREE.MeshLambertMaterial({
                 ambient: 0xffffff,
-                map: THREE.ImageUtils.loadTexture('images/head5.jpg')
+                map: THREE.ImageUtils.loadTexture('images/head5.jpg'),
+                transparent: true
             }),
             new THREE.MeshLambertMaterial({
                 ambient: 0xffffff,
-                map: THREE.ImageUtils.loadTexture('images/head6.jpg')
+                map: THREE.ImageUtils.loadTexture('images/head6.jpg'),
+                transparent: true
             })
         ];
 
@@ -550,14 +562,24 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.updateOnlinePresence = function(isOnline) {
             this.onlinePresence = isOnline;
             if (isOnline) {
-                this.torse.material.opacity = 1;
+                for(var i=this.torse.material.materials.length-1; i>=0; i--) {
+                    this.torse.material.materials[i].opacity = 1;
+                }
+                for(var i=this.tete.material.materials.length-1; i>=0; i--) {
+                    this.tete.material.materials[i].opacity = 1;
+                }
                 this.tete.castShadow = true;
                 this.tete.receiveShadow = true;
                 this.torse.castShadow = true;
                 this.torse.receiveShadow = true;
             } else {
-                this.torse.material.opacity = 0.4;
-                //this.torse.material.color = 0xffff00;
+                var opa = 0.4;
+                for(var i=this.torse.material.materials.length-1; i>=0; i--) {
+                    this.torse.material.materials[i].opacity = opa;
+                }
+                for(var i=this.tete.material.materials.length-1; i>=0; i--) {
+                    this.tete.material.materials[i].opacity = opa;
+                }
                 this.name_label.material.opacity = 0.4;
                 this.tete.castShadow = false;
                 this.tete.receiveShadow = false;
@@ -637,6 +659,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             player.robots.forEach(function(r) {
                 scene.add(r.body);
             });
+        },
+        getMainPlayer: function() {
+            return player;
         },
         addRobot: function(r) {
             scene.add(r.body);

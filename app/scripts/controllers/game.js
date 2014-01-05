@@ -34,8 +34,12 @@ angular.module('gameApp')
                 }
             }
             console.log(pnjs.length + ' pnjs');
-        } else
+        } else {
             console.log('Game was already initialized');
+            player = Game.getMainPlayer();
+            updateRobots(player.robots);
+            updateInventory(player.dbUser.inventory);
+        }
 
         $('#instructions').click(function() {
             enablePointerLock();
@@ -109,9 +113,11 @@ angular.module('gameApp')
 
         function toggleInventory() {
             $scope.showInventory = !$scope.showInventory;
+            console.log('toggle ' + $scope.showInventory);
         }
 
         function updateInventory(inventory, selected) {
+            console.log('update');
             $scope.inventory = inventory;
             $scope.selectedInventoryObject = selected;
         }

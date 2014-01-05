@@ -56,7 +56,7 @@
 
 <div id="inventory" ng-show="showInventory">
     <p>{{inventory.length}} objects in inventory (maintain esc to get your mouse back)</p>
-    <button ng-repeat="o in inventory" class="btn" ng-class="{'btn-warning': selectedInventoryObject.id==o.id}" ng-click="selectInventory(o)">
+    <button ng-repeat="o in inventory" class="btn" ng-class="{'btn-warning': selectedInventoryObject && selectedInventoryObject.id==o.id}" ng-click="selectInventory(o)">
         {{o.display}}
     </button>
 </div>
