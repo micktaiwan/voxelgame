@@ -129,16 +129,21 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         scene.add(light2);
         */
 
+        // Axis
+        var axis = new THREE.AxisHelper(20);
+        axis.position.set(0, 25, 0);
+        scene.add(axis);
+
         // model
         var loader = new THREE.OBJMTLLoader();
-//        loader.load( 'obj/ModelFace2.obj', 'obj/ModelFace2.mtl', function ( object ) {
-        loader.load( 'obj/female02.obj', 'obj/female02.mtl', function ( object ) {
-                object.position.x = 40;
-                object.position.y = 10;
-                object.position.z = -200;
-                object.scale.set(0.25,0.25,0.25);
-                scene.add( object );
-        } );
+        //        loader.load( 'obj/ModelFace2.obj', 'obj/ModelFace2.mtl', function ( object ) {
+        loader.load('obj/female02.obj', 'obj/female02.mtl', function(object) {
+            object.position.x = 40;
+            object.position.y = 10;
+            object.position.z = -200;
+            object.scale.set(0.25, 0.25, 0.25);
+            scene.add(object);
+        });
 
         if (Config.modeDebug)
             modeDebug();
@@ -562,10 +567,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.updateOnlinePresence = function(isOnline) {
             this.onlinePresence = isOnline;
             if (isOnline) {
-                for(var i=this.torse.material.materials.length-1; i>=0; i--) {
+                for (var i = this.torse.material.materials.length - 1; i >= 0; i--) {
                     this.torse.material.materials[i].opacity = 1;
                 }
-                for(var i=this.tete.material.materials.length-1; i>=0; i--) {
+                for (var i = this.tete.material.materials.length - 1; i >= 0; i--) {
                     this.tete.material.materials[i].opacity = 1;
                 }
                 this.tete.castShadow = true;
@@ -574,10 +579,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
                 this.torse.receiveShadow = true;
             } else {
                 var opa = 0.4;
-                for(var i=this.torse.material.materials.length-1; i>=0; i--) {
+                for (var i = this.torse.material.materials.length - 1; i >= 0; i--) {
                     this.torse.material.materials[i].opacity = opa;
                 }
-                for(var i=this.tete.material.materials.length-1; i>=0; i--) {
+                for (var i = this.tete.material.materials.length - 1; i >= 0; i--) {
                     this.tete.material.materials[i].opacity = opa;
                 }
                 this.name_label.material.opacity = 0.4;

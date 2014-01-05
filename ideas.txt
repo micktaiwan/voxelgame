@@ -33,3 +33,9 @@ if (intersects.length > 0 && intersects[0].distance < distGet) {
     }
 }
 return null;
+
+=================================================================
+Arrow
+        var arrow = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 0), 50);
+        arrow.position.set(20, 25, 20);
+        scene.add(arrow);
