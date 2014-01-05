@@ -21,9 +21,9 @@ angular.module('gameApp.services.camera', []).factory('Camera', function($rootSc
         this.update = function() {
             if (this.mode == 'pov') {
                 //console.log('pov');
-                this.camera.position.y = this.follow.corps.position.y + 200;
-                this.camera.position.x = this.follow.corps.position.x - 200;
-                this.camera.position.z = this.follow.corps.position.z;
+                this.camera.position.y = this.follow.corps.position.y - Math.sin(this.follow.tete.rotation.x)* 100;
+                this.camera.position.x = this.follow.corps.position.x + (Math.sin(this.follow.corps.rotation.y)* 100)* Math.cos(this.follow.tete.rotation.x);
+                this.camera.position.z = this.follow.corps.position.z + (Math.cos(this.follow.corps.rotation.y) * 100)* Math.cos(this.follow.tete.rotation.x);
                 this.camera.lookAt(new THREE.Vector3(this.follow.corps.position.x, this.follow.corps.position.y, this.follow.corps.position.z));
             } else if (follow) {
                 this.camera.position.y = this.follow.position.y + 200;
