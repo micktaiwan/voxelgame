@@ -2,10 +2,10 @@
 
 angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function($rootScope, $location, Db, Session, Game, Robot, Map) {
 
-    function player(_dbUser, callbacks) {
+    function player(dbUser, callbacks) {
         // info player
         //console.log(_dbUser.pos);
-        var dbUser = _dbUser;
+        this.dbUser = dbUser;
         var selectedObject = null;
         sortInventory();
         selectNextInventoryObject(0);
@@ -145,7 +145,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                     y: positionNew.y,
                     z: positionNew.z
                 };
-/*
+                /*
                 var cube = Map.getCubeByPos(Math.round(pos.x / Config.dimCadri), Math.round(pos.y / Config.dimCadri) - 1, Math.round(pos.z / Config.dimCadri));
                 if (cube) {
                     var neighbors = cube.getNeighbors();
@@ -451,7 +451,9 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         };
 
         this.createRobot = function() {
-            var dbRobot = Db.addRobot({type: 'holefiller'});
+            var dbRobot = Db.addRobot({
+                type: 'holefiller'
+            });
             var robot = new Robot.newRobot(dbRobot, this, {});
             this.robots.push(robot);
             Game.addRobot(robot);

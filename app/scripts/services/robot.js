@@ -136,7 +136,8 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
             if (memory.size() == 0) {
                 var c = this.getRealCubeByCurrentPos();
                 if (!c) {
-                    console.error('no cube on current pos');
+                    //console.error('no cube on current pos');
+                    // TODO: change goal (go to player pos or something)
                     c = Map.first();
                 }
                 return c;
@@ -150,7 +151,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
             if (next) return next;
 
             rewind = 1;
-            while (rewind < memory.size() && !getNext(Map.getCubeById(memory.rewind(rewind).id).getNeighborsOnlyAdjacents()))
+            while (rewind < memory.size() && (next=Map.getCubeById(memory.rewind(rewind).id)) && !getNext(next.getNeighborsOnlyAdjacents()))
                 rewind += 1;
             //console.log('Rewinded ' + rewind + ' cubes');
             if (rewind == memory.size()) {
@@ -161,7 +162,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
 
             path = pathfinder.find(memory, c, memory.rewind(rewind));
             if (path.length == 0) {
-                throw 'no path to cube ???';
+                throw 'no path to cube ??? rewind='+rewind+', memory len='+memory.size();
             }
             //console.log('found a path to rewind ' + rewind + ' in ' + (path.length - 1) + ' cubes');
             return path[0];
