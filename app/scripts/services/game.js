@@ -644,30 +644,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     function onDocumentMouseDown(event) {
         if (isLocked) {
-            /*            var WIDTH = window.innerWidth;
-            var HEIGHT = window.innerHeight;
-            var elem = renderer.domElement,
-                boundingRect = elem.getBoundingClientRect(),
-                x = (event.clientX - boundingRect.left) * (elem.width / boundingRect.width),
-                y = (event.clientY - boundingRect.top) * (elem.height / boundingRect.height);
-
-            var vector = new THREE.Vector3(
-                (x / WIDTH) * 2 - 1, -(y / HEIGHT) * 2 + 1,
-                0.5
-            );
-
-            var arrow = new THREE.ArrowHelper(
-                new THREE.Vector3(vector.x, vector.y, vector.z),
-                new THREE.Vector3(Camera.getTHREECamera().position.x, Camera.getTHREECamera().y, Camera.getTHREECamera().z),
-                50);
-            arrow.position.set(player.corps.position.x, player.corps.position.y, player.corps.position.z);
-            scene.add(arrow);
-
-            var projector = new THREE.Projector();
-            projector.unprojectVector(vector, Camera.getTHREECamera());
-            var ray = new THREE.Raycaster(Camera.getTHREECamera().position, vector.sub(Camera.getTHREECamera().position).normalize());
-            var intersects = ray.intersectObjects(getMeshObjects());*/
-
+            // select pointed cubes
             //event.preventDefault();
 
             var x = event.pageX;
@@ -682,13 +659,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
             if (intersects.length > 0) {
                 console.log(intersects.length + ' objects');
-                intersects[0].object.material.color.setHex(Math.random() * 0xffffff);
-
-                var particle = new THREE.Sprite(material);
-                particle.position = intersects[0].point;
-                particle.position.y += 2;
-                particle.scale.x = particle.scale.y = 10;
-                scene.add(particle);
+                var pos = intersects[0].object.position;
+                console.log(pos);
+                var obj = Map.getCubeByPos(pos.x/Config.dimCadri, pos.y/Config.dimCadri, pos.z/Config.dimCadri);
+                console.log(obj);
             }
             return;
         }
