@@ -27,6 +27,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     var textureFlare0 = THREE.ImageUtils.loadTexture("images/lensflare0.png");
     var textureFlare2 = THREE.ImageUtils.loadTexture("images/lensflare2.png");
     var textureFlare3 = THREE.ImageUtils.loadTexture("images/lensflare3.png");
+
     function lensFlareUpdateCallback(object) {
 
         var f, fl = object.lensFlares.length;
@@ -44,11 +45,11 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         object.lensFlares[3].rotation = object.positionScreen.x * 0.5 + THREE.Math.degToRad(45);
     }
 
-// TODO: tilt shifting
+    // TODO: tilt shifting
     /*
      function initPostprocessing() {
      var renderPass = new THREE.RenderPass( scene, camera );
-     
+
      var bokehPass = new THREE.BokehPass( scene, camera, {
      focus:                 1.0,
      aperture:        0.025,
@@ -56,9 +57,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
      width: width,
      height: height
      } );
-     
+
      bokehPass.renderToScreen = true;
-     
+
      var composer = new THREE.EffectComposer( renderer );
      composer.addPass( renderPass );
      composer.addPass( bokehPass );
@@ -120,9 +121,14 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
          scene.add(light2);
          */
 
+        // Axis
+        var axis = new THREE.AxisHelper(20);
+        axis.position.set(0, 25, 0);
+        scene.add(axis);
+
         // model
         var loader = new THREE.OBJMTLLoader();
-//        loader.load( 'obj/ModelFace2.obj', 'obj/ModelFace2.mtl', function ( object ) {
+        //        loader.load( 'obj/ModelFace2.obj', 'obj/ModelFace2.mtl', function ( object ) {
         loader.load('obj/female02.obj', 'obj/female02.mtl', function(object) {
             object.position.x = 40;
             object.position.y = 10;
@@ -137,12 +143,18 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
             morphColorsToFaceColors(geometry);
             geometry.computeMorphNormals();
-            var material = new THREE.MeshLambertMaterial({color: 0xffffff, morphTargets: true, morphNormals: true, vertexColors: THREE.FaceColors, shading: THREE.FlatShading});
+            var material = new THREE.MeshLambertMaterial({
+                color: 0xffffff,
+                morphTargets: true,
+                morphNormals: true,
+                vertexColors: THREE.FaceColors,
+                shading: THREE.FlatShading
+            });
             var meshAnim = new THREE.MorphAnimMesh(geometry, material);
-            meshAnim.duration = 5000;
-            meshAnim.scale.set(1.5, 1.5, 1.5);
-            meshAnim.position.y = 250;
-            meshAnim.position.z = -650;
+            meshAnim.duration = 2000;
+            meshAnim.scale.set(0.5, 0.5, 0.5);
+            meshAnim.position.y = 50;
+            meshAnim.position.z = -350;
             scene.add(meshAnim);
             morphs.push(meshAnim);
         });
@@ -242,8 +254,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         }
     }
 
-// type: 'added', 'changed', 'removed'
-// obj: the cube (id, x, y, z, type, user_id)
+    // type: 'added', 'changed', 'removed'
+    // obj: the cube (id, x, y, z, type, user_id)
 
     function onCube(type, obj) {
         if (obj.date > new Date().getTime() - 10 * 1000)
@@ -263,11 +275,11 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
         if (geometry.morphColors && geometry.morphColors.length) {
 
-            var colorMap = geometry.morphColors[ 0 ];
+            var colorMap = geometry.morphColors[0];
             for (var i = 0; i < colorMap.colors.length; i++) {
 
-                geometry.faces[ i ].color = colorMap.colors[ i ];
-                geometry.faces[ i ].color.offsetHSL(0, 0.3, 0);
+                geometry.faces[i].color = colorMap.colors[i];
+                geometry.faces[i].color.offsetHSL(0, 0.3, 0);
             }
 
         }
@@ -387,6 +399,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     var lastTimeMsec = new Date().getTime();
     var nowMsec, fps;
+
     function animate() {
         if (!rendererIsStopped)
             requestAnimationFrame(animate);
@@ -405,7 +418,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         var delta = clock.getDelta();
         var morph;
         for (var i = 0; i < morphs.length; i++) {
-            morph = morphs[ i ];
+            morph = morphs[i];
             morph.updateAnimation(1000 * delta);
         }
 

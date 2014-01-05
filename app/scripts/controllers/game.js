@@ -113,11 +113,11 @@ angular.module('gameApp')
 
         function toggleInventory() {
             $scope.showInventory = !$scope.showInventory;
-            console.log('toggle ' + $scope.showInventory);
+            //console.log('toggle ' + $scope.showInventory);
         }
 
         function updateInventory(inventory, selected) {
-            console.log('update');
+            //console.log('update');
             $scope.inventory = inventory;
             $scope.selectedInventoryObject = selected;
         }
