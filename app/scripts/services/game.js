@@ -115,10 +115,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         scene.add(light);
         addSun(0.995, 0.5, 0.9, 0, 500, 300);
         /*
-        light2 = new THREE.PointLight(0xffffff, 2, 50);
-        light2.position.set(-1, 1, -1);
-        scene.add(light2);
-        */
+         light2 = new THREE.PointLight(0xffffff, 2, 50);
+         light2.position.set(-1, 1, -1);
+         scene.add(light2);
+         */
 
         // model
         var loader = new THREE.OBJMTLLoader();
@@ -146,7 +146,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             scene.add(meshAnim);
             morphs.push(meshAnim);
         });
-        if(Config.modeDebug)
+        if (Config.modeDebug)
             modeDebug();
         rendererStats = new THREEx.RendererStats();
         rendererStats.domElement.style.position = 'absolute';
@@ -169,7 +169,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         var was_already_initialized = initialized;
         addMessageCallback = _addMessageCallback;
         rendererIsStopped = false;
-        if(!initialized)
+        if (!initialized)
             real_init();
         $game_div = $('#game');
         onWindowResize();
@@ -180,7 +180,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     }
 
     function addMessage(msg) {
-        if(!addMessageCallback)
+        if (!addMessageCallback)
             return;
         safeApply($rootScope, function() {
             addMessageCallback(msg);
@@ -189,7 +189,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     function getCubeFromSceneById(obj) {
         for (var key in objects) {
-            if(objects[key].obj && objects[key].obj.id == obj.id) {
+            if (objects[key].obj && objects[key].obj.id == obj.id) {
                 return key;
             }
         }
@@ -198,7 +198,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     function getCubeFromSceneByPos(obj) {
         for (var key in objects) {
-            if(objects[key].obj && objects[key].obj.mesh && objects[key].obj.mesh.position.x == obj.position.x && objects[key].obj.mesh.position.y == obj.position.y && objects[key].obj.mesh.position.z == obj.position.z) {
+            if (objects[key].obj && objects[key].obj.mesh && objects[key].obj.mesh.position.x == obj.position.x && objects[key].obj.mesh.position.y == obj.position.y && objects[key].obj.mesh.position.z == obj.position.z) {
                 return key;
             }
         }
@@ -206,17 +206,17 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     }
 
     function addCubeToScene(obj) {
-        if(getCubeFromSceneByPos(obj))
+        if (getCubeFromSceneByPos(obj))
             throw ('There is a cube there. Check it before you call addCubeToScene.');
         var mesh = new THREE.Mesh(geometry, Objects[obj.type].material);
-        if(Objects[obj.type].opacity) {
+        if (Objects[obj.type].opacity) {
             mesh.material.transparent = true;
             mesh.material.opacity = Objects[obj.type].opacity;
         }
         mesh.position.x = obj.x * Config.dimCadri;
         mesh.position.y = obj.y * Config.dimCadri;
         mesh.position.z = obj.z * Config.dimCadri;
-        if(Config.randomCubeRotation)
+        if (Config.randomCubeRotation)
             randomizeRot(mesh, Config.randomCubeRotationFactor);
         mesh.castShadow = true;
         mesh.receiveShadow = true;
@@ -234,7 +234,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     function removeCubeFromScene(obj) {
         var key = getCubeFromSceneById(obj);
-        if(key)
+        if (key)
             removeCubeFromSceneByKey(key);
         else {
             console.error("did not find cube");
@@ -246,12 +246,12 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 // obj: the cube (id, x, y, z, type, user_id)
 
     function onCube(type, obj) {
-        if(obj.date > new Date().getTime() - 10 * 1000)
+        if (obj.date > new Date().getTime() - 10 * 1000)
             console.log('cube ' + type + ' on ' + obj.x + ', ' + obj.y + ', ' + obj.z);
-        if(type == "added") {
+        if (type == "added") {
             Map.addCube(obj);
             addCubeToScene(obj);
-        } else if(type == "removed") {
+        } else if (type == "removed") {
             Map.removeCube(obj);
             removeCubeFromScene(obj);
         } else {
@@ -261,7 +261,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     function morphColorsToFaceColors(geometry) {
 
-        if(geometry.morphColors && geometry.morphColors.length) {
+        if (geometry.morphColors && geometry.morphColors.length) {
 
             var colorMap = geometry.morphColors[ 0 ];
             for (var i = 0; i < colorMap.colors.length; i++) {
@@ -275,7 +275,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     }
 
     function onWindowResize() {
-        if(player) {
+        if (player) {
             player.camera.aspect = window.innerWidth / window.innerHeight;
             player.camera.updateProjectionMatrix();
         }
@@ -289,7 +289,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     function control() {
 
         function onMove(event) {
-            if(isLocked)
+            if (isLocked)
                 return;
             var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0; // event.pageX || 0;
             var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0; //event.pageY || 0;
@@ -319,7 +319,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         }
 
         var onKeyDown = function(event) {
-            if(isLocked)
+            if (isLocked)
                 return;
             switch (event.keyCode) {
 
@@ -376,7 +376,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         document.addEventListener('keydown', onKeyDown, false);
         document.addEventListener('keyup', onKeyUp, false);
         document.addEventListener('mousewheel', function(e) {
-            if(isLocked)
+            if (isLocked)
                 return;
             player.camdist(e.wheelDelta);
             return false;
@@ -388,7 +388,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     var lastTimeMsec = new Date().getTime();
     var nowMsec, fps;
     function animate() {
-        if(!rendererIsStopped)
+        if (!rendererIsStopped)
             requestAnimationFrame(animate);
         nowMsec = new Date().getTime()
         fps = 1000.0 / (nowMsec - lastTimeMsec)
@@ -398,7 +398,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         //            console.log(Config.speedFactor + ", " + fps);
 
         rendererStats.update(renderer);
-        if(!player)
+        if (!player)
             return;
         player.updateRobots();
         // anim
@@ -410,13 +410,13 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         }
 
         //player.updateCamera();
-        if(!isLocked) {
+        if (!isLocked) {
             player.move();
             player.jump();
             //light2.position.set(player.corps.position.x, player.corps.position.y, player.corps.position.z);
         }
         renderer.render(scene, player.camera);
-        if(player.corps.position.y < -150)
+        if (player.corps.position.y < -150)
             end();
     }
 
@@ -450,7 +450,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     function PNJ(p) {
         //console.log(p);
 
-        if(!p.pos) {
+        if (!p.pos) {
             p.pos = {
                 x: 0,
                 y: Config.dimCadri,
@@ -458,7 +458,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             }
         }
 
-        if(!p.rot) {
+        if (!p.rot) {
             p.rot = {
                 corps: 0,
                 tete: 0
@@ -577,10 +577,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.updateOnlinePresence = function(isOnline) {
             this.onlinePresence = isOnline;
             if (isOnline) {
-                for(var i=this.torse.material.materials.length-1; i>=0; i--) {
+                for (var i = this.torse.material.materials.length - 1; i >= 0; i--) {
                     this.torse.material.materials[i].opacity = 1;
                 }
-                for(var i=this.tete.material.materials.length-1; i>=0; i--) {
+                for (var i = this.tete.material.materials.length - 1; i >= 0; i--) {
                     this.tete.material.materials[i].opacity = 1;
                 }
                 this.tete.castShadow = true;
@@ -589,10 +589,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
                 this.torse.receiveShadow = true;
             } else {
                 var opa = 0.4;
-                for(var i=this.torse.material.materials.length-1; i>=0; i--) {
+                for (var i = this.torse.material.materials.length - 1; i >= 0; i--) {
                     this.torse.material.materials[i].opacity = opa;
                 }
-                for(var i=this.tete.material.materials.length-1; i>=0; i--) {
+                for (var i = this.tete.material.materials.length - 1; i >= 0; i--) {
                     this.tete.material.materials[i].opacity = opa;
                 }
                 this.name_label.material.opacity = 0.4;
@@ -628,7 +628,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     }
 
     function onDocumentMouseDown(event) {
-        if(isLocked)
+        if (isLocked)
             return;
         switch (event.button) {
             case 0: // left
@@ -644,7 +644,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     }
 
     function onDocumentMouseUp(event) {
-        if(isLocked)
+        if (isLocked)
             return;
         player.dummy.mesh.visible = false;
         switch (event.button) {
@@ -664,7 +664,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             return init(addMessageCallback);
         },
         stop: function() {
-            if(!rendererIsStopped)
+            if (!rendererIsStopped)
                 console.log("Game rendering has been stopped but still receive DB updates");
             rendererIsStopped = true;
         },
@@ -711,7 +711,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         },
         getCubeFromSceneById: function(obj) {
             var index = getCubeFromSceneById(obj);
-            if(index)
+            if (index)
                 return objects[index];
             else
                 return null;
