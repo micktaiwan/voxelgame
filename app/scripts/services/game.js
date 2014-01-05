@@ -5,7 +5,6 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     var initialized = false;
     var rendererIsStopped = true;
     var rendererStats = null;
-
     var $game_div;
     var scene, renderer;
     var geometry, material, mesh;
@@ -15,9 +14,12 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     var dummy = [];
 
+    // anim
+    var morphs = [];
+    var clock = new THREE.Clock();
+
     var geometry = new THREE.CubeGeometry(Config.dimCadri, Config.dimCadri, Config.dimCadri);
     var canMove = false;
-
     var light, light2;
     var objects = [];
     var addMessageCallback = null; // method to add ingame messages
@@ -25,14 +27,12 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     var textureFlare0 = THREE.ImageUtils.loadTexture("images/lensflare0.png");
     var textureFlare2 = THREE.ImageUtils.loadTexture("images/lensflare2.png");
     var textureFlare3 = THREE.ImageUtils.loadTexture("images/lensflare3.png");
-
     function lensFlareUpdateCallback(object) {
 
         var f, fl = object.lensFlares.length;
         var flare;
         var vecX = -object.positionScreen.x * 2;
         var vecY = -object.positionScreen.y * 2;
-
         for (f = 0; f < fl; f++) {
             flare = object.lensFlares[f];
             flare.x = object.positionScreen.x + vecX * flare.distance;
@@ -44,26 +44,26 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         object.lensFlares[3].rotation = object.positionScreen.x * 0.5 + THREE.Math.degToRad(45);
     }
 
-    // TODO: tilt shifting
+// TODO: tilt shifting
     /*
-    function initPostprocessing() {
-        var renderPass = new THREE.RenderPass( scene, camera );
-
-        var bokehPass = new THREE.BokehPass( scene, camera, {
-            focus:                 1.0,
-            aperture:        0.025,
-            maxblur:        1.0,
-            width: width,
-            height: height
-        } );
-
-        bokehPass.renderToScreen = true;
-
-        var composer = new THREE.EffectComposer( renderer );
-        composer.addPass( renderPass );
-        composer.addPass( bokehPass );
-    }
-*/
+     function initPostprocessing() {
+     var renderPass = new THREE.RenderPass( scene, camera );
+     
+     var bokehPass = new THREE.BokehPass( scene, camera, {
+     focus:                 1.0,
+     aperture:        0.025,
+     maxblur:        1.0,
+     width: width,
+     height: height
+     } );
+     
+     bokehPass.renderToScreen = true;
+     
+     var composer = new THREE.EffectComposer( renderer );
+     composer.addPass( renderPass );
+     composer.addPass( bokehPass );
+     }
+     */
 
     function addSun(h, s, l, x, y, z) {
 
@@ -74,36 +74,28 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         light.castShadow = true;
         //light.shadowCameraVisible = true;
         /*
-        light.shadowCameraNear = 10;
-        light.shadowCameraFar = 10000;
-        light.shadowCameraFov = 30;
-        */
+         light.shadowCameraNear = 10;
+         light.shadowCameraFar = 10000;
+         light.shadowCameraFov = 30;
+         */
         light.shadowDarkness = 0.8;
         scene.add(light);
-
         light = new THREE.PointLight(0xffffff, 1, 0);
         light.color.setHSL(h, s, l);
         light.position.set(x, y, z);
-
         var flareColor = new THREE.Color(0xffffff);
         flareColor.setHSL(h, s, l + 0.5);
-
         var lensFlare = new THREE.LensFlare(textureFlare0, 700, 0.0, THREE.AdditiveBlending, flareColor);
-
         lensFlare.add(textureFlare2, 512, 0.0, THREE.AdditiveBlending);
         lensFlare.add(textureFlare2, 512, 0.0, THREE.AdditiveBlending);
         lensFlare.add(textureFlare2, 512, 0.0, THREE.AdditiveBlending);
-
         lensFlare.add(textureFlare3, 60, 0.6, THREE.AdditiveBlending);
         lensFlare.add(textureFlare3, 70, 0.7, THREE.AdditiveBlending);
         lensFlare.add(textureFlare3, 120, 0.9, THREE.AdditiveBlending);
         lensFlare.add(textureFlare3, 70, 1.0, THREE.AdditiveBlending);
-
         lensFlare.customUpdateCallback = lensFlareUpdateCallback;
         lensFlare.position = light.position;
-
         scene.add(lensFlare);
-
     }
 
     function getMeshObjects() {
@@ -116,37 +108,50 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         scene = new THREE.Scene();
         scene.fog = new THREE.Fog(0x333333, 300, 1000);
         //objects.length = 0; // reset all objects
-        
+
         // LIGHTS
         light = new THREE.AmbientLight(0xffffff);
         light.color.setHSL(0.1, 0.3, 0.2);
         scene.add(light);
         addSun(0.995, 0.5, 0.9, 0, 500, 300);
-
         /*
-        light2 = new THREE.PointLight(0xffffff, 2, 50);
-        light2.position.set(-1, 1, -1);
-        scene.add(light2);
-        */
-       
+         light2 = new THREE.PointLight(0xffffff, 2, 50);
+         light2.position.set(-1, 1, -1);
+         scene.add(light2);
+         */
+
         // model
         var loader = new THREE.OBJMTLLoader();
 //        loader.load( 'obj/ModelFace2.obj', 'obj/ModelFace2.mtl', function ( object ) {
-        loader.load( 'obj/female02.obj', 'obj/female02.mtl', function ( object ) {
-                object.position.x = 40;
-                object.position.y = 10;
-                object.position.z = -200;
-                object.scale.set(0.25,0.25,0.25);
-                scene.add( object );
-        } );
+        loader.load('obj/female02.obj', 'obj/female02.mtl', function(object) {
+            object.position.x = 40;
+            object.position.y = 10;
+            object.position.z = -200;
+            object.scale.set(0.19, 0.19, 0.19);
+            scene.add(object);
+        });
+        //
 
-        if (Config.modeDebug)
+        var loader = new THREE.JSONLoader();
+        loader.load("obj/animated/flamingo.js", function(geometry) {
+
+            morphColorsToFaceColors(geometry);
+            geometry.computeMorphNormals();
+            var material = new THREE.MeshLambertMaterial({color: 0xffffff, morphTargets: true, morphNormals: true, vertexColors: THREE.FaceColors, shading: THREE.FlatShading});
+            var meshAnim = new THREE.MorphAnimMesh(geometry, material);
+            meshAnim.duration = 5000;
+            meshAnim.scale.set(1.5, 1.5, 1.5);
+            meshAnim.position.y = 250;
+            meshAnim.position.z = -650;
+            scene.add(meshAnim);
+            morphs.push(meshAnim);
+        });
+        if(Config.modeDebug)
             modeDebug();
         rendererStats = new THREEx.RendererStats();
         rendererStats.domElement.style.position = 'absolute';
         rendererStats.domElement.style.right = '0px';
         rendererStats.domElement.style.top = '50px';
-
         renderer = new THREE.WebGLRenderer({
             antialias: true,
             alpha: true
@@ -155,10 +160,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         renderer.shadowMapEnabled = true;
         renderer.shadowMapSoft = true;
         window.addEventListener('resize', onWindowResize, false);
-
         control();
         Db.onCube(onCube);
-
         initialized = true;
     }
 
@@ -166,7 +169,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         var was_already_initialized = initialized;
         addMessageCallback = _addMessageCallback;
         rendererIsStopped = false;
-        if (!initialized)
+        if(!initialized)
             real_init();
         $game_div = $('#game');
         onWindowResize();
@@ -177,7 +180,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     }
 
     function addMessage(msg) {
-        if (!addMessageCallback) return;
+        if(!addMessageCallback)
+            return;
         safeApply($rootScope, function() {
             addMessageCallback(msg);
         });
@@ -185,7 +189,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     function getCubeFromSceneById(obj) {
         for (var key in objects) {
-            if (objects[key].obj && objects[key].obj.id == obj.id) {
+            if(objects[key].obj && objects[key].obj.id == obj.id) {
                 return key;
             }
         }
@@ -194,7 +198,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     function getCubeFromSceneByPos(obj) {
         for (var key in objects) {
-            if (objects[key].obj && objects[key].obj.mesh && objects[key].obj.mesh.position.x == obj.position.x && objects[key].obj.mesh.position.y == obj.position.y && objects[key].obj.mesh.position.z == obj.position.z) {
+            if(objects[key].obj && objects[key].obj.mesh && objects[key].obj.mesh.position.x == obj.position.x && objects[key].obj.mesh.position.y == obj.position.y && objects[key].obj.mesh.position.z == obj.position.z) {
                 return key;
             }
         }
@@ -202,21 +206,20 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     }
 
     function addCubeToScene(obj) {
-        if (getCubeFromSceneByPos(obj))
+        if(getCubeFromSceneByPos(obj))
             throw ('There is a cube there. Check it before you call addCubeToScene.');
         var mesh = new THREE.Mesh(geometry, Objects[obj.type].material);
-        if (Objects[obj.type].opacity) {
+        if(Objects[obj.type].opacity) {
             mesh.material.transparent = true;
             mesh.material.opacity = Objects[obj.type].opacity;
         }
         mesh.position.x = obj.x * Config.dimCadri;
         mesh.position.y = obj.y * Config.dimCadri;
         mesh.position.z = obj.z * Config.dimCadri;
-        if (Config.randomCubeRotation)
+        if(Config.randomCubeRotation)
             randomizeRot(mesh, Config.randomCubeRotationFactor);
         mesh.castShadow = true;
         mesh.receiveShadow = true;
-
         scene.add(mesh);
         objects.push({
             obj: obj,
@@ -231,23 +234,24 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     function removeCubeFromScene(obj) {
         var key = getCubeFromSceneById(obj);
-        if (key) removeCubeFromSceneByKey(key);
+        if(key)
+            removeCubeFromSceneByKey(key);
         else {
             console.error("did not find cube");
             console.error(obj);
         }
     }
 
-    // type: 'added', 'changed', 'removed'
-    // obj: the cube (id, x, y, z, type, user_id)
+// type: 'added', 'changed', 'removed'
+// obj: the cube (id, x, y, z, type, user_id)
 
     function onCube(type, obj) {
-        if (obj.date > new Date().getTime() - 10 * 1000)
+        if(obj.date > new Date().getTime() - 10 * 1000)
             console.log('cube ' + type + ' on ' + obj.x + ', ' + obj.y + ', ' + obj.z);
-        if (type == "added") {
+        if(type == "added") {
             Map.addCube(obj);
             addCubeToScene(obj);
-        } else if (type == "removed") {
+        } else if(type == "removed") {
             Map.removeCube(obj);
             removeCubeFromScene(obj);
         } else {
@@ -255,8 +259,23 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         }
     }
 
+    function morphColorsToFaceColors(geometry) {
+
+        if(geometry.morphColors && geometry.morphColors.length) {
+
+            var colorMap = geometry.morphColors[ 0 ];
+            for (var i = 0; i < colorMap.colors.length; i++) {
+
+                geometry.faces[ i ].color = colorMap.colors[ i ];
+                geometry.faces[ i ].color.offsetHSL(0, 0.3, 0);
+            }
+
+        }
+
+    }
+
     function onWindowResize() {
-        if (player) {
+        if(player) {
             player.camera.aspect = window.innerWidth / window.innerHeight;
             player.camera.updateProjectionMatrix();
         }
@@ -270,12 +289,12 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     function control() {
 
         function onMove(event) {
-            if (isLocked) return;
+            if(isLocked)
+                return;
             var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0; // event.pageX || 0;
             var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0; //event.pageY || 0;
 
             player.rotate(movementX, movementY);
-
             // camera lag, not nicely done
             //player.camera.position.x += movementX * 0.01;
             //player.camera.position.y -= movementY * 0.01;
@@ -289,19 +308,19 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         var onMouseMove = function(event) {
             onmove(event);
         };
-
         // TODO
         /*
-        add an ontouchmove handler that translates the event's screenX and screenY to pageX and pageY and then
-        calls your existing onmousemove handler. That would be for handling events from iOS devices running mobile Safari.
-        You'll probably have to add some additional translations to handle other devices/browsers as well.
-        */
+         add an ontouchmove handler that translates the event's screenX and screenY to pageX and pageY and then
+         calls your existing onmousemove handler. That would be for handling events from iOS devices running mobile Safari.
+         You'll probably have to add some additional translations to handle other devices/browsers as well.
+         */
         var onTouch = function(event) {
             onmove(event);
         }
 
         var onKeyDown = function(event) {
-            if (isLocked) return;
+            if(isLocked)
+                return;
             switch (event.keyCode) {
 
                 case 90: // z
@@ -330,7 +349,6 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
                     break;
             }
         };
-
         var onKeyUp = function(event) {
             switch (event.keyCode) {
                 case 38: // up
@@ -358,7 +376,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         document.addEventListener('keydown', onKeyDown, false);
         document.addEventListener('keyup', onKeyUp, false);
         document.addEventListener('mousewheel', function(e) {
-            if (isLocked) return;
+            if(isLocked)
+                return;
             player.camdist(e.wheelDelta);
             return false;
         }, false);
@@ -368,10 +387,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     var lastTimeMsec = new Date().getTime();
     var nowMsec, fps;
-
     function animate() {
-        if (!rendererIsStopped) requestAnimationFrame(animate);
-
+        if(!rendererIsStopped)
+            requestAnimationFrame(animate);
         nowMsec = new Date().getTime()
         fps = 1000.0 / (nowMsec - lastTimeMsec)
         lastTimeMsec = nowMsec
@@ -380,19 +398,25 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         //            console.log(Config.speedFactor + ", " + fps);
 
         rendererStats.update(renderer);
-        if (!player) return;
-
+        if(!player)
+            return;
         player.updateRobots();
-
+        // anim
+        var delta = clock.getDelta();
+        var morph;
+        for (var i = 0; i < morphs.length; i++) {
+            morph = morphs[ i ];
+            morph.updateAnimation(1000 * delta);
+        }
 
         //player.updateCamera();
-        if (!isLocked) {
+        if(!isLocked) {
             player.move();
             player.jump();
             //light2.position.set(player.corps.position.x, player.corps.position.y, player.corps.position.z);
         }
         renderer.render(scene, player.camera);
-        if (player.corps.position.y < -150)
+        if(player.corps.position.y < -150)
             end();
     }
 
@@ -426,7 +450,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     function PNJ(p) {
         //console.log(p);
 
-        if (!p.pos) {
+        if(!p.pos) {
             p.pos = {
                 x: 0,
                 y: Config.dimCadri,
@@ -434,7 +458,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             }
         }
 
-        if (!p.rot) {
+        if(!p.rot) {
             p.rot = {
                 corps: 0,
                 tete: 0
@@ -446,7 +470,6 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.onlinePresence = false;
         this.corps = new THREE.Object3D();
         copyVector(this.corps.position, p.pos);
-
         var materials = [
             new THREE.MeshLambertMaterial({
                 ambient: 0xffffff,
@@ -473,14 +496,12 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
                 map: THREE.ImageUtils.loadTexture('images/body6.jpg')
             })
         ];
-
         var d = Config.dimCadri;
         var geometrytorse = new THREE.CubeGeometry(d, d, d / 2);
         this.torse = new THREE.Mesh(geometrytorse, new THREE.MeshFaceMaterial(materials));
         this.corps.add(this.torse);
         this.torse.castShadow = true;
         this.torse.receiveShadow = true;
-
         materials = [
             new THREE.MeshLambertMaterial({
                 ambient: 0xffffff,
@@ -507,7 +528,6 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
                 map: THREE.ImageUtils.loadTexture('images/head6.jpg')
             })
         ];
-
         var geometrytete = new THREE.CubeGeometry(d / 2, d / 2, d / 2);
         this.tete = new THREE.Mesh(geometrytete, new THREE.MeshFaceMaterial(materials));
         this.tete.castShadow = true;
@@ -515,7 +535,6 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.tete.position.y = d;
         this.tete.position.z = -d / 4;
         this.corps.add(this.tete);
-
         var geometryName = new THREE.TextGeometry(p.name, {
             font: 'optimer', // Must be lowercase!
             weight: 'normal',
@@ -527,7 +546,6 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             bevelSize: 0.1,
             bevelEnabled: true
         });
-
         var textMaterial = new THREE.MeshPhongMaterial({
             color: 0xffaa00,
             transparent: true
@@ -539,17 +557,14 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         this.name_label.position.z = d * 0.25;
         this.name_label.position.x = -(box.max.x - box.min.x) / 2; // center offset
         this.corps.add(this.name_label);
-
         copyRotation(this, p.rot);
-
         scene.add(this.corps);
         objects.push({
             mesh: this.torse
         });
-
         this.updateOnlinePresence = function(isOnline) {
             this.onlinePresence = isOnline;
-            if (isOnline) {
+            if(isOnline) {
                 this.torse.material.opacity = 1;
                 this.tete.castShadow = true;
                 this.tete.receiveShadow = true;
@@ -565,12 +580,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
                 this.torse.receiveShadow = false;
             }
         };
-
         this.move = function(pos, rot) {
             copyVector(this.corps.position, pos);
             copyRotation(this, rot);
         };
-
         return this;
     }
 
@@ -593,7 +606,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     }
 
     function onDocumentMouseDown(event) {
-        if (isLocked) return;
+        if(isLocked)
+            return;
         switch (event.button) {
             case 0: // left
                 player.dummy.mesh.material.color.setRGB(1, 0, 0); // get
@@ -608,7 +622,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     }
 
     function onDocumentMouseUp(event) {
-        if (isLocked) return;
+        if(isLocked)
+            return;
         player.dummy.mesh.visible = false;
         switch (event.button) {
             case 0: // left
@@ -627,7 +642,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             return init(addMessageCallback);
         },
         stop: function() {
-            if (!rendererIsStopped)
+            if(!rendererIsStopped)
                 console.log("Game rendering has been stopped but still receive DB updates");
             rendererIsStopped = true;
         },
@@ -671,7 +686,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         },
         getCubeFromSceneById: function(obj) {
             var index = getCubeFromSceneById(obj);
-            if (index)
+            if(index)
                 return objects[index];
             else
                 return null;
