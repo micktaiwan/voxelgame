@@ -49,7 +49,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     /*
      function initPostprocessing() {
      var renderPass = new THREE.RenderPass( scene, camera );
-
+     
      var bokehPass = new THREE.BokehPass( scene, camera, {
      focus:                 1.0,
      aperture:        0.025,
@@ -57,9 +57,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
      width: width,
      height: height
      } );
-
+     
      bokehPass.renderToScreen = true;
-
+     
      var composer = new THREE.EffectComposer( renderer );
      composer.addPass( renderPass );
      composer.addPass( bokehPass );
@@ -127,6 +127,22 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         scene.add(axis);
 
         // model
+        //scout
+        var scale = 7;
+	//var loader = new THREE.JSONLoader(), callback = function( geometry ) { createScene( geometry,  0, 0, 0, 7 ) };
+
+//        var loader = new THREE.SceneLoader(), callback = function( geometry ) { createScene( geometry,  0, 0, 0, 7 ) };
+//        loader.load("obj/animated/scout.js", function(geometry) {
+//            createScene(geometry, 400, 0, 275, scale)
+//        });
+
+// var loader = new THREE.SceneLoader();
+//  loader.load('obj/animated/scout.js', function(res) {
+//      scene.add(res.scene);
+//      renderer.render(res.scene, camera);
+//  });
+  
+        // nana
         var loader = new THREE.OBJMTLLoader();
         //        loader.load( 'obj/ModelFace2.obj', 'obj/ModelFace2.mtl', function ( object ) {
         loader.load('obj/female02.obj', 'obj/female02.mtl', function(object) {
@@ -138,7 +154,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         });
         //
 
-        var loader = new THREE.JSONLoader();
+        loader = new THREE.JSONLoader();
         loader.load("obj/animated/flamingo.js", function(geometry) {
 
             morphColorsToFaceColors(geometry);
@@ -189,6 +205,61 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         $game_div.append(renderer.domElement);
         animate();
         return was_already_initialized;
+    }
+
+    function ensureLoop(animation) {
+
+        for (var i = 0; i < animation.hierarchy.length; i++) {
+
+            var bone = animation.hierarchy[ i ];
+
+            var first = bone.keys[ 0 ];
+            var last = bone.keys[ bone.keys.length - 1 ];
+
+            last.pos = first.pos;
+            last.rot = first.rot;
+            last.scl = first.scl;
+
+        }
+
+    }
+
+    function createScene(geometry, x, y, z, s) {
+
+        ensureLoop(geometry.animation);
+
+        geometry.computeBoundingBox();
+        var bb = geometry.boundingBox;
+
+        THREE.AnimationHandler.add(geometry.animation);
+        console.log(geometry);
+        for (var i = 0; i < geometry.materials.length; i++) {
+
+            var m = geometry.materials[ i ];
+            m.skinning = true;
+            m.ambient.copy(m.color);
+
+            m.wrapAround = true;
+            m.perPixel = true;
+
+        }
+
+
+        var mesh = new THREE.SkinnedMesh(geometry, new THREE.MeshFaceMaterial());
+        mesh.position.set(x, y - bb.min.y * s, z);
+        mesh.scale.set(s, s, s);
+        scene.add(mesh);
+
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+
+
+        var animation = new THREE.Animation(mesh, geometry.animation.name);
+        animation.JITCompile = false;
+        animation.interpolationType = THREE.AnimationHandler.LINEAR;
+
+        animation.play();
+
     }
 
     function addMessage(msg) {
