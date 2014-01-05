@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function($rootScope, $location, Db, Session, Game, Robot, Map) {
+angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function($rootScope, $location, Db, Session, Game, Robot, Map, Camera) {
 
     function player(dbUser, callbacks) {
         // info player
@@ -12,7 +12,6 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         var id = dbUser.id;
         var positionNew = new THREE.Vector3(dbUser.pos.x, dbUser.pos.y, dbUser.pos.z);
         this.dummy = Game.addGetPutDummy();
-        var distCamPlayer = Config.distCamPlayer;
         var distCollision = Config.dimCadri * 0.66;
 
         var audio = document.createElement('audio');
@@ -99,12 +98,8 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         this.tete.position.z = -d / 4;
         this.corps.add(this.tete);
 
-        this.camera = new THREE.PerspectiveCamera(Config.viewwAngle, window.innerWidth / window.innerHeight, 1, 10000);
-        //this.camera.position.x += Math.sin(this.corps.rotation.y) * distCamPlayer;
-        //this.camera.position.z += Math.cos(this.corps.rotation.y) * distCamPlayer;
-        this.camera.position.set( 0, 600, 0 );
-        this.camera.lookAt(new THREE.Vector3(0,0,0));
-        //this.tete.add(this.camera);
+        Camera.followPlayer(this);
+        Camera.getCamera().setCamDist(Config.distCamPlayer);
 
         this.corps.rotation.y = dbUser.rot.corps;
         this.tete.rotation.x = dbUser.rot.tete;
@@ -121,12 +116,13 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             });
         };
 
+        /*
         this.updateCamera = function() {
-            return;
+            //return;
             this.camera.position.x += (this.tete.position.x - this.camera.position.x) / 10;
             this.camera.position.y += (this.tete.position.y - this.camera.position.y - Config.dimCadri / 2) / 10;
         };
-
+*/
         this.rotate = function(corps, tete) {
             this.corps.rotation.y -= corps * 0.002;
             this.tete.rotation.x -= tete * 0.002;
@@ -148,21 +144,8 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                     y: positionNew.y,
                     z: positionNew.z
                 };
-                /*
-                var cube = Map.getCubeByPos(Math.round(pos.x / Config.dimCadri), Math.round(pos.y / Config.dimCadri) - 1, Math.round(pos.z / Config.dimCadri));
-                if (cube) {
-                    var neighbors = cube.getNeighbors();
-                    console.log('ok ' + neighbors.length);
-                    for (var i in neighbors) {
-                        var rc = Game.getCubeFromSceneById(neighbors[i]);
-                        if (rc) {
-                            rc.mesh.rotation.y += 0.2;
-                            //console.log(rc.mesh);
-                        }
-                    }
-                }
-*/
                 Db.updatePos(pos);
+                /*
                 if (Config.randomCubeRotation && !this.jumping) {
                     var rot = {
                         rotation: {
@@ -174,6 +157,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                     randomizeRot(rot, 0.02);
                     copyVector(this.torse.rotation, rot.rotation);
                 }
+                */
                 /*
                 safeApply($rootScope, function(){
                     callbacks.playerUpdateCallback({pos: pos});
@@ -425,30 +409,6 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
             //console.log(dbUser.inventory.length);
         };
 
-        this.setCamDist = function(distCamPlayer) {
-            return;
-            var limit = 5;
-            var dist = distCamPlayer;
-            if (dist < limit) dist = limit;
-            this.camera.position.x = this.tete.position.x + Math.sin(this.tete.rotation.y) * dist;
-            this.camera.position.z = this.tete.position.z + Math.cos(this.tete.rotation.y) * dist;
-            if (distCamPlayer < limit) {
-                this.camera.fov = Config.viewAngle - distCamPlayer / 1.5;
-                this.camera.updateProjectionMatrix();
-            } else if (this.camera.fov != Config.viewAngle) {
-                this.camera.fov = Config.viewAngle;
-                this.camera.updateProjectionMatrix();
-            }
-        };
-
-        this.camdist = function(delta) {
-            distCamPlayer -= delta / 10;
-            if (distCamPlayer < -60) distCamPlayer = -60;
-            //if (distCamPlayer > 300) distCamPlayer = 300;
-            this.setCamDist(distCamPlayer);
-        };
-
-        this.setCamDist(Config.distCamPlayer);
 
         this.setSelectedObject = function(obj) {
             selectedObject = getInventoryObjectById(obj.id);

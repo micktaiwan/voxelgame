@@ -12,6 +12,7 @@ angular.module('gameApp', [
     'gameApp.services.mainplayer',
     'gameApp.services.robot',
     'gameApp.services.map',
+    'gameApp.services.camera',
 ])
     .config(function($routeProvider) {
         $routeProvider

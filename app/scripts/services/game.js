@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('gameApp.services.game', []).factory('Game', function($rootScope, $location, Db, Session, Map) {
+angular.module('gameApp.services.game', []).factory('Game', function($rootScope, $location, Db, Session, Map, Camera) {
 
     var initialized = false;
     var rendererIsStopped = true;
@@ -288,10 +288,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     }
 
     function onWindowResize() {
-        if (player) {
-            player.camera.aspect = window.innerWidth / window.innerHeight;
-            player.camera.updateProjectionMatrix();
-        }
+        Camera.getTHREECamera().aspect = window.innerWidth / window.innerHeight;
+        Camera.getTHREECamera().updateProjectionMatrix();
         var width = window.innerWidth - $game_div[0].offsetLeft * 2;
         var height = window.innerHeight - $game_div[0].offsetTop - 5;
         /*
@@ -311,8 +309,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
             player.rotate(movementX, movementY);
             // camera lag, not nicely done
-            //player.camera.position.x += movementX * 0.01;
-            //player.camera.position.y -= movementY * 0.01;
+            //Camera.getTHREECamera().position.x += movementX * 0.01;
+            //Camera.getTHREECamera().position.y -= movementY * 0.01;
 
             Db.updateRot({
                 corps: player.corps.rotation.y,
@@ -396,10 +394,8 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             player.camdist(e.wheelDelta);
             return false;
         }, false);
-        var elem = renderer.domElement;
-        console.log(elem);
-        elem.addEventListener('mousedown', onDocumentMouseDown, false);
-        //document.addEventListener('mouseup', onDocumentMouseUp, false);
+        renderer.domElement.addEventListener('mousedown', onDocumentMouseDown, false);
+        renderer.domElement.addEventListener('mouseup', onDocumentMouseUp, false);
     }
 
     var lastTimeMsec = new Date().getTime();
@@ -419,6 +415,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         if (!player)
             return;
         player.updateRobots();
+        Camera.getCamera().update();
         // anim
         var delta = clock.getDelta();
         var morph;
@@ -433,7 +430,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             player.jump();
             //light2.position.set(player.corps.position.x, player.corps.position.y, player.corps.position.z);
         }
-        renderer.render(scene, player.camera);
+        renderer.render(scene, Camera.getTHREECamera());
         if (player.corps.position.y < -150)
             end();
     }
@@ -647,8 +644,6 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     function onDocumentMouseDown(event) {
         if (isLocked) {
-            console.log('down');
-
             /*            var WIDTH = window.innerWidth;
             var HEIGHT = window.innerHeight;
             var elem = renderer.domElement,
@@ -663,29 +658,30 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
             var arrow = new THREE.ArrowHelper(
                 new THREE.Vector3(vector.x, vector.y, vector.z),
-                new THREE.Vector3(player.camera.position.x, player.camera.y, player.camera.z),
+                new THREE.Vector3(Camera.getTHREECamera().position.x, Camera.getTHREECamera().y, Camera.getTHREECamera().z),
                 50);
             arrow.position.set(player.corps.position.x, player.corps.position.y, player.corps.position.z);
             scene.add(arrow);
 
             var projector = new THREE.Projector();
-            projector.unprojectVector(vector, player.camera);
-            var ray = new THREE.Raycaster(player.camera.position, vector.sub(player.camera.position).normalize());
+            projector.unprojectVector(vector, Camera.getTHREECamera());
+            var ray = new THREE.Raycaster(Camera.getTHREECamera().position, vector.sub(Camera.getTHREECamera().position).normalize());
             var intersects = ray.intersectObjects(getMeshObjects());*/
 
             //event.preventDefault();
 
-            var vector = new THREE.Vector3((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5);
-            projector.unprojectVector(vector, player.camera);
+            var x = event.pageX;
+            var y = event.pageY;
+            x -= renderer.domElement.offsetLeft;
+            y -= renderer.domElement.offsetTop;
 
-            var raycaster = new THREE.Raycaster(player.camera.position, vector.sub(player.camera.position).normalize());
-
+            var vector = new THREE.Vector3((x / renderer.domElement.width) * 2 - 1, -(y / renderer.domElement.height) * 2 + 1, 0.5);
+            projector.unprojectVector(vector, Camera.getTHREECamera());
+            var raycaster = new THREE.Raycaster(Camera.getTHREECamera().position, vector.sub(Camera.getTHREECamera().position).normalize());
             var intersects = raycaster.intersectObjects(getMeshObjects());
 
-
             if (intersects.length > 0) {
-                console.log(event.clientY);
-                console.log(intersects[0].point);
+                console.log(intersects.length + ' objects');
                 intersects[0].object.material.color.setHex(Math.random() * 0xffffff);
 
                 var particle = new THREE.Sprite(material);
@@ -693,14 +689,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
                 particle.position.y += 2;
                 particle.scale.x = particle.scale.y = 10;
                 scene.add(particle);
-
             }
-
-
-            //console.log(intersects);
-
             return;
         }
+
         switch (event.button) {
             case 0: // left
                 player.dummy.mesh.material.color.setRGB(1, 0, 0); // get
