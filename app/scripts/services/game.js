@@ -21,7 +21,12 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     var geometry = new THREE.CubeGeometry(Config.dimCadri, Config.dimCadri, Config.dimCadri);
     var canMove = false;
     var light, light2;
+
+    // TODO: get rid of that. Should be in Map
     var objects = [];
+
+
+
     var addMessageCallback = null; // method to add ingame messages
 
     var textureFlare0 = THREE.ImageUtils.loadTexture("images/lensflare0.png");
@@ -107,7 +112,11 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
     function real_init() {
         projector = new THREE.Projector();
+
+        // TODO: get rid of that. Should be in Map
         scene = new THREE.Scene();
+
+
         scene.fog = new THREE.Fog(0x333333, 300, 1000);
         //objects.length = 0; // reset all objects
 
@@ -130,18 +139,18 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         // model
         //scout
         var scale = 7;
-	//var loader = new THREE.JSONLoader(), callback = function( geometry ) { createScene( geometry,  0, 0, 0, 7 ) };
+        //var loader = new THREE.JSONLoader(), callback = function( geometry ) { createScene( geometry,  0, 0, 0, 7 ) };
 
-//        var loader = new THREE.SceneLoader(), callback = function( geometry ) { createScene( geometry,  0, 0, 0, 7 ) };
-//        loader.load("obj/animated/scout.js", function(geometry) {
-//            createScene(geometry, 400, 0, 275, scale)
-//        });
+        //        var loader = new THREE.SceneLoader(), callback = function( geometry ) { createScene( geometry,  0, 0, 0, 7 ) };
+        //        loader.load("obj/animated/scout.js", function(geometry) {
+        //            createScene(geometry, 400, 0, 275, scale)
+        //        });
 
-// var loader = new THREE.SceneLoader();
-//  loader.load('obj/animated/scout.js', function(res) {
-//      scene.add(res.scene);
-//      renderer.render(res.scene, camera);
-//  });
+        // var loader = new THREE.SceneLoader();
+        //  loader.load('obj/animated/scout.js', function(res) {
+        //      scene.add(res.scene);
+        //      renderer.render(res.scene, camera);
+        //  });
 
         // nana
         var loader = new THREE.OBJMTLLoader();
@@ -150,7 +159,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             object.position.x = 40;
             object.position.y = 10;
             object.position.z = -200;
-            object.scale.set(0.19, 0.19, 0.19);
+            object.scale.set(0.25, 0.25, 0.25);
             scene.add(object);
         });
         //
@@ -207,6 +216,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         animate();
         return was_already_initialized;
     }
+    /*
 
     function ensureLoop(animation) {
 
@@ -262,6 +272,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         animation.play();
 
     }
+*/
 
     function addMessage(msg) {
         if (!addMessageCallback)
@@ -732,7 +743,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
                 console.log(intersects.length + ' objects');
                 var pos = intersects[0].object.position;
                 console.log(pos);
-                var obj = Map.getCubeByPos(pos.x/Config.dimCadri, pos.y/Config.dimCadri, pos.z/Config.dimCadri);
+                var obj = Map.getCubeByPos(pos.x / Config.dimCadri, pos.y / Config.dimCadri, pos.z / Config.dimCadri);
                 console.log(obj);
             }
             return;

@@ -374,6 +374,10 @@ angular.module('gameApp.services.map', []).factory('Map', function() {
             return new PathFinder();
         },
 
+        getMap: function() {
+            return _map.getMap();
+        },
+
     }
 
 });

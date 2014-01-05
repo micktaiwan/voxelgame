@@ -12,7 +12,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         var id = dbUser.id;
         var positionNew = new THREE.Vector3(dbUser.pos.x, dbUser.pos.y, dbUser.pos.z);
         this.dummy = Game.addGetPutDummy();
-        var distCollision = Config.dimCadri * 0.66;
+        var distCollision = Config.dimCadri * 0.8;
 
         var audio = document.createElement('audio');
         var source = document.createElement('source');
@@ -56,7 +56,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         ];
 
         var d = Config.dimCadri;
-        var geometrytorse = new THREE.CubeGeometry(d, d, d / 2);
+        var geometrytorse = new THREE.CubeGeometry(d / 1.5, d * 1.5, d / 2);
         this.torse = new THREE.Mesh(geometrytorse, new THREE.MeshFaceMaterial(materials));
         this.torse.castShadow = true;
         this.torse.receiveShadow = true;
@@ -94,7 +94,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         this.tete = new THREE.Mesh(geometrytete, new THREE.MeshFaceMaterial(materials));
         this.tete.castShadow = true;
         this.tete.receiveShadow = true;
-        this.tete.position.y = d;
+        this.tete.position.y = d*1.2;
         this.tete.position.z = -d / 4;
         this.corps.add(this.tete);
 
@@ -225,6 +225,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
                 if (intersects.length > 0 && intersects[0].distance < distCollision) {
                     audio.play();
                     canBouge = false;
+                    break;
                 }
                 /*
                 if(Config.modeDebug) {

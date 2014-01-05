@@ -21,13 +21,43 @@ angular.module('gameApp.services.camera', []).factory('Camera', function($rootSc
         this.update = function() {
             if (this.mode == 'pov') {
                 //console.log('pov');
-                this.camera.position.y = this.follow.corps.position.y - Math.sin(this.follow.tete.rotation.x) * this.distCam;
-                this.camera.position.x = this.follow.corps.position.x + (Math.sin(this.follow.corps.rotation.y) * this.distCam) * Math.cos(this.follow.tete.rotation.x);
-                this.camera.position.z = this.follow.corps.position.z + (Math.cos(this.follow.corps.rotation.y) * this.distCam) * Math.cos(this.follow.tete.rotation.x);
-                this.camera.lookAt(new THREE.Vector3(
-                    this.follow.corps.position.x + this.follow.tete.position.x,
-                    this.follow.corps.position.y + this.follow.tete.position.y + Config.dimCadri,
-                    this.follow.corps.position.z + this.follow.tete.position.z));
+
+                var pos = {
+                    x: Math.sin(this.follow.corps.rotation.y) * Math.cos(this.follow.tete.rotation.x),
+                    y: Math.sin(this.follow.tete.rotation.x),
+                    z: Math.cos(this.follow.corps.rotation.y) * Math.cos(this.follow.tete.rotation.x)
+                }
+
+                var look = {
+                    x: this.follow.corps.position.x + this.follow.tete.position.x,
+                    y: this.follow.corps.position.y + this.follow.tete.position.y + Config.dimCadri,
+                    z: this.follow.corps.position.z + this.follow.tete.position.z
+                }
+                var lookVector = new THREE.Vector3(look.x, look.y, look.z);
+                var dist = this.distCam;
+
+                /*
+                var posVector = new THREE.Vector3(
+                    this.follow.corps.position.x + pos.x * dist,
+                    this.follow.corps.position.y - pos.y * dist,
+                    this.follow.corps.position.z + pos.z * dist); * /
+
+                var dir = posVector - lookVector;
+
+                var raycaster = new THREE.Raycaster(look, dir);
+                //var intersects = raycaster.intersectObjects(Map.getMeshes());
+                //console.log(intersects);
+
+                var arrow = new THREE.ArrowHelper(lookVector, posVector, 50);
+                arrow.position.set(posVector.x, posVector.y, posVector.z);
+                Map.addToScene(arrow);
+                */
+                this.camera.position.x = this.follow.corps.position.x + this.follow.tete.position.x + pos.x * dist;
+                this.camera.position.y = this.follow.corps.position.y + this.follow.tete.position.y - pos.y * dist + Config.dimCadri;
+                this.camera.position.z = this.follow.corps.position.z + this.follow.tete.position.z + pos.z * dist;
+
+                this.camera.lookAt(lookVector);
+
             } else if (follow) {
                 this.camera.position.y = this.follow.position.y + 200;
                 this.camera.position.x = this.follow.position.x - 200;
