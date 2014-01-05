@@ -6,7 +6,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     var rendererIsStopped = true;
     var rendererStats = null;
     var $game_div;
-    var scene, renderer;
+    var scene, renderer, projector;
     var geometry, material, mesh;
     //var time = Date.now();
     //var players = [];
@@ -106,6 +106,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     }
 
     function real_init() {
+        projector = new THREE.Projector();
         scene = new THREE.Scene();
         scene.fog = new THREE.Fog(0x333333, 300, 1000);
         //objects.length = 0; // reset all objects
@@ -293,8 +294,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         }
         var width = window.innerWidth - $game_div[0].offsetLeft * 2;
         var height = window.innerHeight - $game_div[0].offsetTop - 5;
+        /*
         $game_div[0].style.width = width;
         $game_div[0].style.height = height;
+        */
         renderer.setSize(width, height);
     }
 
@@ -393,8 +396,10 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             player.camdist(e.wheelDelta);
             return false;
         }, false);
-        document.addEventListener('mousedown', onDocumentMouseDown, false);
-        document.addEventListener('mouseup', onDocumentMouseUp, false);
+        var elem = renderer.domElement;
+        console.log(elem);
+        elem.addEventListener('mousedown', onDocumentMouseDown, false);
+        //document.addEventListener('mouseup', onDocumentMouseUp, false);
     }
 
     var lastTimeMsec = new Date().getTime();
@@ -641,8 +646,61 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     }
 
     function onDocumentMouseDown(event) {
-        if (isLocked)
+        if (isLocked) {
+            console.log('down');
+
+            /*            var WIDTH = window.innerWidth;
+            var HEIGHT = window.innerHeight;
+            var elem = renderer.domElement,
+                boundingRect = elem.getBoundingClientRect(),
+                x = (event.clientX - boundingRect.left) * (elem.width / boundingRect.width),
+                y = (event.clientY - boundingRect.top) * (elem.height / boundingRect.height);
+
+            var vector = new THREE.Vector3(
+                (x / WIDTH) * 2 - 1, -(y / HEIGHT) * 2 + 1,
+                0.5
+            );
+
+            var arrow = new THREE.ArrowHelper(
+                new THREE.Vector3(vector.x, vector.y, vector.z),
+                new THREE.Vector3(player.camera.position.x, player.camera.y, player.camera.z),
+                50);
+            arrow.position.set(player.corps.position.x, player.corps.position.y, player.corps.position.z);
+            scene.add(arrow);
+
+            var projector = new THREE.Projector();
+            projector.unprojectVector(vector, player.camera);
+            var ray = new THREE.Raycaster(player.camera.position, vector.sub(player.camera.position).normalize());
+            var intersects = ray.intersectObjects(getMeshObjects());*/
+
+            //event.preventDefault();
+
+            var vector = new THREE.Vector3((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5);
+            projector.unprojectVector(vector, player.camera);
+
+            var raycaster = new THREE.Raycaster(player.camera.position, vector.sub(player.camera.position).normalize());
+
+            var intersects = raycaster.intersectObjects(getMeshObjects());
+
+
+            if (intersects.length > 0) {
+                console.log(event.clientY);
+                console.log(intersects[0].point);
+                intersects[0].object.material.color.setHex(Math.random() * 0xffffff);
+
+                var particle = new THREE.Sprite(material);
+                particle.position = intersects[0].point;
+                particle.position.y += 2;
+                particle.scale.x = particle.scale.y = 10;
+                scene.add(particle);
+
+            }
+
+
+            //console.log(intersects);
+
             return;
+        }
         switch (event.button) {
             case 0: // left
                 player.dummy.mesh.material.color.setRGB(1, 0, 0); // get

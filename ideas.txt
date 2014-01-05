@@ -1,3 +1,6 @@
+3D to 2D:
+http://zachberry.com/blog/tracking-3d-objects-in-2d-with-three-js/
+
 ===============================================================
 // how to convert 2D mouse coordinates into 3D selection
 

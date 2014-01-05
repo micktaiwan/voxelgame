@@ -99,10 +99,12 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         this.tete.position.z = -d / 4;
         this.corps.add(this.tete);
 
-        this.camera = new THREE.PerspectiveCamera(Config.viewwAngle, window.innerWidth / window.innerHeight, 1, 1000);
-        this.camera.position.x += Math.sin(this.corps.rotation.y) * distCamPlayer;
-        this.camera.position.z += Math.cos(this.corps.rotation.y) * distCamPlayer;
-        this.tete.add(this.camera);
+        this.camera = new THREE.PerspectiveCamera(Config.viewwAngle, window.innerWidth / window.innerHeight, 1, 10000);
+        //this.camera.position.x += Math.sin(this.corps.rotation.y) * distCamPlayer;
+        //this.camera.position.z += Math.cos(this.corps.rotation.y) * distCamPlayer;
+        this.camera.position.set( 0, 600, 0 );
+        this.camera.lookAt(new THREE.Vector3(0,0,0));
+        //this.tete.add(this.camera);
 
         this.corps.rotation.y = dbUser.rot.corps;
         this.tete.rotation.x = dbUser.rot.tete;
@@ -120,6 +122,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         };
 
         this.updateCamera = function() {
+            return;
             this.camera.position.x += (this.tete.position.x - this.camera.position.x) / 10;
             this.camera.position.y += (this.tete.position.y - this.camera.position.y - Config.dimCadri / 2) / 10;
         };
@@ -423,6 +426,7 @@ angular.module('gameApp.services.mainplayer', []).factory('MainPlayer', function
         };
 
         this.setCamDist = function(distCamPlayer) {
+            return;
             var limit = 5;
             var dist = distCamPlayer;
             if (dist < limit) dist = limit;

@@ -95,12 +95,8 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
         };
 
         this.distanceFromPlayer = function() {
-            var r = this.body.position;
-            var p = player.corps.position;
-            var dist = Math.sqrt(Math.pow((r.x - p.x), 2) + Math.pow((r.y - p.y), 2) + Math.pow((r.z - p.z), 2));
-            return Math.round(dist / Config.dimCadri);
+            return Math.round(player.corps.position.distanceTo(this.body.position)  / Config.dimCadri);
         }
-
         this.printPos = function() {
             var pos = this.getCurrentPosCubePos();
             return '(' + pos.x + ',' + pos.y + ',' + pos.z + ')';
@@ -151,7 +147,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
             if (next) return next;
 
             rewind = 1;
-            while (rewind < memory.size() && (next=Map.getCubeById(memory.rewind(rewind).id)) && !getNext(next.getNeighborsOnlyAdjacents()))
+            while (rewind < memory.size() && (next = Map.getCubeById(memory.rewind(rewind).id)) && !getNext(next.getNeighborsOnlyAdjacents()))
                 rewind += 1;
             //console.log('Rewinded ' + rewind + ' cubes');
             if (rewind == memory.size()) {
@@ -162,7 +158,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
 
             path = pathfinder.find(memory, c, memory.rewind(rewind));
             if (path.length == 0) {
-                throw 'no path to cube ??? rewind='+rewind+', memory len='+memory.size();
+                throw 'no path to cube ??? rewind=' + rewind + ', memory len=' + memory.size();
             }
             //console.log('found a path to rewind ' + rewind + ' in ' + (path.length - 1) + ' cubes');
             return path[0];

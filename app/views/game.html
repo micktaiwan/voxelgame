@@ -12,7 +12,8 @@
         <div ng-repeat="r in robots">
             - {{r.dbRobot.type}}
             <span ng-hide="r.active" class="strong">not active</span>
-            {{r.distanceFromPlayer()}}m away {{r.printPos()}}
+            {{r.distanceFromPlayer()}}m away
+            {{r.printPos()}}
         </div>
         <br/>
         <p>Soon:
