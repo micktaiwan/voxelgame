@@ -21,25 +21,25 @@ angular.module('gameApp.services.camera', []).factory('Camera', function($rootSc
         this.update = function() {
             if (this.mode == 'pov') {
                 //console.log('pov');
-                this.camera.position.y = this.follow.corps.position.y - Math.sin(this.follow.tete.rotation.x)* 100;
-                this.camera.position.x = this.follow.corps.position.x + (Math.sin(this.follow.corps.rotation.y)* 100)* Math.cos(this.follow.tete.rotation.x);
-                this.camera.position.z = this.follow.corps.position.z + (Math.cos(this.follow.corps.rotation.y) * 100)* Math.cos(this.follow.tete.rotation.x);
-                this.camera.lookAt(new THREE.Vector3(this.follow.corps.position.x, this.follow.corps.position.y, this.follow.corps.position.z));
+                this.camera.position.y = this.follow.corps.position.y - Math.sin(this.follow.tete.rotation.x) * this.distCam;
+                this.camera.position.x = this.follow.corps.position.x + (Math.sin(this.follow.corps.rotation.y) * this.distCam) * Math.cos(this.follow.tete.rotation.x);
+                this.camera.position.z = this.follow.corps.position.z + (Math.cos(this.follow.corps.rotation.y) * this.distCam) * Math.cos(this.follow.tete.rotation.x);
+                this.camera.lookAt(new THREE.Vector3(
+                    this.follow.corps.position.x + this.follow.tete.position.x,
+                    this.follow.corps.position.y + this.follow.tete.position.y + Config.dimCadri,
+                    this.follow.corps.position.z + this.follow.tete.position.z));
             } else if (follow) {
                 this.camera.position.y = this.follow.position.y + 200;
                 this.camera.position.x = this.follow.position.x - 200;
                 this.camera.position.z = this.follow.position.z;
                 this.camera.lookAt(new THREE.Vector3(this.follow.position.x, this.follow.position.y, this.follow.position.z));
-            }
-            else {
-            	console.error('camera has nothing to follow');
+            } else {
+                console.error('camera has nothing to follow');
             }
         };
 
         this.setCamDist = function(distCamPlayer, mesh) {
-
-            return; // en attendant
-
+            if (!mesh) mesh = this.follow.position ? this.follow : this.follow.corps;
             var limit = 5;
             var dist = distCamPlayer;
             if (dist < limit) dist = limit;
@@ -54,11 +54,11 @@ angular.module('gameApp.services.camera', []).factory('Camera', function($rootSc
             }
         };
 
-        this.camdist = function(delta) {
-            distCam -= delta / 10;
-            if (distCam < -60) distCam = -60;
+        this.setCamDistFromDelta = function(delta) {
+            this.distCam -= delta / 10;
+            if (this.distCam < -60) this.distCam = -60;
             //if (distCamPlayer > 300) distCamPlayer = 300;
-            this.setCamDist(distCam);
+            this.setCamDist(this.distCam);
         };
 
     };

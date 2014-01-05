@@ -158,7 +158,7 @@ angular.module('gameApp.services.robot', []).factory('Robot', function($rootScop
 
             path = pathfinder.find(memory, c, memory.rewind(rewind));
             if (path.length == 0) {
-                throw 'no path to cube ??? rewind=' + rewind + ', memory len=' + memory.size();
+                console.error('no path to cube ??? rewind=' + rewind + ', memory len=' + memory.size());
             }
             //console.log('found a path to rewind ' + rewind + ' in ' + (path.length - 1) + ' cubes');
             return path[0];

@@ -49,7 +49,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     /*
      function initPostprocessing() {
      var renderPass = new THREE.RenderPass( scene, camera );
-     
+
      var bokehPass = new THREE.BokehPass( scene, camera, {
      focus:                 1.0,
      aperture:        0.025,
@@ -57,9 +57,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
      width: width,
      height: height
      } );
-     
+
      bokehPass.renderToScreen = true;
-     
+
      var composer = new THREE.EffectComposer( renderer );
      composer.addPass( renderPass );
      composer.addPass( bokehPass );
@@ -142,7 +142,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 //      scene.add(res.scene);
 //      renderer.render(res.scene, camera);
 //  });
-  
+
         // nana
         var loader = new THREE.OBJMTLLoader();
         //        loader.load( 'obj/ModelFace2.obj', 'obj/ModelFace2.mtl', function ( object ) {
@@ -462,7 +462,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         document.addEventListener('mousewheel', function(e) {
             if (isLocked)
                 return;
-            player.camdist(e.wheelDelta);
+            Camera.getCamera().setCamDistFromDelta(e.wheelDelta);
             return false;
         }, false);
         renderer.domElement.addEventListener('mousedown', onDocumentMouseDown, false);
