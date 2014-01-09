@@ -12,6 +12,13 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     //var players = [];
     var player; // the one who actually play
 
+    var moimeme;
+    var duration = 600;
+    var keyframes = 40;
+    var interpolation = duration / keyframes;
+    var lastKeyframe = 0;
+    var currentKeyframe = 0;
+
     var dummy = [];
 
     // anim
@@ -54,7 +61,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
     /*
      function initPostprocessing() {
      var renderPass = new THREE.RenderPass( scene, camera );
-
+     
      var bokehPass = new THREE.BokehPass( scene, camera, {
      focus:                 1.0,
      aperture:        0.025,
@@ -62,9 +69,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
      width: width,
      height: height
      } );
-
+     
      bokehPass.renderToScreen = true;
-
+     
      var composer = new THREE.EffectComposer( renderer );
      composer.addPass( renderPass );
      composer.addPass( bokehPass );
@@ -138,19 +145,21 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
 
         // model
         //scout
-        var scale = 7;
-        //var loader = new THREE.JSONLoader(), callback = function( geometry ) { createScene( geometry,  0, 0, 0, 7 ) };
+        var scalef = 0.3;
+        var scale = 5;
 
-        //        var loader = new THREE.SceneLoader(), callback = function( geometry ) { createScene( geometry,  0, 0, 0, 7 ) };
-        //        loader.load("obj/animated/scout.js", function(geometry) {
-        //            createScene(geometry, 400, 0, 275, scale)
-        //        });
+        var loader = new THREE.JSONLoader();
 
-        // var loader = new THREE.SceneLoader();
-        //  loader.load('obj/animated/scout.js', function(res) {
-        //      scene.add(res.scene);
-        //      renderer.render(res.scene, camera);
-        //  });
+        loader.load("obj/animated/running_babe.js", function(geo, material) {
+            material[0].morphTargets = true;
+            material[1].morphTargets = true;
+            var materials = new THREE.MeshFaceMaterial(material);
+            //console.log(geo.faces[0].materials);
+            moimeme = new THREE.Mesh(geo, materials);
+            moimeme.position.set(0, 0, 20);
+            moimeme.scale.set(scale, scale, scale);
+            scene.add(moimeme);
+        });
 
         // nana
         var loader = new THREE.OBJMTLLoader();
@@ -159,7 +168,7 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
             object.position.x = 40;
             object.position.y = 10;
             object.position.z = -200;
-            object.scale.set(0.25, 0.25, 0.25);
+            object.scale.set(scalef, scalef, scalef);
             scene.add(object);
         });
         //
@@ -216,63 +225,6 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         animate();
         return was_already_initialized;
     }
-    /*
-
-    function ensureLoop(animation) {
-
-        for (var i = 0; i < animation.hierarchy.length; i++) {
-
-            var bone = animation.hierarchy[ i ];
-
-            var first = bone.keys[ 0 ];
-            var last = bone.keys[ bone.keys.length - 1 ];
-
-            last.pos = first.pos;
-            last.rot = first.rot;
-            last.scl = first.scl;
-
-        }
-
-    }
-
-    function createScene(geometry, x, y, z, s) {
-
-        ensureLoop(geometry.animation);
-
-        geometry.computeBoundingBox();
-        var bb = geometry.boundingBox;
-
-        THREE.AnimationHandler.add(geometry.animation);
-        console.log(geometry);
-        for (var i = 0; i < geometry.materials.length; i++) {
-
-            var m = geometry.materials[ i ];
-            m.skinning = true;
-            m.ambient.copy(m.color);
-
-            m.wrapAround = true;
-            m.perPixel = true;
-
-        }
-
-
-        var mesh = new THREE.SkinnedMesh(geometry, new THREE.MeshFaceMaterial());
-        mesh.position.set(x, y - bb.min.y * s, z);
-        mesh.scale.set(s, s, s);
-        scene.add(mesh);
-
-        mesh.castShadow = true;
-        mesh.receiveShadow = true;
-
-
-        var animation = new THREE.Animation(mesh, geometry.animation.name);
-        animation.JITCompile = false;
-        animation.interpolationType = THREE.AnimationHandler.LINEAR;
-
-        animation.play();
-
-    }
-*/
 
     function addMessage(msg) {
         if (!addMessageCallback)
@@ -375,9 +327,9 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         var width = window.innerWidth - $game_div[0].offsetLeft * 2;
         var height = window.innerHeight - $game_div[0].offsetTop - 5;
         /*
-        $game_div[0].style.width = width;
-        $game_div[0].style.height = height;
-        */
+         $game_div[0].style.width = width;
+         $game_div[0].style.height = height;
+         */
         renderer.setSize(width, height);
     }
 
@@ -515,6 +467,23 @@ angular.module('gameApp.services.game', []).factory('Game', function($rootScope,
         renderer.render(scene, Camera.getTHREECamera());
         if (player.corps.position.y < -150)
             end();
+
+        // temp moimeme
+
+        if (moimeme) {
+            var time = Date.now() % duration;
+            var keyframe = Math.floor(time / interpolation);
+            if (keyframe != currentKeyframe) {
+                moimeme.morphTargetInfluences[ lastKeyframe ] = 0;
+                moimeme.morphTargetInfluences[ currentKeyframe ] = 1;
+                moimeme.morphTargetInfluences[ keyframe ] = 0;
+
+                lastKeyframe = currentKeyframe;
+                currentKeyframe = keyframe;
+            }
+            moimeme.morphTargetInfluences[ keyframe ] = (time % interpolation) / interpolation;
+            moimeme.morphTargetInfluences[ lastKeyframe ] = 1 - moimeme.morphTargetInfluences[ keyframe ];
+        }
     }
 
     // Death
